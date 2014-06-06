@@ -1,0 +1,46 @@
+li div
+{
+    float: left;
+    height: 15px;
+}
+
+.filter_email
+{
+    margin-left: 47px;
+}
+
+.filter_extension
+{
+    margin-left: 28px;
+}
+
+li.name
+{
+    margin-left: 24px;
+    height: 15px;
+}
+
+.file
+{
+    width: 260px;
+}
+
+.increment
+{
+    background: url("../images/increment.png") no-repeat 0px 0px;
+    cursor: pointer;
+    width: 15px;
+}
+
+.decrement
+{
+    background: url("../images/decrement.png") no-repeat 0px 0px;
+    cursor: pointer;
+    width: 15px;
+}
+
+.value
+{
+    width: 40px;
+    text-align: center;
+}

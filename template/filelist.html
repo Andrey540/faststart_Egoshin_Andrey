@@ -1,0 +1,27 @@
+      <div class="main_block">
+        <div class="header">
+          <h1>{$header}</h1>
+          It's free and always will be.
+        </div>
+        <form action="{$action}" method="post" enctype="multipart/form-data">
+          <label class="filter_email">User Email:</label>
+	      <input type="text" name="email" value="{$email}" />
+  	      <br />
+	      <label class="filter_extension">File Extension:</label>
+	      <input type="text" name="extension" value="{$extension}" />	 
+	      <br />
+	      <input type="submit" value="Filter" class="button" />
+        </form> 
+        <h2>Files: </h2>
+        <ul id="{$user_id}">
+          {foreach from=$file item=fileItem}
+          <li id="{$fileItem.file_id}" class="name">
+            <div class="file">{$fileItem.file}</div>
+            <div class="decrement" name="decrement"></div>
+            <div class="value" name="value">{$fileItem.file_rate}</div>
+            <div class="increment" name="increment"></div>
+            <div class="clear"></div>
+          </li>
+          {/foreach}
+        </ul>   
+      </div>

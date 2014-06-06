@@ -1,0 +1,96 @@
+div
+{
+	margin-bottom: 20px;
+	padding: 20px;
+}
+
+#check_result
+{
+    margin-left: 10px;
+}
+
+.name
+{
+    margin-left: 45px;
+}
+
+.email
+{
+    margin-left: 22px;
+}
+
+.i_am
+{
+    margin-left: 78px;
+}
+
+.birthday
+{
+    margin-left: 58px;
+}
+
+.re_email
+{
+    margin-left: 23px;
+}
+
+.filter_email
+{
+    margin-left: 47px;
+}
+
+.filter_extension
+{
+    margin-left: 28px;
+}
+
+.sex
+{
+    width: 101px;
+}
+
+.month
+{
+    width: 76px;
+}
+
+.day
+{
+    width: 62px;
+}
+
+.year
+{
+    width: 67px;
+}
+
+p
+{
+    color: #3B5998;
+	margin-bottom: 8px;
+	margin-left: 112px;
+}
+
+li.name
+{
+    margin-left: 24px;
+}
+
+li.email
+{
+    margin-left: 50px;
+}
+
+li.sex
+{
+    margin-left: 38px;
+}
+
+.file
+{
+    margin: 10px 0px 15px 50px;
+    width: 262px;
+    height: 30px;
+	border: 1px solid #9AAFCA;
+}
+

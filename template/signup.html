@@ -1,0 +1,33 @@
+      <div class="main_block">
+        <div class="header">
+          <h1>{$header}</h1>
+	      It's free and always will be.
+	    </div>
+	    <form action="{$action}" method="post" enctype="multipart/form-data">
+          <label class="name">First Name:</label>
+	      <input type="text" name="first_name" />
+  	      <br />
+	      <label class="name">Last Name:</label>
+	      <input type="text" name="last_name" />	 
+	      <br />
+	      <label class="name">Your Email:</label>
+	      <input type="text" name="email" />	 
+	      <br />
+	      <label class="re_email">Re-enter Email:</label>
+	      <input type="text" name="re_email" />	 
+	      <br />
+	      <label class="email">New Password:</label>
+	      <input type="password" name="password" /><span id="check_result"></span>	 
+	      <br />
+	      <label class="i_am">I am:</label>
+          {html_options name="sex" class="sex" options=$sex selected="0"}
+	      <br />
+	      <label class="birthday">Birthday:</label>
+	      {html_options name="month" class="month" options=$month selected="0"}
+	      {html_options name="day" class="day" options=$day selected="0"}
+	      {html_options name="year" class="year" options=$year selected="0"}
+	      <br />
+	      <p>Why do i need to provide this?</p>
+	      <input type="submit" value="Sign Up" class="button" />
+        </form> 
+      </div>

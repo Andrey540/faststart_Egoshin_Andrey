@@ -1,0 +1,20 @@
+      <div class="main_block">
+        <div class="header">
+          <h1>{$header}</h1>
+          It's free and always will be.
+        </div>
+        <br />
+        <ul>
+          {foreach from=$users item=userItem}
+          <li class="name"><a class="undecorated" href="/formsignin.php?user_id={$userItem.user_id}">{$userItem.email}</a>{$userItem.name}</li>
+          {/foreach}
+        </ul>
+        <div  class="page_list">
+          <ul class="pages_menu">
+            {foreach from=$pages item=pageItem}
+            <li class="page"><a href="/userlist.php?show_page={$pageItem}">{$pageItem}</li>
+            {/foreach}
+            <div class="clear"></div>
+          </ul>
+        </div>   
+      </div>
