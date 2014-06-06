@@ -1,7 +1,7 @@
 <?php
     require_once('include/common.inc.php');
   
-    $userInfo = getUserInfoFromRequest(2);
+    $userInfo = getUserInfoFromRequest(GET_FROM_POST);
     $message = '';
   
     if (!checkName($userInfo['first_name']))

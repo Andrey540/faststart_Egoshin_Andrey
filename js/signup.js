@@ -1,8 +1,9 @@
     function checkName(name)
     {
+        const MIN_NAME_LENGTH = 3;
         result = true;
         
-        if ((name.length < 3) || ((name[0] < 'A') || (name[0] > 'Z')))
+        if ((name.length < MIN_NAME_LENGTH) || ((name[0] < 'A') || (name[0] > 'Z')))
         {
             result = false;
         }
@@ -58,9 +59,10 @@
 
     function checkPassword(pass)
     {
+        const MIN_PASSWORD_LENGTH = 6;
         var result = true;
         
-        if (pass.length < 6)
+        if (pass.length < MIN_PASSWORD_LENGTH)
             result = false;    
     
         return result;

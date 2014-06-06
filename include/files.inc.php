@@ -25,6 +25,31 @@
         return $result;
     }
     
+    function uploadFile($fileInfo)
+    {
+        $result = false;    
+        
+        $arrWords = explode(".", $fileInfo['name']);
+      
+        if (!empty($arrWords))
+        {      
+            $fileInfo['user_id']   = $_SESSION['user_id'];
+            $fileInfo['name']      = str_replace('.' . $arrWords[count($arrWords) - 1], '', $fileInfo['name']);
+            $fileInfo['extension'] = $arrWords[count($arrWords) - 1];
+      
+            if (saveFileInfo(&$fileInfo))
+            {
+                $finalPath = 'uploads/' . $fileInfo['file_id'] . '.' . $fileInfo['extension'];
+                if (move_uploaded_file($fileInfo['tmp_name'], $finalPath))
+                {      
+                    $result = true;
+                }      
+            } 
+        }  
+    
+        return $result;
+    }
+    
     function saveUserInfoToFile($userInfo, $fileName)
     { 
         $success = false;

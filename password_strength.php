@@ -2,19 +2,19 @@
 
     require_once('include/common.inc.php');
     
+    const PASSWORD_WEAK   = 0;
+    const PASSWORD_GOOD   = 1;
+    const PASSWORD_STRONG = 2;
+    
     $password = getUserInfoFromRequest(GET_FROM_POST);    
 
     $strength = calcTextStrenght($password['password']);
-   
-    const PASSWORD_WEAK = 0;
-    const PASSWORD_GOOD = 1;
-    const PASSWORD_STRONG = 2;
 
     $result = PASSWORD_WEAK;
      
     $strengthCriteria = array
     (
-        PASSWORD_GOOD => 60,
+        PASSWORD_GOOD   => 60,
         PASSWORD_STRONG => 70
     );
     

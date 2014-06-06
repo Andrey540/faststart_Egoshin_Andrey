@@ -1,4 +1,4 @@
-<?php
+<?php    
    
     function takeFileRate($fileId)
     {
@@ -30,7 +30,7 @@
     }    
     
     function changeFileRate($fileId, $userId, $action)
-    {
+    {        
         $result = false;
         $checkInfo = findExistRate($fileId, $userId);  
         if (empty($checkInfo))
@@ -47,12 +47,12 @@
             }
             else if (($checkInfo[0]['rate'] == 1) && ($action == -1)) 
             {            
-                updateRate($fileId, $userId, '0');
+                updateRate($fileId, $userId, 0);
                 $result = true;
             }
             else if (($checkInfo[0]['rate'] == -1) && ($action == 1))
             {
-                updateRate($fileId, $userId, '0'); 
+                updateRate($fileId, $userId, 0); 
                 $result = true;
             }        
         } 

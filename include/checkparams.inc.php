@@ -1,4 +1,14 @@
 <?php
+    
+    const MIN_PASSWORD_STRENGTH = 60;
+    const MIN_YEAR = 1900;
+    const MAX_YEAR = 2200;
+    const MIN_MONTH = 1;
+    const MAX_MONTH = 12;
+    const MIN_DAY = 1;
+    const MAX_DAY = 31;
+    const MIN_SEX = 1;
+    const MAX_SEX = 2;
 	
     function calcCountNotSymbolChars($param)
     {
@@ -103,7 +113,7 @@
     {
         $result = true;
       
-        if (calcTextStrenght($param) < 60)
+        if (calcTextStrenght($param) < MIN_PASSWORD_STRENGTH)
             $result = false;		  
   
         return $result;
@@ -141,9 +151,9 @@
     
     function checkDay($param)
     {
-        $result = false;
+        $result = false;        
       
-        if (($param >= 1) && ($param <= 31))
+        if (($param >= MIN_DAY) && ($param <= MAX_DAY))
             $result = true;		  
   
         return $result;
@@ -151,9 +161,9 @@
     
     function checkYear($param)
     {
-        $result = false;
+        $result = false;        
       
-        if (($param >= 1900) && ($param <= 2014))
+        if (($param >= MIN_YEAR) && ($param <= MAX_YEAR))
             $result = true;		  
   
         return $result;

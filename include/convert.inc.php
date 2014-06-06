@@ -1,4 +1,6 @@
 <?php
+
+    const NORMAL_DATE_LENGTH = 3;
     
     function concatDate(&$vars)
     {
@@ -11,7 +13,7 @@
     }  
     
     function parseDate(&$vars)
-    {
+    {       
         $vars['year'] = '0000';
         $vars['month'] = '0000';
         $vars['day'] = '0000';
@@ -21,7 +23,7 @@
                        
         $arrDate = explode("-", $vars['birthday']);
         
-        if (count($arrDate) == 3)
+        if (count($arrDate) == NORMAL_DATE_LENGTH)
         {
             $vars['year']  = $arrDate[0];
             $vars['month'] = $arrDate[1];

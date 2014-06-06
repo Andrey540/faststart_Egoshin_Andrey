@@ -2,10 +2,10 @@
 
 function setYearSelect($start, $end)
 { 
-	if ($start < 1900)
-		$start = 1900;
-	if ($end > 2200)
-		$end = 2200;
+	if ($start < MIN_YEAR)
+		$start = MIN_YEAR;
+	if ($end > MAX_YEAR)
+		$end = MAX_YEAR;
 	if ($start > $end)
 		$start = $end;
     $option = '';
@@ -16,10 +16,10 @@ function setYearSelect($start, $end)
 
 function setMonthSelect($start, $end)
 { 
-	if ($start < 1)
-		$start = 1;
-	if ($end > 12)
-		$end = 12;
+	if ($start < MIN_MONTH)
+		$start = MIN_MONTH;
+	if ($end > MAX_MONTH)
+		$end = MAX_MONTH;
 	if ($start > $end)
 		$start = $end;
 	$month = array('', 'January', 'February', 'March', 'April', 'May', 'June',
@@ -33,10 +33,10 @@ function setMonthSelect($start, $end)
 
 function setDaySelect($start, $end)
 { 
-	if ($start < 1)
-		$start = 1;
-	if ($end > 31)
-		$end = 31;
+	if ($start < MIN_DAY)
+		$start = MIN_DAY;
+	if ($end > MAX_DAY)
+		$end = MAX_DAY;
 	if ($start > $end)
 		$start = $end;
     $option = '';
@@ -47,10 +47,10 @@ function setDaySelect($start, $end)
 
 function setSexSelect($start, $end)
 { 
-	if ($start < 1)
-		$start = 1;
-	if ($end > 2)
-		$end = 2;
+	if ($start < MIN_SEX)
+		$start = MIN_SEX;
+	if ($end > MAX_SEX)
+		$end = MAX_SEX;
 	if ($start > $end)
 		$start = $end;
 	$sex = array('', 'Man', 'Woman');
