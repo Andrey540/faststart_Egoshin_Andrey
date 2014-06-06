@@ -5,15 +5,26 @@
     $password = getUserInfoFromRequest(GET_FROM_POST);    
 
     $strength = calcTextStrenght($password['password']);
-    $result = 0;
+   
+    const PASSWORD_WEAK = 0;
+    const PASSWORD_GOOD = 1;
+    const PASSWORD_STRONG = 2;
+
+    $result = PASSWORD_WEAK;
+     
+    $strengthCriteria = array
+    (
+        PASSWORD_GOOD => 60,
+        PASSWORD_STRONG => 70
+    );
     
-    if (($strength >= 20) && ($strength < 60))
+    if (($strength >= $strengthCriteria[PASSWORD_GOOD]) && ($strength < $strengthCriteria[PASSWORD_STRONG]))
     {
-        $result = 1;
+        $result = PASSWORD_GOOD;
     }
-    else if ($strength >= 60)
+    else if ($strength >= $strengthCriteria[PASSWORD_STRONG])
     {
-        $result = 2;
+        $result = PASSWORD_STRONG;
     }
 
    echo $result;

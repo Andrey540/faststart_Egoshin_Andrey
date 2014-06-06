@@ -1,4 +1,7 @@
-     function getXmlHttp()
+    const rateValue = "value";
+    var g_busy = false;
+    
+    function getXmlHttp()
     {
         var xhr = false;
         try
@@ -53,6 +56,7 @@
         var user = file.parentElement;         
         var value = takeRateBlock(file);
         value.innerHTML = answer.rate;
+        g_busy = false;
     }
     
     function takeRateBlock(list)
@@ -62,7 +66,7 @@
         
         for (var i = 0; i < divs.length; i++)
         {
-            if (divs[i].className == "value")
+            if (divs[i].className == rateValue)
             {
                 value = divs[i];
                 break;
@@ -91,24 +95,32 @@
     
     function onClickIncrement()
     {
-        var file = this.parentElement; 
-        var user = file.parentElement;         
-        var CHANGE_RATE_URL = "/change_rate.php";
-        var value = takeRateBlock(file);
-        var data = "file_id=" + file.id + "&user_id=" + user.id + '&rate=' + value.innerHTML + '&action=1';
+        if (!g_busy)
+        {
+            g_busy = true;
+            var file = this.parentElement; 
+            var user = file.parentElement;         
+            var CHANGE_RATE_URL = "/change_rate.php";
+            var value = takeRateBlock(file);
+            var data = "file_id=" + file.id + "&user_id=" + user.id + '&rate=' + value.innerHTML + '&action=1';
         
-        getUrl(CHANGE_RATE_URL, onChangeRate, data);
+            getUrl(CHANGE_RATE_URL, onChangeRate, data);
+        }
     }
     
     function onClickDecrement()
     {
-        var file = this.parentElement; 
-        var user = file.parentElement;         
-        var CHANGE_RATE_URL = "/change_rate.php";
-        var value = takeRateBlock(file);
-        var data = "file_id=" + file.id + "&user_id=" + user.id + '&rate=' + value.innerHTML + '&action=-1';
+        if (!g_busy)
+        {
+            g_busy = true;
+            var file = this.parentElement; 
+            var user = file.parentElement;         
+            var CHANGE_RATE_URL = "/change_rate.php";
+            var value = takeRateBlock(file);
+            var data = "file_id=" + file.id + "&user_id=" + user.id + '&rate=' + value.innerHTML + '&action=-1';
 
-        getUrl(CHANGE_RATE_URL, onChangeRate, data);    
+            getUrl(CHANGE_RATE_URL, onChangeRate, data);
+        }        
     }
     
     function onWindowloaded()
