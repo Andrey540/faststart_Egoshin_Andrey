@@ -59,3 +59,32 @@ function userAuthorized()
     
     return $result;
 }
+
+function printUserInfo($userInfo, $pageVars)
+{
+    parseDate(&$userInfo);
+        
+    $sex = array('Select Sex:', 'Man', 'Woman');
+        
+    $pageVars['user'] = array(         
+                               array('class' => 'name',
+                                     'title' => 'First Name: ',
+                                     'data'  => $userInfo['first_name']),
+                               array('class' => 'name',
+                                     'title' => 'Last Name: ',
+                                     'data'  => $userInfo['last_name']),
+                               array('class' => 'email',
+                                     'title' => 'E-mail: ',
+                                     'data'  => $userInfo['email']),
+                               array('class' => 'sex',
+                                     'title' => 'You Are: ',
+                                     'data'  => $sex[$userInfo['sex']]),
+                               array('class' => '',
+                                     'title' => 'Your Birthday: ',
+                                     'data'  => $userInfo['day']   . ' ' . 
+                                                $userInfo['month'] . ' ' . 
+                                                $userInfo['year'])
+                             );
+
+    return $pageVars;
+}

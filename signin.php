@@ -17,10 +17,8 @@
     $userInfo = array(); 
     $userInfo = findSurveyByEmail($userEmail['email']);    
     
-    if (!empty($userInfo))
-        parseDate(&$userInfo[0]);
-    else if ($message == '')
-        $message = 'There is not such e-mail';   
+    if ((empty($userInfo)) && ($message == ''))
+        $message = 'There is not such e-mail';           
         
     $pageVars = array();
     $pageVars['title']  = 'Sign In';
@@ -30,25 +28,7 @@
     
     if ($message == '')
     {
-        $pageVars['user'] = array(         
-                                   array('class' => 'name',
-                                         'title' => 'First Name: ',
-                                         'data'  => $userInfo[0]['first_name']),
-                                   array('class' => 'name',
-                                         'title' => 'Last Name: ',
-                                         'data'  => $userInfo[0]['last_name']),
-                                   array('class' => 'email',
-                                         'title' => 'E-mail: ',
-                                         'data'  => $userInfo[0]['email']),
-                                   array('class' => 'sex',
-                                         'title' => 'You Are: ',
-                                         'data'  => $userInfo[0]['sex']),
-                                   array('class' => '',
-                                         'title' => 'Your Birthday: ',
-                                         'data'  => $userInfo[0]['day'] . ' ' . 
-                                                    $userInfo[0]['month'] . ' ' . 
-                                                    $userInfo[0]['year'])
-                                 );
+        $pageVars = printUserInfo($userInfo[0], $pageVars);
         
         echo buildLayout('answerlist.html', $pageVars);
     }

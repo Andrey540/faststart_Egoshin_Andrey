@@ -4,7 +4,7 @@
     
     function concatDate(&$vars)
     {
-        $year = range(MIN_YEAR, MAX_YEAR);
+        $year = range(MIN_YEAR, MAX_YEAR);                
                             
         $vars['birthday'] = $year[$vars['year'] - 1] . '-' . $vars['month'] .
                                 '-' . $vars['day']; 
@@ -24,7 +24,7 @@
         if (count($arrDate) == NORMAL_DATE_LENGTH)
         {
             $vars['year']  = $arrDate[0];
-            $vars['month'] = $arrDate[1];
+            $vars['month'] = $month[$arrDate[1]];
             $vars['day']   = $arrDate[2];
         }
     } 
