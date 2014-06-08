@@ -22,6 +22,6 @@
     else
     {
         $_SESSION['user_id'] = $userInfo[0]['user_id'];
-        $pageVars = printUserInfo($userInfo[0], $pageVars);        
+        $pageVars = joinUserInfo($userInfo[0], $pageVars);        
         echo buildLayout('answerlist.html', $pageVars);
     }   

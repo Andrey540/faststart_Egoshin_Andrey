@@ -60,7 +60,7 @@ function userAuthorized()
     return $result;
 }
 
-function printUserInfo($userInfo, $pageVars)
+function joinUserInfo($userInfo, $pageVars)
 {
     parseDate(&$userInfo);
         

@@ -30,7 +30,7 @@
     
     if ($message == '')
     {
-        $pageVars = printUserInfo($userInfo[0], $pageVars);
+        $pageVars = joinUserInfo($userInfo[0], $pageVars);
         
         echo buildLayout('answerlist.html', $pageVars);
     }
