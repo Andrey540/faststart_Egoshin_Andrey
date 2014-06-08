@@ -8,23 +8,25 @@
    
     $userEmail = getUserInfoFromRequest(GET_FROM_POST);
 	$message = '';
-
-    if (!checkEmail($userEmail['email']))
-	{
-		$message = 'incorrect e-mail!';
-	}
-
-    $userInfo = array(); 
-    $userInfo = findSurveyByEmail($userEmail['email']);    
     
-    if ((empty($userInfo)) && ($message == ''))
-        $message = 'There is not such e-mail';           
-        
     $pageVars = array();
     $pageVars['title']  = 'Sign In';
     $pageVars['header'] = 'Sign In';
     $pageVars['script'] = '';
     $pageVars['css']    = 'style-form';
+
+    if (!checkEmail($userEmail['email']))
+	{
+		$message = 'incorrect e-mail!';
+	}
+    else
+    {
+        $userInfo = array(); 
+        $userInfo = findSurveyByEmail($userEmail['email']);    
+    
+        if ((empty($userInfo)) && ($message == ''))
+            $message = 'There is not such e-mail';  
+    }    
     
     if ($message == '')
     {
