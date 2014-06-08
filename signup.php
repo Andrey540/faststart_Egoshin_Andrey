@@ -2,22 +2,13 @@
     require_once('include/common.inc.php');
   
     $userInfo = getUserInfoFromRequest(GET_FROM_POST);
-    $message = checkUserParams($userInfo);    
+    $error = checkUserParams($userInfo);    
   
     strtolower($userInfo['email']);
     
-    if ($message == '')
+    if ($error == 0)
     {    
-        $addUser = addNewUser($userInfo);
-        switch ($addUser)
-        {
-            case -1:
-                $message = 'can not sign up!';
-                break;
-            case -2:
-                $message = 'this e-mail is already exist!';
-                break;  
-        }        
+        $error = addNewUser($userInfo);   
     }
     
     $pageVars = array();
@@ -26,8 +17,9 @@
     $pageVars['action'] = 'signin.php';
     $pageVars['script'] = '';
     $pageVars['css']    = 'style-form';
+    $message = '';
     
-    if ($message == '')
+    if ($error == 0)
     {
         $pageVars['success'] = 'Success: ';
         $message = 'you are signed up!';
@@ -35,6 +27,7 @@
     else
     {
         $pageVars['success'] = 'Error: ';
+        $message = takeError($error);
     }
     $pageVars['message'] = $message;
     

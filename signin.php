@@ -7,7 +7,7 @@
     }
    
     $userEmail = getUserInfoFromRequest(GET_FROM_POST);
-	$message = '';
+    $error = 0;
     
     $pageVars = array();
     $pageVars['title']  = 'Sign In';
@@ -17,26 +17,25 @@
 
     if (!checkEmail($userEmail['email']))
 	{
-		$message = 'incorrect e-mail!';
+		$error = 4;
 	}
     else
     {
         $userInfo = array(); 
         $userInfo = findSurveyByEmail($userEmail['email']);    
     
-        if ((empty($userInfo)) && ($message == ''))
-            $message = 'There is not such e-mail';  
+        if ((empty($userInfo)) && ($error == 0))
+            $error = 11;  
     }    
     
-    if ($message == '')
+    if ($error == 0)
     {
-        $pageVars = joinUserInfo($userInfo[0], $pageVars);
-        
+        $pageVars = joinUserInfo($userInfo[0], $pageVars);        
         echo buildLayout('answerlist.html', $pageVars);
     }
     else
     {
         $pageVars['success'] = 'Error: ';
-        $pageVars['message'] = $message;
+        $pageVars['message'] = takeError($error);
         echo buildLayout('answer.html', $pageVars); 
     }

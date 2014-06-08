@@ -14,7 +14,8 @@
     require_once('include/convert.inc.php');  
     require_once('include/files.inc.php'); 
     require_once('include/rate.inc.php'); 
-    require_once('include/htmllists.inc.php');    
+    require_once('include/htmllists.inc.php');  
+    require_once('include/errormessage.inc.php');     
     
     session_start();
     dbInitialConnect();
