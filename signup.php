@@ -45,7 +45,16 @@
     
     if ($message == '')
     {    
-        addNewUser($userInfo, &$message);       
+        $addUser = addNewUser($userInfo);
+        switch ($addUser)
+        {
+            case -1:
+                $message = 'can not sign up!';
+                break;
+            case -2:
+                $message = 'this e-mail is already exist!';
+                break;  
+        }        
     }
     
     $pageVars = array();

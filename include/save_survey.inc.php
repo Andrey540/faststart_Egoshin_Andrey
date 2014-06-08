@@ -1,6 +1,7 @@
 <?php
-    function addNewUser($userInfo, &$message)
+    function addNewUser($userInfo)
     {
+        $result = 0;
         $checkInfo = findSurveyByEmail($userInfo['email']);
         
         if (empty($checkInfo))
@@ -8,13 +9,14 @@
             concatDate(&$userInfo); 
                                 
             if (!saveSurveyInfo($userInfo))
-            {
-                $message = 'can not sign up!';
+            {                
+                $result = -1;
             }
         }
         else
-        {
-            $message = 'this e-mail is already exist!';
+        {            
+            $result = -2;
         }
+        return $result;
     }
     
