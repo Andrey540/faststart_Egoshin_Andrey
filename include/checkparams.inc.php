@@ -111,60 +111,25 @@
     
     function checkPassword($param)
     {
-        $result = true;
-      
-        if (calcTextStrenght($param) < MIN_PASSWORD_STRENGTH)
-            $result = false;		  
-  
-        return $result;
+        return (calcTextStrenght($param) >= MIN_PASSWORD_STRENGTH);
     }
     
     function checkSex($param)
-    {
-        $result = true;
-      
-        if (($param != 'Man') && ($param != 'Woman'))
-            $result = false;		  
-  
-        return $result;
+    {  
+        return (($param == 1) || ($param == 2));
     }
     
     function checkMonth($param)
-    {
-        $result = false;
-        
-        $month = array('January', 'February', 'March', 'April', 'May', 'June',
-					'July', 'August', 'September', 'October', 'November',
-					'December');
-                    
-        foreach($month as $val)
-        {
-            if ($val == $param)
-            {
-                $result = true;
-                break;
-            }        
-        }		  
-  
-        return $result;
+    {  
+        return $param != 0;
     }
     
     function checkDay($param)
-    {
-        $result = false;        
-      
-        if (($param >= MIN_DAY) && ($param <= MAX_DAY))
-            $result = true;		  
-  
-        return $result;
+    {		  
+        return $param != 0;
     }
     
     function checkYear($param)
-    {
-        $result = false;        
-      
-        if (($param >= MIN_YEAR) && ($param <= MAX_YEAR))
-            $result = true;		  
-  
-        return $result;
+    {  
+        return $param != 0;
     }
