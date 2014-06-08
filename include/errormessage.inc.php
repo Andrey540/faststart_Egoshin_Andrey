@@ -15,12 +15,7 @@
                      10 => 'this e-mail is already exist!',
                      11 => 'There is not such e-mail',
                      12 => 'Can not upload file!');
-                      
- 
- 
- 
- 
- 
+                     
     return $message[$errorId];
  }
  
