@@ -1,7 +1,7 @@
 <?php
     function addNewUser($userInfo)
     {
-        $result = 0;
+        $result = ERROR_OK;
         $checkInfo = findSurveyByEmail($userInfo['email']);
         
         if (empty($checkInfo))
@@ -10,12 +10,12 @@
                                 
             if (!saveSurveyInfo($userInfo))
             {                
-                $result = -1;
+                $result = ERROR_ADD_USER;
             }
         }
         else
         {            
-            $result = -2;
+            $result = ERROR_EMAIL_EXIST;
         }
         return $result;
     }

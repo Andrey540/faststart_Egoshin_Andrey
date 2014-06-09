@@ -6,7 +6,7 @@
   
     strtolower($userInfo['email']);
     
-    if ($error == 0)
+    if ($error == ERROR_OK)
     {    
         $error = addNewUser($userInfo);   
     }
@@ -19,7 +19,7 @@
     $pageVars['css']    = 'style-form';
     $message = '';
     
-    if ($error == 0)
+    if ($error == ERROR_OK)
     {
         $pageVars['success'] = 'Success: ';
         $message = 'you are signed up!';
@@ -27,7 +27,7 @@
     else
     {
         $pageVars['success'] = 'Error: ';
-        $message = takeError($error);
+        $message = getError($error);
     }
     $pageVars['message'] = $message;
     

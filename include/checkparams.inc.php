@@ -116,7 +116,7 @@
     
     function checkSex($param)
     {  
-        return (($param == 1) || ($param == 2));
+        return ($param != 0);
     }
     
     function checkMonth($param)
@@ -136,43 +136,43 @@
     
     function checkUserParams($userInfo)
     {
-        $message = '';
+        $result = ERROR_OK;
   
         if (!checkName($userInfo['first_name']))
         {
-            $message = 'wrong First Name identifier!';
+            $result = ERROR_FIRST_NAME;
         }
         else if (!checkName($userInfo['last_name']))
         {
-            $message = 'wrong Last Name identifier!';
+            $result = ERROR_LAST_NAME;
         }
         else if (!checkPassword($userInfo['password']))
         {
-            $message = 'wrong password identifier!';
+            $result = ERROR_PASSWORD;
         }
         else if ($userInfo['email'] != $userInfo['re_email'])
         {
-            $message = 'wrong e-mail identifier!';
+            $result = ERROR_EMAIL;
         }
         else if (!checkEmail($userInfo['email']))
         {
-            $message = 'wrong e-mail identifier!';
+            $result = ERROR_EMAIL;
         }    
         else if (!checkSex($userInfo['sex']))
         {
-            $message = 'wrong sex identifier!';
+            $result = ERROR_SEX;
         }    
         else if (!checkMonth($userInfo['month']))
         {
-            $message = 'wrong month identifier!';
+            $result = ERROR_MONTH;
         }    
         else if (!checkDay($userInfo['day']))
         {
-            $message = 'wrong day identifier!';
+            $result = ERROR_DAY;
         }    
         else if (!checkYear($userInfo['year']))
         {
-            $message = 'wrong year identifier!';
+            $result = ERROR_YEAR;
         }  
-        return $message;   
+        return $result;   
     }
