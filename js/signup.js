@@ -199,10 +199,17 @@
         var data = "password=" + encodeURIComponent(password[0].value);
         
         getUrl(PASSWORD_STRENGTH_URL, onPasswordStrengthCheck, data);
-    }
+    } 
+
+function trySelectors()
+{
+    $("h1").css({background: "green"});
+
+}    
     
     function onWindowloaded()
     {
+     //   trySelectors();
         var elements = document.getElementsByTagName('form');
         var form = elements[0];
         form.onsubmit = onSubmit;
@@ -211,4 +218,6 @@
         password[0].onchange = onChange;            
     }
     
-    window.onload = onWindowloaded;    
+   // window.onload = onWindowloaded;
+    $(onWindowloaded);
+    

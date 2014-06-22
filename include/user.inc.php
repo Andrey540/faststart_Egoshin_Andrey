@@ -21,6 +21,9 @@ function getUserInfoFromRequest($parameter = GET_FROM_GET)
         $userParams['action']     = getParameterFromGet('action');
         $userParams['file_id']    = getParameterFromGet('file_id');
         $userParams['rate']       = getParameterFromGet('rate');
+        $userParams['image']      = getParameterFromGet('image');
+        $userParams['audio']      = getParameterFromGet('audio');
+        $userParams['video']      = getParameterFromGet('video');
     }
     else if ($parameter == GET_FROM_POST)
     {
@@ -39,6 +42,9 @@ function getUserInfoFromRequest($parameter = GET_FROM_GET)
         $userParams['action']     = getParameterFromPost('action');
         $userParams['file_id']    = getParameterFromPost('file_id');
         $userParams['rate']       = getParameterFromPost('rate');
+        $userParams['image']      = getParameterFromPost('image');
+        $userParams['audio']      = getParameterFromPost('audio');
+        $userParams['video']      = getParameterFromPost('video');
     }
     else if ($parameter == GET_FROM_FILE)
     {

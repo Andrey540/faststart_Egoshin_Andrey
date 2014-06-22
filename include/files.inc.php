@@ -8,6 +8,13 @@
         return dbQueryGetResult($query);   
     }
     
+    function findImages($extension = 'jpg')
+    {
+        $query = "SELECT files.`file_id`, files.`extension`  FROM files WHERE 
+                    files.`extension` LIKE '%" . dbQuote($extension) . "%'";
+        return dbQueryGetResult($query);   
+    }
+    
     function saveFileInfo(&$fileInfo)
     {
         $result = false;
@@ -91,4 +98,9 @@
         }
     
         return $userInfo;
+    }
+    
+    function emptyFile($file)
+    {
+        return !(($file['data_file'] != '') && ($file['data_file']['error'] == 0));    
     }

@@ -18,7 +18,7 @@
     
     $message = 'can not upload file!';
 
-    if (($fileSave['data_file']['error'] == 0) && ($_SESSION['user_id'] != ''))
+    if ((!emptyFile($fileSave)) && ($_SESSION['user_id'] != ''))
     {        
         if (uploadFile($fileSave['data_file']))
         {      

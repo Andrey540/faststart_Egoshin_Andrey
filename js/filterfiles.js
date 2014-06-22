@@ -123,8 +123,28 @@
         }        
     }
     
+    function addHrefs()
+    {        
+        $(".file > a").each(function(aElement)
+        {
+            var str = $(this).text();
+            var id = $(this).parent().parent().attr('id');
+            
+            if (str.indexOf('.mp3') != -1)
+            {
+                $(this).attr("href", '/formmedia.php?audio=' + id + '.mp3');
+            }
+            else if (str.indexOf('.mp4') != -1)
+            {
+                $(this).attr("href", '/formmedia.php?video=' + id + '.mp4');
+            }
+        }); 
+    }
+    
     function onWindowloaded()
     {        
+        addHrefs();
+        
         var increments = document.getElementsByName('increment');
         
         for (var i = 0; i < increments.length; i++)
@@ -140,4 +160,4 @@
         }         
     }
     
-    window.onload = onWindowloaded;    
+    $(onWindowloaded);    

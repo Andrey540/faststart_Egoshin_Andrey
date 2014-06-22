@@ -16,7 +16,8 @@
         <ul id="{$user_id}">
           {foreach from=$file item=fileItem}
           <li id="{$fileItem.file_id}" class="name">
-            <div class="file">{$fileItem.file}</div>
+            <div class="email">{$fileItem.email}</div>
+            <div class="file"><a class="undecorated">{$fileItem.file}</a></div>
             <div class="decrement" name="decrement"></div>
             <div class="value" name="value">{$fileItem.file_rate}</div>
             <div class="increment" name="increment"></div>

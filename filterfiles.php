@@ -27,7 +27,8 @@
         $result = takeFileRate($value['file_id']);
         $rate = DEFAULT_RATE + $result[0]["SUM(`rate`)"];
         $list = array(
-                      array('file'      => $value['email'] . ' - ' . $value['name'] . '.' . $value['extension'],
+                      array('email'     => $value['email'] . ' - ',
+                            'file'      => $value['name'] . '.' . $value['extension'],
                             'file_id'   => $value['file_id'],
                             'file_rate' => $rate)                        
                      );
