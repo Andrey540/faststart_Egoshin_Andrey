@@ -78,7 +78,7 @@
         }
         else if (circle.x > MAX_WIDTH - CIRCLE_RADIUS)
         {
-            circle.x -= MAX_WIDTH - CIRCLE_RADIUS - circle.x;
+            circle.x += MAX_WIDTH - CIRCLE_RADIUS - circle.x;
         }
     }
     
@@ -91,7 +91,7 @@
         }
         else if (circle.y > MAX_HEIGHT - CIRCLE_RADIUS)
         {
-            circle.y -= MAX_HEIGHT - CIRCLE_RADIUS - circle.y;
+            circle.y += MAX_HEIGHT - CIRCLE_RADIUS - circle.y;
         }
     }
     

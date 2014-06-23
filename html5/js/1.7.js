@@ -84,11 +84,11 @@
     {
         if (circle.x < CIRCLE_RADIUS)
         {
-            circle.x += CIRCLE_RADIUS - circle.x;
+            circle.x += CIRCLE_RADIUS - circle.x + 1;
         }
         else if (circle.x > MAX_WIDTH - CIRCLE_RADIUS)
         {
-            circle.x -= MAX_WIDTH - CIRCLE_RADIUS - circle.x;
+            circle.x += MAX_WIDTH - CIRCLE_RADIUS - circle.x;
         }
     }
     
@@ -97,11 +97,11 @@
     {
         if (circle.y < CIRCLE_RADIUS)
         {
-            circle.y += CIRCLE_RADIUS - circle.y;
+            circle.y += CIRCLE_RADIUS - circle.y + 1;
         }
         else if (circle.y > MAX_HEIGHT - CIRCLE_RADIUS)
         {
-            circle.y -= MAX_HEIGHT - CIRCLE_RADIUS - circle.y;
+            circle.y += MAX_HEIGHT - CIRCLE_RADIUS - circle.y;
         }
     }
     
