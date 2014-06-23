@@ -5,8 +5,7 @@
     const SPIN_RADIUS = 200;
     const MAIN_CIRCLE_X = MAX_WIDTH / 2;
     const MAIN_CIRCLE_Y = MAX_HEIGHT / 2;
-    const FPS = 34;
-    const SPEED = 1;
+    const SPEED = 0.5;
 
     var g_canvas  = null;
     var g_context = null;
@@ -29,19 +28,15 @@
         
         drawSpinCircle(x, y);
         
-        g_angel++;
+        g_angel += SPEED;
     }    
     
-    function step()
+    function drawFrame()
     {
-        setTimeout(function()
-                  {
-                        requestAnimationFrame(step);
-                        g_context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);  
-                        drawMainCircle();
-                        spinCircle();
-                        // Drawing code goes here
-                  }, FPS);
+        window.requestAnimationFrame(drawFrame, g_canvas);
+        g_context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);  
+        drawMainCircle();
+        spinCircle();
     }
         
     function initialize()
@@ -71,7 +66,7 @@
     function onWindowloaded()
     {
         initialize();  
-        step();
+        drawFrame();
     }
 
     $(onWindowloaded);

@@ -1,7 +1,6 @@
     const MAX_WIDTH  = 640;
     const MAX_HEIGHT = 480;
     const CIRCLE_RADIUS = 100;
-    const FPS = 34;
     const SPEED = 5;
     const MAX_COEFFICIENT = 2;
     var g_canvas  = null;
@@ -36,17 +35,13 @@
         }    
     }
     
-    function step()
+    function drawFrame()
     {
-        setTimeout(function()
-                  {
-                        requestAnimationFrame(step);
-                        g_context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);  
-                        checkPosition();
-                        moveCircle();
-                        drawCircle(g_circle.x, g_circle.y);                        
-                        // Drawing code goes here
-                  }, FPS);
+        window.requestAnimationFrame(drawFrame, g_canvas);
+        g_context.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);  
+        checkPosition();
+        moveCircle();
+        drawCircle(g_circle.x, g_circle.y);                        
     }
     
     function generateCircleCoordinates()
@@ -104,7 +99,7 @@
     {
         initialize();
         initializeCircle();        
-        step();
+        drawFrame();
     }
 
     $(onWindowloaded);
