@@ -1,11 +1,11 @@
 <?php
 class File
 {
+    const FILE_DIRECTORY = "uploads/";
     private $name;
-    private $tmpName;
     
     static function getUploadedFiles()
-    {
+    { 
         $result = "";
         $dir = "uploads/";  
         if(is_dir($dir))
@@ -33,21 +33,11 @@ class File
         return $this->name;
     }
     
-    public function setTmpName($tmpName)
-    {
-        $this->tmpName = $tmpName;
-    }
-    
-    public function getTmpName()
-    {
-        return $this->tmpName;
-    }
-    
-    public function upload()
+    public function upload($filePath)
     {
         $result = false;            
-        $finalPath = 'uploads/' . $this->name;
-        if (move_uploaded_file($this->tmpName, $finalPath))
+        $finalPath = File::FILE_DIRECTORY . $this->name;
+        if (move_uploaded_file($filePath, $finalPath))
         {      
                 $result = true;
         }      
@@ -58,7 +48,7 @@ class File
     public function delete()
     {           
         $result = false;
-        $finalPath = 'uploads/' . $this->name;
+        $finalPath = File::FILE_DIRECTORY . $this->name;
         if (file_exists($finalPath))
         {
             $result = unlink($finalPath);

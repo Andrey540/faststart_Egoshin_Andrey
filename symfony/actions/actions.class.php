@@ -52,9 +52,8 @@ class defaultActions extends sfActions
         $file = new File();
         
         $file->setName($data['name']);
-        $file->setTmpName($data['tmp_name']);
         
-        if (!$file->upload())
+        if (!$file->upload($data['tmp_name']))
         {
             $this->success = "your file can not be uploaded!";            
         }
