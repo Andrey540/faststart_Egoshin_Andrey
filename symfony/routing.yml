@@ -1,0 +1,43 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/10-Routing
+
+# default rules
+homepage:
+  url:   /
+  param: { module: default, action: index }
+
+# generic rules
+# please, remove them by adding more specific rules
+hello_sarah:
+  url: /hello_sarah
+  param: { module: default, action: helloSarah }
+  
+# generic rules
+# please, remove them by adding more specific rules
+save_car:
+  url: /save_car
+  param: { module: default, action: saveCar }
+  
+read_car:
+  url: /read_car
+  param: { module: default, action: readCar }
+  
+upload_form:
+  url: /upload_form
+  param: { module: default, action: uploadForm }
+  
+upload_file:
+  url: /upload_file
+  param: { module: default, action: uploadFile }
+  
+get_files:
+  url: /get_files
+  param: { module: default, action: getFiles }
+  
+delete_file:
+  url: /delete_file
+  param: { module: default, action: deleteFile }
+  
+delete_form:
+  url: /delete_form
+  param: { module: default, action: deleteForm }

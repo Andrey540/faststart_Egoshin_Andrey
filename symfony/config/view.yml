@@ -1,0 +1,14 @@
+uploadFormSuccess:
+  stylesheets: [main.css, upload_form.css]
+ 
+uploadFileSuccess:
+  stylesheets: [main.css, upload_file.css]
+  
+getFilesSuccess:
+  stylesheets: [main.css, get_files.css]
+  
+deleteFileSuccess:
+  stylesheets: [main.css, delete_file.css]
+  
+deleteFormSuccess:
+  stylesheets: [main.css, delete_file.css]
