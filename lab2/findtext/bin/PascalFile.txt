@@ -1,0 +1,73 @@
+PROGRAM Encryption(INPUT, OUTPUT);
+{Переводит символы из INPUT в код согласно Chiper 
+  и печатает новые символы в OUTPUT}
+CONST
+  Len = 20;
+  Encoded = ['A' .. 'Z'] + [' '];
+TYPE
+  Str = ARRAY [1 .. Len] OF CHAR;
+  Chiper = ARRAY [' ' .. 'Z'] OF CHAR;
+  Length = 1..Len;
+  Decod = SET OF CHAR;
+VAR
+  Msg: Str;
+  Code: Chiper;   
+  I: 0 .. Len;
+  F: TEXT;
+  DecodedChar: Decod;
+PROCEDURE Encode(VAR S: Str; I: INTEGER);
+{Выводит символы из Code, соответствующие символам из S}
+VAR
+  Index: 1 .. Len;
+BEGIN {Encode}
+  FOR Index := 1 TO I
+  DO
+    IF S[Index] IN [' '..'Z']{DecodedChar}
+    THEN
+      WRITE(Code[S[Index]])
+    ELSE
+      WRITE(S[Index]);
+  WRITELN
+END;  {Encode}
+
+PROCEDURE ReadChiper(VAR F1: TEXT; VAR Code: Chiper);
+{Выводит символы из Code, соответствующие символам из S}
+VAR
+  Key, Value, Ch, Ch1: CHAR;
+BEGIN {Encode}
+  WHILE NOT EOF(F1)
+  DO
+    BEGIN
+      {читать строку в Msg и распечатать ее}
+      READLN(F1, Value, Ch, Ch1, Key);
+      DecodedChar := DecodedChar + [Key];       
+      Code[Key] := Value;    
+    END;
+END;  {Encode}
+
+BEGIN {Encryption}
+  ASSIGN(F, 'D:\PC\F1.TXT');
+  RESET(F);
+  ReadChiper(F, Code);
+  {Инициализировать Code}
+  {Initialize(Code);}  
+  WHILE NOT EOF
+  DO
+    BEGIN
+      {читать строку в Msg и распечатать ее}
+      I := 0;
+      WHILE NOT EOLN AND (I < Len)
+      DO
+        BEGIN
+          I := I + 1;
+          READ(Msg[I]);
+          WRITE(Msg[I])
+        END;
+      READLN;
+      WRITELN;
+      {распечатать кодированное сообщение}
+      IF I > 0
+      THEN
+        Encode(Msg, I);
+    END
+END.  {Encryption}    
