@@ -7,7 +7,7 @@
 const int COLUMNS = 5;
 
 void PrintFibonacciNumbers(int upperNumber);
-long int CalculateSum(long int firstNumber, long int secondNumber); 
+long int CalculateSum(long int firstNumber, long int secondNumber, bool& error); 
 long int StringToInt(const char *str, bool &err);
 
 int main(int argc, char* argv[])
@@ -35,38 +35,40 @@ void PrintFibonacciNumbers(int upperNumber)
     long int previousNumber = 0;
     long int currentNumber  = 1;
     bool firstNumber = true;
-    int index = 1;
+    int index = 0;
 
     while (currentNumber <= upperNumber)
     {
         if (!firstNumber)
         {
             printf(", ");
+            if (index % COLUMNS == 0)
+            {
+                printf("\n");
+            }
         }
-        if (index % COLUMNS == 0)
-        {
-            printf("\n");
-        }
+        
         printf("%d", currentNumber);
 
         intermediateNumber = currentNumber;
-        currentNumber  = CalculateSum(previousNumber, currentNumber);
-        previousNumber = intermediateNumber;
+        bool error = false;
+        currentNumber  = CalculateSum(previousNumber, currentNumber, error);
 
-        if (currentNumber < 0)
+        if (error)
         {
-            printf("\nLimit varible was exceeded, program stopped\n");
             break;
         }
 
+        previousNumber = intermediateNumber;
         firstNumber = false;
         index++;
     }
 }
 
-long int CalculateSum(long int firstNumber, long int secondNumber)
+long int CalculateSum(long int firstNumber, long int secondNumber, bool& error)
 {
-    return (LONG_MAX - firstNumber < secondNumber) ? -1 : (firstNumber + secondNumber);
+    error = LONG_MAX - firstNumber < secondNumber;
+    return firstNumber + secondNumber;
 }
 
 long int StringToInt(const char *str, bool &err)

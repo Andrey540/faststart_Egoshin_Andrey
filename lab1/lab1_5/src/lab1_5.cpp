@@ -1,109 +1,93 @@
 // lab1_5.cpp : Defines the entry point for the console application.
 //
-
 #include "stdafx.h"
-#include <stdlib.h>
-#include <string>
-#include <iostream>
-#include <conio.h>
+
+#include <stdexcept>
+#include <optional.hpp>
+#include <functional>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <vld.h>
+#include <string>
+#include <iostream>
 
+#define exception std::exception
+     
 using namespace std;
+using namespace boost;
 
-#define SPEED_PROMPT "Enter v0"
-#define ANGEL_PROMPT "Enter a0"
-#define RESULT_MESSAGE   "Distance is:"
-
-const int MAX_INT_SIZE = 10;
-const int MAX_ANGEL = 90;
-const double ACCELERATION_DUE_TO_OVERFLOW = 9.8;
-
-double CalculateDistance(int speed, int angel);
-int GetIntParameter(const char *invitationMessage, bool &exitFlag, int minValue, int maxValue);
-string GetStringFromIOStream(void);
-int StringToInt(const char *str, bool &err);
-
-int main(int argc, char* argv[])
+const double MAX_ANGLE_VALUE = 90;
+     
+optional<double> ReadDoubleUntilExit(string const& prompt, function<void(double value)> validate)
+{
+    while (true)
+    {
+        cout << prompt;
+        string str;
+        getline(cin, str);
+        if (str == "exit")
+        {
+            return none;
+        }
+        try
+        {
+            double value = stod(str);
+            validate(value);
+            return value;
+        }
+        catch (invalid_argument const&)
+        {
+            cout << "Please enter a number" << endl;
+        }
+        catch (exception const& e)
+        {
+            cout << e.what() << endl;
+        }
+    }   
+}
+     
+optional<double> ReadSpeed()
+{
+    optional<double> speed;
+    do
+    {
+        speed = ReadDoubleUntilExit("Enter speed or exit: ", [](double value){
+            if (value <= 0)
+            {
+                throw domain_error("Speed must be greater than 0");
+            }
+        });
+    } while (speed && (speed.get() <= 0));
+    return speed;
+}
+     
+optional<double> ReadAngle()
 {    
-    bool exitFlag = false;
-
-    while(!exitFlag)
+    optional<double> angle;
+    do
     {
-        int speed = GetIntParameter(SPEED_PROMPT, exitFlag, 0, INT_MAX);
-
-        if (exitFlag)
-        {
-            continue;
-        }
-
-        int angle = GetIntParameter(ANGEL_PROMPT, exitFlag, 0, MAX_ANGEL);
-
-        if (exitFlag)
-        {
-            continue;
-        }
-
-        double distance = CalculateDistance(speed, angle);
-        printf("%s %f\n", RESULT_MESSAGE, distance);
-    }
-
-    return 0;
+        angle = ReadDoubleUntilExit("Enter angle or exit: ", [](double value){
+            if ((value <= 0) || (value >= MAX_ANGLE_VALUE))
+            {
+                throw domain_error("Angle must be greater than 0 and less than 90");
+            }
+        });
+    } while (angle && ((angle.get() <= 0) || (angle >= MAX_ANGLE_VALUE)));
+    return angle;
 }
-
-double CalculateDistance(int speed, int angel)
+     
+double CalculateDistance(double speed, double angle)
 {
-    double time = 2 * (speed * sin(angel * M_PI / 180)) / ACCELERATION_DUE_TO_OVERFLOW;
-    return (speed * cos(angel * M_PI / 180)) * time;
+    const double ACCELERATION_DUE_TO_OVERFLOW = 9.8;
+    double time = 2 * (speed * sin(angle * M_PI / 180)) / ACCELERATION_DUE_TO_OVERFLOW;
+    return (speed * cos(angle * M_PI / 180)) * time;
 }
-
-int GetIntParameter(const char *invitationMessage, bool &exitFlag, int minValue, int maxValue)
+     
+void main()
 {
-    const char* additionalMessage = " (or type 'exit') ";
-    const char* exitCondition     = "exit";    
-    bool incorrectParameter = true;
-    int result = 0;
-    string parameter = "";
-
-    while(incorrectParameter)
+    optional<double> speed;
+    optional<double> angle;
+    while ((speed = ReadSpeed()) && (angle = ReadAngle()))
     {
-        std::cout << invitationMessage << additionalMessage;
-        parameter = GetStringFromIOStream();
-
-        if (strcmp(parameter.c_str(), exitCondition) == 0)
-        {
-            exitFlag = true;
-            return 0;
-        }
-
-        result = StringToInt(parameter.c_str(), incorrectParameter);
-
-        if (incorrectParameter)
-        {
-            printf("Parameter must be a number\n");            
-        }
-        else if ((result <= minValue) || (result >= maxValue))
-        {
-            printf("Parameter must be greater then %d and less then %d\n", minValue, maxValue);
-            incorrectParameter = true;
-        }
+        cout << "Distance is " << CalculateDistance(*speed, *angle) << endl;
     }
-
-    return result;
-}
-
-string GetStringFromIOStream(void)
-{
-    string str;
-    getline(cin, str);
-    return str;
-}
-
-int StringToInt(const char *str, bool &err)
-{
-    char * pLastChar = NULL;
-    int param = strtol(str, &pLastChar, 10);
-    err = ((*str == '\0') || (*pLastChar != '\0'));
-    return param;
 }
