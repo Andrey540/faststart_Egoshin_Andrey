@@ -8,19 +8,16 @@
 
 using namespace std;
 
-int SearchEntries(ifstream& sourceFile, string searchingExp);
+bool SearchEntries(ifstream& sourceFile, string const& searchingExp);
+void PrintHelp();
 string ReadString(ifstream& file);
 
 int main(int argc, char* argv[])
 {
-    if (argc == 1)
+    if (argc != 3)
     {
-        printf("Parameters are empty!");
-        return 1;
-    }
-    else if (argc == 2)
-    {
-        printf("Searching word is empty!");
+        printf("Incorrect format!");
+        PrintHelp();
         return 1;
     }
 
@@ -28,8 +25,8 @@ int main(int argc, char* argv[])
 
     if (sourceFile.is_open())
     {
-        string searchingString(argv[2], strlen(argv[2]));        
-        if (SearchEntries(sourceFile, searchingString) == 1)
+        string searchingString(argv[2]);        
+        if (!SearchEntries(sourceFile, searchingString))
         {
             sourceFile.close();
             printf("Text not found\n");
@@ -46,7 +43,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-int SearchEntries(ifstream& sourceFile, string searchingExp)
+bool SearchEntries(ifstream& sourceFile, string const& searchingExp)
 {
     int nLine = 1;
     int count = 0;
@@ -54,21 +51,27 @@ int SearchEntries(ifstream& sourceFile, string searchingExp)
     {
         string newString = ReadString(sourceFile);
 
-        if (newString.find(searchingExp) != -1)
+        if (newString.find(searchingExp) == std::string::npos)
         {
             printf("%d\n", nLine);
-            count++;
+            ++count;
         }
 
-        nLine++;
+        ++nLine;
     }
 
     if (count == 0)
     {
-        return 1;
+        return false;
     }
 
-    return 0;
+    return true;
+}
+
+void PrintHelp()
+{
+    printf("Correct format - findtext.exe <input_file> <searching_string>");
+    return;
 }
 
 string ReadString(ifstream& file)

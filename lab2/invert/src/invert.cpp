@@ -8,8 +8,7 @@
 
 using namespace std;
 
-const int MATRIX_COLS = 3;
-const int MATRIX_ROWS = 3;
+const int MATRIX_SIZE = 3;
 
 bool ReadMatrix(ifstream& file, double* matrix);
 void PrintMatrix(double* matrix);
@@ -20,9 +19,10 @@ void TransponseMatrix(double* matrix);
 
 int main(int argc, char* argv[])
 {
-    if (argc == 1)
+    if (argc != 2)
     {
-        printf("Empty parameter!");
+        printf("Incorrect format!\n");
+        printf("Correct format - invert.exe <input_file>");
         return 1;
     }
 
@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
 
     if (sourceFile.is_open())
     {
-        double matrix[MATRIX_COLS][MATRIX_ROWS];
+        double matrix[MATRIX_SIZE][MATRIX_SIZE];
         if (!ReadMatrix(sourceFile, (double*)matrix))
         {
-           printf("There is not matrix %d x %d", MATRIX_COLS, MATRIX_ROWS);
+           printf("There is not matrix %d x %d", MATRIX_SIZE, MATRIX_SIZE);
            return 1;
         }
 
@@ -42,9 +42,10 @@ int main(int argc, char* argv[])
            printf("Error - deterbinant of the matrix = 0!");
            return 1;
         }
-        double invertMatrix[MATRIX_COLS][MATRIX_ROWS];
+        double invertMatrix[MATRIX_SIZE][MATRIX_SIZE];
         CalculateInvertMatrix((double*)matrix, (double*)invertMatrix);
         PrintMatrix((double*)invertMatrix);
+        sourceFile.close();
     }
     else
     {
@@ -61,27 +62,27 @@ bool ReadMatrix(ifstream& file, double* matrix)
     while (file >> matrix[index])
     {
         index++;
-        if (index > MATRIX_COLS * MATRIX_ROWS)
+        if (index > MATRIX_SIZE * MATRIX_SIZE)
         {
             break;
         }
     }
 
-    return index == MATRIX_COLS * MATRIX_ROWS;
+    return index == MATRIX_SIZE * MATRIX_SIZE;
 }
 
 void CalculateInvertMatrix(double* matrix, double* invertMatrix)
 {
     double determinanrt = CalculateDeterminant(matrix);
-    for (int i = 0; i < MATRIX_COLS * MATRIX_ROWS; ++i)
+    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; ++i)
     {
-        int currentRow = i / MATRIX_COLS;
-        int row1 = (currentRow + 1) % MATRIX_ROWS;
-        int row2 = (currentRow + 2) % MATRIX_ROWS;
-        int indA11 = row1 * MATRIX_COLS + ((i + 1) % MATRIX_COLS);
-        int indA12 = row1 * MATRIX_COLS + ((i + 2) % MATRIX_COLS);
-        int indA21 = row2 * MATRIX_COLS + ((i + 1) % MATRIX_COLS);
-        int indA22 = row2 * MATRIX_COLS + ((i + 2) % MATRIX_COLS);
+        int currentRow = i / MATRIX_SIZE;
+        int row1 = (currentRow + 1) % MATRIX_SIZE;
+        int row2 = (currentRow + 2) % MATRIX_SIZE;
+        int indA11 = row1 * MATRIX_SIZE + ((i + 1) % MATRIX_SIZE);
+        int indA12 = row1 * MATRIX_SIZE + ((i + 2) % MATRIX_SIZE);
+        int indA21 = row2 * MATRIX_SIZE + ((i + 1) % MATRIX_SIZE);
+        int indA22 = row2 * MATRIX_SIZE + ((i + 2) % MATRIX_SIZE);
         invertMatrix[i] = CalculateMinor(matrix[indA11], matrix[indA12], 
                                                        matrix[indA21], matrix[indA22]);
         invertMatrix[i] /= determinanrt;
@@ -92,13 +93,13 @@ void CalculateInvertMatrix(double* matrix, double* invertMatrix)
 
 void TransponseMatrix(double* matrix)
 {
-    for (int i = 0; i < MATRIX_ROWS; ++i)
+    for (int i = 0; i < MATRIX_SIZE; ++i)
     {
         for (int j = 0; j <= i; ++j)
         {
-            double replacingValue = matrix[i * MATRIX_COLS + j];
-            matrix[i * MATRIX_COLS + j] = matrix[j * MATRIX_COLS + i];
-            matrix[j * MATRIX_COLS + i] = replacingValue;
+            double replacingValue = matrix[i * MATRIX_SIZE + j];
+            matrix[i * MATRIX_SIZE + j] = matrix[j * MATRIX_SIZE + i];
+            matrix[j * MATRIX_SIZE + i] = replacingValue;
         }
     }
 }
@@ -121,11 +122,11 @@ double CalculateMinor(double A11, double A12, double A21, double A22)
 
 void PrintMatrix(double* matrix)
 {
-    for (int i = 0; i < MATRIX_COLS * MATRIX_ROWS; ++i)
+    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; ++i)
     {
         printf("%.3lf ", matrix[i]);
 
-        if (i % MATRIX_COLS == MATRIX_COLS - 1)
+        if (i % MATRIX_SIZE == MATRIX_SIZE - 1)
         {
             printf("\n");
         }

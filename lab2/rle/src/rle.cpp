@@ -6,10 +6,10 @@
 #include <iostream>
 #include <fstream>
 
-void executeFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&));
+void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&));
 void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode);
 void UnpackFile(FILE* unpackingFile, FILE* resultFile, int& resultCode);
-void PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte);
+bool PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte);
 const char* GetErrorMessageByResultCode(int resultCode);
 bool CheckFileLength(FILE* file);
 bool CheckParityOfFileLength(FILE* file);
@@ -26,12 +26,10 @@ const char* CAN_NOT_OPEN_OUTPUT_FILE_MESSAGE         = "Can not open output file
 const char* TOO_LARGE_INPUT_FILE_MESSAGE             = "Too large input file!\n";
 const char* ODD_LENGTH_OF_INPUT_FILE_MESSAGE         = "Odd length of input file!\n";
 const char* INPUT_FILE_INCLUDE_ZERO_SEQUENCE_MESSAGE = "Input file include zero sequence!\n";
+const char* CAN_NOT_WRITE_TO_OUTPUT_FILE_MESSAGE     = "Can not write to output file\n";
 
-const int CAN_NOT_OPEN_INPUT_FILE_CODE          = 1;
-const int CAN_NOT_OPEN_OUTPUT_FILE_CODE         = 2;
-const int TOO_LARGE_INPUT_FILE_CODE             = 3;
-const int ODD_LENGTH_OF_INPUT_FILE_CODE         = 4;
-const int INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE = 5;
+enum {CAN_NOT_OPEN_INPUT_FILE_CODE, CAN_NOT_OPEN_OUTPUT_FILE_CODE, TOO_LARGE_INPUT_FILE_CODE,
+      ODD_LENGTH_OF_INPUT_FILE_CODE, INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE,                                    CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE};
 
 int main(int argc, char* argv[])
 {
@@ -62,7 +60,7 @@ int main(int argc, char* argv[])
         return 1;
     }
     int resultCode = 0;
-    executeFileOperation(argv[2], argv[3], resultCode, fileOperation);
+    ExecuteFileOperation(argv[2], argv[3], resultCode, fileOperation);
 
     if (resultCode != 0)
     {
@@ -73,7 +71,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void executeFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&))
+void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&))
 {
     FILE* inputFile = fopen(inputFilePath, "rb");
     FILE* outputFile  = fopen(outputFilePath, "wb");
@@ -87,12 +85,7 @@ void executeFileOperation(char* inputFilePath, char* outputFilePath, int& result
         else
         {
             (*fileOperation) (inputFile, outputFile, resultCode);
-        }
-   
-        fclose(inputFile);
-        fclose(outputFile);
-        inputFile  = NULL;
-        outputFile = NULL;
+        }  
     }
     else if (inputFile == NULL)
     {
@@ -101,6 +94,17 @@ void executeFileOperation(char* inputFilePath, char* outputFilePath, int& result
     else if (outputFile == NULL)
     {
         resultCode = CAN_NOT_OPEN_OUTPUT_FILE_CODE;
+    }
+
+    if (inputFile != NULL)
+    {
+        fclose(inputFile);
+        inputFile  = NULL;
+    }
+    if (outputFile != NULL)
+    {
+        fclose(outputFile);
+        outputFile = NULL;
     }
     return;
 }
@@ -142,7 +146,11 @@ void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode)
         }
         else if (newByte != previousCharacterizedByte)
         {
-            PrintCoupleBytesToFile(resultFile, count, previousCharacterizedByte);
+            if (!PrintCoupleBytesToFile(resultFile, count, previousCharacterizedByte))
+            {
+                resultCode = CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE;
+                return;
+            }
             previousCharacterizedByte = newByte;
             count = 0;
         }
@@ -154,7 +162,7 @@ void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode)
                 count = 0;
             }
         }
-        count++;
+        ++count;
     }
 
     if (count != 0)
@@ -165,15 +173,14 @@ void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode)
     return;
 }
 
-void PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte)
+bool PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte)
 {
     if (file == NULL)
     {
-        return;
+        return false;
     }
-    fwrite(&firstByte, sizeof(unsigned char), 1, file);
-    fwrite(&secondByte, sizeof(unsigned char), 1, file);
-    return;
+    return (fwrite(&firstByte, sizeof(unsigned char), 1, file) &&
+            fwrite(&secondByte, sizeof(unsigned char), 1, file));
 }
 
 void UnpackFile(FILE* unpackingFile, FILE* resultFile, int& resultCode)
@@ -185,16 +192,20 @@ void UnpackFile(FILE* unpackingFile, FILE* resultFile, int& resultCode)
     }
 
     unsigned char newBytes[2];
-    while(fread(&newBytes, sizeof(unsigned char), 2, unpackingFile))
+    while(fread(&newBytes, sizeof(unsigned char), 2, unpackingFile) == 2)
     {
         if (newBytes[0] == 0)
         {
             resultCode = INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE;
             return;
         }
-        for (int i = 0; i < newBytes[0]; i++)
+        for (int i = 0; i < newBytes[0]; ++i)
         {
-            fwrite(&newBytes[1], sizeof(unsigned char), 1, resultFile);
+            if (!fwrite(&newBytes[1], sizeof(unsigned char), 1, resultFile))
+            {
+                resultCode = CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE;
+                return;
+            }
         }
     }
     return;
@@ -214,6 +225,8 @@ const char* GetErrorMessageByResultCode(int resultCode)
             return ODD_LENGTH_OF_INPUT_FILE_MESSAGE;
         case INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE:
             return INPUT_FILE_INCLUDE_ZERO_SEQUENCE_MESSAGE;
+        case CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE:
+            return CAN_NOT_WRITE_TO_OUTPUT_FILE_MESSAGE;
     }
     return "";
 }

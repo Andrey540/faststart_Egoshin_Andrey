@@ -18,24 +18,21 @@ typedef struct
 
 int StringToInt(const char *str, bool &err);
 QuadraticEquationRoots CalculateQuadraticEquationRoots(int A, int B, int C, bool& error);
-void PrintQuadraticEquationRoots(QuadraticEquationRoots roots);
+void PrintQuadraticEquationRoots(QuadraticEquationRoots const& roots);
+void PrintHelp();
 
 int main(int argc, char* argv[])
 {
-    if (argc == 1)
+    if (argc != MAX_COEFFICIENT_COUNT + 1)
     {
-        printf("Parameters are empty!");
-        return 1;
-    }
-    else if (argc < MAX_COEFFICIENT_COUNT + 1)
-    {
-        printf("Empty arguments! You should enter tree coefficients");
+        printf("Incorrect format arguments!\n");
+        PrintHelp();
         return 1;
     }
 
     int coefficients[MAX_COEFFICIENT_COUNT];
     bool error = false;
-    for (int i = 1; i <= MAX_COEFFICIENT_COUNT; i++)
+    for (int i = 1; i <= MAX_COEFFICIENT_COUNT; ++i)
     {        
         coefficients[i - 1] = StringToInt(argv[i], error);
         if (error)
@@ -90,7 +87,7 @@ QuadraticEquationRoots CalculateQuadraticEquationRoots(int A, int B, int C, bool
     return roots;
 }
 
-void PrintQuadraticEquationRoots(QuadraticEquationRoots roots)
+void PrintQuadraticEquationRoots(QuadraticEquationRoots const& roots)
 {
     printf("%.4lf", roots.firstRoot);
 
@@ -99,5 +96,11 @@ void PrintQuadraticEquationRoots(QuadraticEquationRoots roots)
         printf(" %.4lf", roots.secondRoot);
     }
 
+    return;
+}
+
+void PrintHelp()
+{
+    printf("Correct format - solve.exe <A> <B> <C>");
     return;
 }
