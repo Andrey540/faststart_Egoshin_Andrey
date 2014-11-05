@@ -5,227 +5,212 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
-void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&));
-void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode);
-void UnpackFile(FILE* unpackingFile, FILE* resultFile, int& resultCode);
-bool PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte);
-const char* GetErrorMessageByResultCode(int resultCode);
-bool CheckFileLength(FILE* file);
-bool CheckParityOfFileLength(FILE* file);
+using namespace::std;
+
+typedef enum {
+    NO_ERROR,
+    CAN_NOT_OPEN_INPUT_FILE,
+    CAN_NOT_OPEN_OUTPUT_FILE,
+    TOO_LARGE_INPUT_FILE,
+    ODD_LENGTH_OF_INPUT_FILE,
+    INPUT_FILE_INCLUDE_ZERO_SEQUENCE,
+    CAN_NOT_WRITE_TO_OUTPUT_FILE
+} ErrorCode;
+
+typedef struct
+{
+   unsigned char counter;
+   unsigned char value;
+} RlePacket;
+
+ErrorCode ExecuteFileOperation(char* inputFilePath, char* outputFilePath, function<ErrorCode(ifstream& inputFile, ofstream& outputFile)> fileOperation);
+ErrorCode PackFile(ifstream& inputFile, ofstream& outputFile);
+ErrorCode UnpackFile(ifstream& inputFile, ofstream& outputFile);
+unsigned long long GetFileLength(ifstream& file);
+const string GetErrorMessageByResultCode(ErrorCode& resultCode);
 
 const int BYTE_MAX = 255;
-const long MAX_FILE_SIZE = 2097152;
+const unsigned long long MAX_FILE_SIZE = 2147483648;
 
-const char* PACK_OPERATION   = "pack";
-const char* UNPACK_OPERATION = "unpack";
-const char* HELP             = "-h";
+const string PACK_OPERATION   = "pack";
+const string UNPACK_OPERATION = "unpack";
+const string HELP             = "-h";
 
-const char* CAN_NOT_OPEN_INPUT_FILE_MESSAGE          = "Can not open input file!\n";
-const char* CAN_NOT_OPEN_OUTPUT_FILE_MESSAGE         = "Can not open output file!\n";
-const char* TOO_LARGE_INPUT_FILE_MESSAGE             = "Too large input file!\n";
-const char* ODD_LENGTH_OF_INPUT_FILE_MESSAGE         = "Odd length of input file!\n";
-const char* INPUT_FILE_INCLUDE_ZERO_SEQUENCE_MESSAGE = "Input file include zero sequence!\n";
-const char* CAN_NOT_WRITE_TO_OUTPUT_FILE_MESSAGE     = "Can not write to output file\n";
-
-enum {CAN_NOT_OPEN_INPUT_FILE_CODE, CAN_NOT_OPEN_OUTPUT_FILE_CODE, TOO_LARGE_INPUT_FILE_CODE,
-      ODD_LENGTH_OF_INPUT_FILE_CODE, INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE,                                    CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE};
+const string CAN_NOT_OPEN_INPUT_FILE_MESSAGE          = "Can not open input file!";
+const string CAN_NOT_OPEN_OUTPUT_FILE_MESSAGE         = "Can not open output file!";
+const string TOO_LARGE_INPUT_FILE_MESSAGE             = "Too large input file!";
+const string ODD_LENGTH_OF_INPUT_FILE_MESSAGE         = "Odd length of input file!";
+const string INPUT_FILE_INCLUDE_ZERO_SEQUENCE_MESSAGE = "Input file include zero sequence!";
+const string CAN_NOT_WRITE_TO_OUTPUT_FILE_MESSAGE     = "Can not write to output file";
 
 int main(int argc, char* argv[])
 {
-    if ((argc == 2) && (strcmp(HELP, argv[1]) == 0))
+    if ((argc == 2) && HELP == argv[1])
     {
-        printf("rle.exe pack <input_file> <output_file> - for packing");
-        printf("rle.exe unpack <input_file> <output_file> - for unpacking");
+        cout << "rle.exe pack <input_file> <output_file> - for packing" << endl;
+        cout << "rle.exe unpack <input_file> <output_file> - for unpacking" << endl;
         return 0;
     }
     else if (argc < 4)
     {
-        printf("Incorrect format of parameters! Enter -h for help");
+        cout << "Incorrect format of parameters! Enter -h for help" << endl;
         return 1;
     }
     
-    void (*fileOperation) (FILE*, FILE*, int&);
-    if (strcmp(PACK_OPERATION, argv[1]) == 0)
+    function<ErrorCode(ifstream& inputFile, ofstream& outputFile)> fileOperation;
+    if (PACK_OPERATION == argv[1])
     {
         fileOperation = PackFile;
     }
-    else if (strcmp(UNPACK_OPERATION, argv[1]) == 0)
+    else if (UNPACK_OPERATION == argv[1])
     {
         fileOperation = UnpackFile;
     }
     else
     {
-        printf("Incorrect format of parameters! Enter -h for help");
+        cout << "Incorrect format of parameters! Enter -h for help" << endl;
         return 1;
     }
-    int resultCode = 0;
-    ExecuteFileOperation(argv[2], argv[3], resultCode, fileOperation);
 
-    if (resultCode != 0)
+    ErrorCode resultCode = ExecuteFileOperation(argv[2], argv[3], fileOperation);
+    if (resultCode != NO_ERROR)
     {
-        printf("%s", GetErrorMessageByResultCode(resultCode));
+        cout << GetErrorMessageByResultCode(resultCode);
         return 1;
     }
 
 	return 0;
 }
 
-void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, int& resultCode, void (*fileOperation) (FILE*, FILE*, int&))
+ErrorCode ExecuteFileOperation(char* inputFilePath, char* outputFilePath, function<ErrorCode(ifstream& inputFile, ofstream& outputFile)> fileOperation)
 {
-    FILE* inputFile = fopen(inputFilePath, "rb");
-    FILE* outputFile  = fopen(outputFilePath, "wb");
+    ifstream inputFile(inputFilePath, ios::binary);
+    ofstream outputFile(outputFilePath, ios::binary);
+    ErrorCode resultCode = NO_ERROR;
 
-    if ((inputFile != NULL) && (outputFile != NULL))
+    if ((inputFile.is_open()) && (outputFile.is_open()))
     {
-        if (!CheckFileLength(inputFile))
+        if (GetFileLength(inputFile) > MAX_FILE_SIZE)
         {
-            resultCode = TOO_LARGE_INPUT_FILE_CODE;
+            resultCode = TOO_LARGE_INPUT_FILE;
         }
         else
         {
-            (*fileOperation) (inputFile, outputFile, resultCode);
+            resultCode = fileOperation(inputFile, outputFile);
         }  
     }
-    else if (inputFile == NULL)
+    else if (!inputFile.is_open())
     {
-        resultCode = CAN_NOT_OPEN_INPUT_FILE_CODE;
+        resultCode = CAN_NOT_OPEN_INPUT_FILE;
     }
-    else if (outputFile == NULL)
+    else if (!outputFile.is_open())
     {
-        resultCode = CAN_NOT_OPEN_OUTPUT_FILE_CODE;
+        resultCode = CAN_NOT_OPEN_OUTPUT_FILE;
     }
 
-    if (inputFile != NULL)
+    if (outputFile.is_open())
     {
-        fclose(inputFile);
-        inputFile  = NULL;
+        outputFile.close();
     }
-    if (outputFile != NULL)
-    {
-        fclose(outputFile);
-        outputFile = NULL;
-    }
-    return;
+    return resultCode;
 }
 
-bool CheckFileLength(FILE* file)
+ErrorCode PackFile(ifstream& inputFile, ofstream& outputFile)
 {
-    if (file == NULL)
+    RlePacket rlePacket;
+    
+    rlePacket.counter = 0;
+    while(!inputFile.eof())
     {
-        return false;
-    }
-    fseek(file, 0, SEEK_END);
-    long fileSizeBytes = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    return (fileSizeBytes <= MAX_FILE_SIZE);
-}
-
-bool CheckParityOfFileLength(FILE* file)
-{
-    if (file == NULL)
-    {
-        return false;
-    }
-    fseek(file, 0, SEEK_END);
-    long fileSizeBytes = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    return (fileSizeBytes % 2 == 0);
-}
-
-void PackFile(FILE* packingFile, FILE* resultFile, int& resultCode)
-{
-    unsigned char previousCharacterizedByte = 0;
-    unsigned char newByte = 0;
-    unsigned char count = 0;
-    while(fread(&newByte, sizeof(unsigned char), 1, packingFile))
-    {
-        if (count == 0)
+        unsigned char newByte = 0;
+        inputFile.read(reinterpret_cast<char *>(&newByte), sizeof(unsigned char));
+        if (inputFile.eof())
         {
-            previousCharacterizedByte = newByte;
+            break;
         }
-        else if (newByte != previousCharacterizedByte)
+    
+        if (rlePacket.counter == 0)
         {
-            if (!PrintCoupleBytesToFile(resultFile, count, previousCharacterizedByte))
+            rlePacket.value = newByte;
+        }
+        else if (newByte != rlePacket.value)
+        {
+            outputFile.write(reinterpret_cast<char *>(&rlePacket), sizeof(rlePacket));
+            rlePacket.value = newByte;
+            rlePacket.counter = 0;
+        }
+        else if (BYTE_MAX - rlePacket.counter == 0)
+        {
+            outputFile.write(reinterpret_cast<char *>(&rlePacket), sizeof(rlePacket));
+            rlePacket.counter = 0;
+        }
+        ++rlePacket.counter;
+    }
+
+    if (rlePacket.counter != 0)
+    {
+        outputFile.write(reinterpret_cast<char *>(&rlePacket), sizeof(rlePacket));
+    }
+
+    return NO_ERROR;
+}
+
+ErrorCode UnpackFile(ifstream& inputFile, ofstream& outputFile)
+{
+    if (GetFileLength(inputFile) % 2 != 0)
+    {
+        return ODD_LENGTH_OF_INPUT_FILE;
+    }
+    
+    while(!inputFile.eof())
+    {
+        RlePacket rlePacket;
+        inputFile.read(reinterpret_cast<char *>(&rlePacket), sizeof(rlePacket));
+        if (inputFile.eof())
+        {
+            break;
+        }
+
+        if (rlePacket.counter == 0)
+        {
+            return INPUT_FILE_INCLUDE_ZERO_SEQUENCE;
+        }
+        for (int i = 0; i < rlePacket.counter; ++i)
+        {
+            if (!outputFile.write(reinterpret_cast<char *>(&rlePacket.value), sizeof(unsigned char)))
             {
-                resultCode = CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE;
-                return;
-            }
-            previousCharacterizedByte = newByte;
-            count = 0;
-        }
-        else
-        {
-            if (BYTE_MAX - count == 0)
-            {
-                PrintCoupleBytesToFile(resultFile, count, previousCharacterizedByte);
-                count = 0;
-            }
-        }
-        ++count;
-    }
-
-    if (count != 0)
-    {
-        PrintCoupleBytesToFile(resultFile, count, previousCharacterizedByte);
-    }
-
-    return;
-}
-
-bool PrintCoupleBytesToFile(FILE* file, unsigned char firstByte, unsigned char secondByte)
-{
-    if (file == NULL)
-    {
-        return false;
-    }
-    return (fwrite(&firstByte, sizeof(unsigned char), 1, file) &&
-            fwrite(&secondByte, sizeof(unsigned char), 1, file));
-}
-
-void UnpackFile(FILE* unpackingFile, FILE* resultFile, int& resultCode)
-{
-    if (!CheckParityOfFileLength(unpackingFile))
-    {
-        resultCode = ODD_LENGTH_OF_INPUT_FILE_CODE;
-        return;
-    }
-
-    unsigned char newBytes[2];
-    while(fread(&newBytes, sizeof(unsigned char), 2, unpackingFile) == 2)
-    {
-        if (newBytes[0] == 0)
-        {
-            resultCode = INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE;
-            return;
-        }
-        for (int i = 0; i < newBytes[0]; ++i)
-        {
-            if (!fwrite(&newBytes[1], sizeof(unsigned char), 1, resultFile))
-            {
-                resultCode = CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE;
-                return;
+                return CAN_NOT_WRITE_TO_OUTPUT_FILE;
             }
         }
     }
-    return;
+    return NO_ERROR;
 }
 
-const char* GetErrorMessageByResultCode(int resultCode)
+unsigned long long GetFileLength(ifstream& file)
+{
+    file.seekg (0, std::ios::end);
+    unsigned long long size = file.tellg();
+    file.seekg (0, std::ios::beg);
+    return size;
+}
+
+const string GetErrorMessageByResultCode(ErrorCode& resultCode)
 {
     switch(resultCode)
     {
-        case CAN_NOT_OPEN_INPUT_FILE_CODE:
+        case CAN_NOT_OPEN_INPUT_FILE:
             return CAN_NOT_OPEN_INPUT_FILE_MESSAGE;
-        case CAN_NOT_OPEN_OUTPUT_FILE_CODE:
+        case CAN_NOT_OPEN_OUTPUT_FILE:
             return CAN_NOT_OPEN_OUTPUT_FILE_MESSAGE;
-        case TOO_LARGE_INPUT_FILE_CODE:
+        case TOO_LARGE_INPUT_FILE:
             return TOO_LARGE_INPUT_FILE_MESSAGE;
-        case ODD_LENGTH_OF_INPUT_FILE_CODE:
+        case ODD_LENGTH_OF_INPUT_FILE:
             return ODD_LENGTH_OF_INPUT_FILE_MESSAGE;
-        case INPUT_FILE_INCLUDE_ZERO_SEQUENCE_CODE:
+        case INPUT_FILE_INCLUDE_ZERO_SEQUENCE:
             return INPUT_FILE_INCLUDE_ZERO_SEQUENCE_MESSAGE;
-        case CAN_NOT_WRITE_TO_OUTPUT_FILE_CODE:
+        case CAN_NOT_WRITE_TO_OUTPUT_FILE:
             return CAN_NOT_WRITE_TO_OUTPUT_FILE_MESSAGE;
     }
     return "";

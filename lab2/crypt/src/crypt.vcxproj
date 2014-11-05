@@ -42,10 +42,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\PC\boost\boost_1_56_0;D:\PC\boost\boost_1_56_0\boost\optional;D:\PC\boost\boost_1_56_0\boost;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\PC\boost\boost_1_56_0;D:\PC\boost\boost_1_56_0\boost\optional;D:\PC\boost\boost_1_56_0\boost;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\PC\boost\boost_1_56_0\boost;$(SourcePath)</SourcePath>
-    <ReferencePath>D:\PC\boost\boost_1_56_0\boost\optional;D:\PC\boost\boost_1_56_0\boost;$(ReferencePath)</ReferencePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

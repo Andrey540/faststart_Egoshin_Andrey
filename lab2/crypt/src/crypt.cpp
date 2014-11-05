@@ -4,37 +4,30 @@
 #include "stdafx.h"
 
 #include <stdexcept>
-#include <optional.hpp>
+#include <boost\optional.hpp>
 #include <functional>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cmath>
-
-#define exception std::exception
      
-using namespace std;
 using namespace boost;
+using namespace std;
 
-void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, void (*fileOperation) (ifstream&, ofstream&, const unsigned char), const unsigned char key);
-void EncryptFile(ifstream& inputFile, ofstream& outputFile, const unsigned char key);
-void DecryptFile(ifstream& inputFile, ofstream& outputFile, const unsigned char key);
-unsigned char ShuffleByte(unsigned char byte);
-unsigned char UnShuffleByte(unsigned char byte);
-void GetBitsFromByte(unsigned char byte, int* bits);
-void GetByteFromBits(unsigned char &byte, int* bits);
+void CodeFile(char* inputFilePath, char* outputFilePath, function <unsigned char(const unsigned char byte, const unsigned char key)> byteOperation, const unsigned char key);
+unsigned char EncryptByte(const unsigned char byte, const unsigned char key);
+unsigned char DecryptByte(const unsigned char byte, const unsigned char key);
 optional<int> GetKey(string const& str);
 optional<int> ReadIntValue(string const& prompt, function<void(int value)> validate);
 void PrintHelp();
 
-const char* ENCRYPT_OPERATION = "crypt";
-const char* DECRYPT_OPERATION = "decrypt";
+const string ENCRYPT_OPERATION = "crypt";
+const string DECRYPT_OPERATION = "decrypt";
 
 const int BYTE_MAX = 255;
-const long MAX_FILE_SIZE = 2097152;
 
 int main(int argc, char* argv[])
 {
+    assert(CHAR_BIT == 8. "Incorrect platform char size");
     if (argc != 5)
     {
         PrintHelp();
@@ -42,13 +35,14 @@ int main(int argc, char* argv[])
     }
 
     void (*fileOperation) (ifstream&, ofstream&, const unsigned char);
-    if (strcmp(ENCRYPT_OPERATION, argv[1]) == 0)
+    function <unsigned char(const unsigned char byte, const unsigned char key)> byteOperation;
+    if (ENCRYPT_OPERATION == argv[1])
     {
-        fileOperation = EncryptFile;
+        byteOperation = EncryptByte;
     }
-    else if (strcmp(DECRYPT_OPERATION, argv[1]) == 0)
+    else if (DECRYPT_OPERATION == argv[1])
     {
-        fileOperation = DecryptFile;
+        byteOperation = DecryptByte;
     }
     else
     {
@@ -60,9 +54,9 @@ int main(int argc, char* argv[])
     {
         string strKey(argv[4]);
         optional<int> key = GetKey(strKey);
-        ExecuteFileOperation(argv[2], argv[3], fileOperation, (unsigned char)key.get());    
+        CodeFile(argv[2], argv[3], byteOperation, (unsigned char)key.get());
     }
-    catch (exception const& e)
+    catch (std::exception const& e)
     {
         cout << e.what();
         return 1;
@@ -70,27 +64,28 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, void (*fileOperation) (ifstream&, ofstream&, const unsigned char), const unsigned char key)
+void CodeFile(char* inputFilePath, char* outputFilePath, function <unsigned char(const unsigned char byte, const unsigned char key)> byteOperation, const unsigned char key)
 {
     ifstream inputFile(inputFilePath, ios::binary);
     ofstream outputFile(outputFilePath, ios::binary);
 
     if ((inputFile.is_open()) && (outputFile.is_open()))
     {
-        if (inputFile.tellg() > MAX_FILE_SIZE)
+        while(!inputFile.eof())
         {
-            throw domain_error("Too large input file!");
+            unsigned char byte = 0;
+            inputFile.read(reinterpret_cast<char *>(&byte), sizeof(byte));
+            byte = byteOperation(byte, key);
+            if (!inputFile.eof())
+            {
+                outputFile.write(reinterpret_cast<char *>(&byte), sizeof(byte));
+            }
         }
-        (*fileOperation) (inputFile, outputFile, key);
     }
 
-    if (inputFile.is_open())
+    if (!inputFile.is_open())
     {
-        inputFile.close();
-    }
-    else
-    {
-        throw domain_error("Can not open input file!");
+        throw runtime_error("Can not open input file!");
     }
     if (outputFile.is_open())
     {
@@ -98,99 +93,29 @@ void ExecuteFileOperation(char* inputFilePath, char* outputFilePath, void (*file
     }
     else
     {
-        throw domain_error("Can not open output file!");
+        throw runtime_error("Can not open output file!");
     }
     return;
 }
 
-void EncryptFile(ifstream& inputFile, ofstream& outputFile, const unsigned char key)
+unsigned char EncryptByte(const unsigned char byte, const unsigned char key)
 {
-    while(!inputFile.eof())
-    {
-        unsigned char byte = 0;
-        inputFile.read(reinterpret_cast<char *>(&byte), sizeof(unsigned char));
-        byte ^= key;
-        byte = ShuffleByte(byte);
-        if (!inputFile.eof())
-        {
-            outputFile.write(reinterpret_cast<char *>(&byte), sizeof(unsigned char));
-        }
-    }
-    return;
+    unsigned char decryptBye = byte ^ key;    
+    return
+        ((decryptBye & 96)  >> 5) | // 6,7 bits => 1,2 bits
+        ((decryptBye & 7)   << 2) | // 1,2,3 bits => 3,4,5 bits
+        ((decryptBye & 24)  << 3) | // 4,5 bits => 7,8 bits
+        ((decryptBye & 128) >> 2);  // 8 bit => 6 bit
 }
 
-void DecryptFile(ifstream& inputFile, ofstream& outputFile, const unsigned char key)
+unsigned char DecryptByte(unsigned char byte, const unsigned char key)
 {
-    while(!inputFile.eof())
-    {
-        unsigned char byte = 0;
-        inputFile.read(reinterpret_cast<char *>(&byte), sizeof(unsigned char));
-        byte = UnShuffleByte(byte);
-        byte ^= key;    
-        if (!inputFile.eof())
-        {
-            outputFile.write(reinterpret_cast<char *>(&byte), sizeof(unsigned char));
-        }
-    }
-    return;
-
-}
-
-unsigned char ShuffleByte(unsigned char byte)
-{
-    int bits[8];
-    GetBitsFromByte(byte, (int*)bits);
-    int shuffleBits[8];
-
-    shuffleBits[0] = bits[5];
-    shuffleBits[1] = bits[6];
-    shuffleBits[2] = bits[0];
-    shuffleBits[3] = bits[1];
-    shuffleBits[4] = bits[2];
-    shuffleBits[5] = bits[7];
-    shuffleBits[6] = bits[3];
-    shuffleBits[7] = bits[4];
-
-    GetByteFromBits(byte, (int*)bits);
-
-    return byte;
-}
-
-unsigned char UnShuffleByte(unsigned char byte)
-{
-    int bits[8];
-    GetBitsFromByte(byte, (int*)bits);
-    int unShuffleBits[8];
-
-    unShuffleBits[0] = bits[2];
-    unShuffleBits[1] = bits[3];
-    unShuffleBits[2] = bits[4];
-    unShuffleBits[3] = bits[6];
-    unShuffleBits[4] = bits[7];
-    unShuffleBits[5] = bits[0];
-    unShuffleBits[6] = bits[1];
-    unShuffleBits[7] = bits[5];
-
-    GetByteFromBits(byte, (int*)bits);
-
-    return byte;
-}
-
-void GetBitsFromByte(unsigned char byte, int* bits)
-{
-   for (int i = 0; i < 8; ++i)
-   {
-       bits[i] = (byte & (1 << i)) != 0;       
-   }
-}
-
-void GetByteFromBits(unsigned char &byte, int* bits)
-{
-   byte = 0;
-   for (int i = 0; i < 8; ++i)
-   {
-       byte += bits[i] * (1 << i);
-   }
+    unsigned char decryptBye =
+        ((byte & 28)  >> 2) | // 3,4,5 bits => 1,2,3 bits
+        ((byte & 192) >> 3) | // 7,8 bits => 4,5 bits
+        ((byte & 3)   << 5) | // 1,2 bits => 6,7 bits
+        ((byte & 32)  << 2);  // 6 bit => 8 bit
+    return decryptBye ^= key;
 }
 
 optional<int> GetKey(string const& str)
@@ -221,7 +146,7 @@ optional<int> ReadIntValue(string const& str, function<void(int value)> validate
 
 void PrintHelp()
 {
-    printf("crypt.exe crypt <input_file> <output_file> <key>- for encrypt\n");
-    printf("crypt.exe decrypt <input_file> <output_file> <key>- for decrypt\n");
+    cout << "crypt.exe crypt <input_file> <output_file> <key>- for encrypt" << endl;
+    cout << "crypt.exe decrypt <input_file> <output_file> <key>- for decrypt" << endl;
     return;
 }

@@ -5,24 +5,28 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
 const int MATRIX_SIZE = 3;
 
-bool ReadMatrix(ifstream& file, double* matrix);
-void PrintMatrix(double* matrix);
-double CalculateDeterminant(double* matrix);
+typedef double Matrix3x3[MATRIX_SIZE][MATRIX_SIZE];
+typedef const double ConstMatrix3x3[MATRIX_SIZE][MATRIX_SIZE];
+
+bool ReadMatrix(ifstream& file, Matrix3x3 matrix);
+void PrintMatrix(ConstMatrix3x3 matrix);
+double CalculateDeterminant(ConstMatrix3x3 matrix);
 double CalculateMinor(double A11, double A12, double A21, double A22);
-void CalculateInvertMatrix(double* matrix, double* invertMatrix);
-void TransponseMatrix(double* matrix);
+void CalculateInvertMatrix(ConstMatrix3x3 matrix, Matrix3x3 invertMatrix);
+void TransponseMatrix(Matrix3x3 matrix);
 
 int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        printf("Incorrect format!\n");
-        printf("Correct format - invert.exe <input_file>");
+        cout << "Incorrect format!" << endl;
+        cout << "Correct format - invert.exe <input_file>" << endl;
         return 1;
     }
 
@@ -30,88 +34,89 @@ int main(int argc, char* argv[])
 
     if (sourceFile.is_open())
     {
-        double matrix[MATRIX_SIZE][MATRIX_SIZE];
-        if (!ReadMatrix(sourceFile, (double*)matrix))
+        Matrix3x3 matrix;
+        if (!ReadMatrix(sourceFile, matrix))
         {
-           printf("There is not matrix %d x %d", MATRIX_SIZE, MATRIX_SIZE);
-           return 1;
+           cout << "There is not matrix " << MATRIX_SIZE << " x " << MATRIX_SIZE << endl;
+           return 1; 
         }
 
-        if (CalculateDeterminant((double*)matrix) == 0)
+        if (CalculateDeterminant(matrix) == 0)
         {
-           printf("Error - deterbinant of the matrix = 0!");
+           cout << "Error - deterbinant of the matrix = 0!" << endl;
            return 1;
         }
-        double invertMatrix[MATRIX_SIZE][MATRIX_SIZE];
-        CalculateInvertMatrix((double*)matrix, (double*)invertMatrix);
-        PrintMatrix((double*)invertMatrix);
-        sourceFile.close();
+        Matrix3x3 invertMatrix;
+        CalculateInvertMatrix(matrix, invertMatrix);
+        PrintMatrix(invertMatrix);
     }
     else
     {
-        printf("Can not open file!");
+        cout << "Can not open file!" << endl;
         return 1;
     }
 
 	return 0;
 }
 
-bool ReadMatrix(ifstream& file, double* matrix)
+bool ReadMatrix(ifstream& file, Matrix3x3 matrix)
 {
     int index = 0;
-    while (file >> matrix[index])
+    int row = 0;
+    while (file >> matrix[row][index % MATRIX_SIZE])
     {
         index++;
         if (index > MATRIX_SIZE * MATRIX_SIZE)
         {
             break;
         }
+        row = index / MATRIX_SIZE;
     }
 
     return index == MATRIX_SIZE * MATRIX_SIZE;
 }
 
-void CalculateInvertMatrix(double* matrix, double* invertMatrix)
+void CalculateInvertMatrix(ConstMatrix3x3 matrix, Matrix3x3 invertMatrix)
 {
     double determinanrt = CalculateDeterminant(matrix);
-    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; ++i)
+    for (int i = 0; i < MATRIX_SIZE; ++i)
     {
-        int currentRow = i / MATRIX_SIZE;
-        int row1 = (currentRow + 1) % MATRIX_SIZE;
-        int row2 = (currentRow + 2) % MATRIX_SIZE;
-        int indA11 = row1 * MATRIX_SIZE + ((i + 1) % MATRIX_SIZE);
-        int indA12 = row1 * MATRIX_SIZE + ((i + 2) % MATRIX_SIZE);
-        int indA21 = row2 * MATRIX_SIZE + ((i + 1) % MATRIX_SIZE);
-        int indA22 = row2 * MATRIX_SIZE + ((i + 2) % MATRIX_SIZE);
-        invertMatrix[i] = CalculateMinor(matrix[indA11], matrix[indA12], 
-                                                       matrix[indA21], matrix[indA22]);
-        invertMatrix[i] /= determinanrt;
+        for (int j = 0; j < MATRIX_SIZE; ++j)
+        {
+            int row1 = (i + 1) % MATRIX_SIZE;
+            int row2 = (i + 2) % MATRIX_SIZE;
+            int col1 = (j + 1) % MATRIX_SIZE;
+            int col2 = (j + 2) % MATRIX_SIZE;
+            invertMatrix[i][j] = CalculateMinor(matrix[row1][col1], matrix[row1][col2], 
+                                             matrix[row2][col1], matrix[row2][col2]);
+            invertMatrix[i][j] /= determinanrt;
+        }
     }
-    TransponseMatrix((double*)invertMatrix);
+    TransponseMatrix(invertMatrix);
     return;
 }
 
-void TransponseMatrix(double* matrix)
+void TransponseMatrix(Matrix3x3 matrix)
 {
     for (int i = 0; i < MATRIX_SIZE; ++i)
     {
         for (int j = 0; j <= i; ++j)
         {
-            double replacingValue = matrix[i * MATRIX_SIZE + j];
-            matrix[i * MATRIX_SIZE + j] = matrix[j * MATRIX_SIZE + i];
-            matrix[j * MATRIX_SIZE + i] = replacingValue;
+            double replacingValue = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = replacingValue;
         }
     }
 }
 
-double CalculateDeterminant(double* matrix)
+double CalculateDeterminant(ConstMatrix3x3 matrix)
 {
-    double determinant = matrix[0] * CalculateMinor(matrix[4], matrix[5],
-                                                    matrix[7], matrix[8]);
-    determinant -= matrix[1] * CalculateMinor(matrix[3], matrix[5],
-                                              matrix[6], matrix[8]);
-    determinant += matrix[2] * CalculateMinor(matrix[3], matrix[4],
-                                              matrix[6], matrix[7]);
+    double determinant = matrix[0][0] * CalculateMinor(matrix[1][1], matrix[1][2],
+                                                       matrix[2][1], matrix[2][2]);
+    determinant -= matrix[0][1] * CalculateMinor(matrix[1][0], matrix[1][2],
+                                                 matrix[2][0], matrix[2][2]);
+    determinant += matrix[0][2] * CalculateMinor(matrix[1][0], matrix[1][1],
+                                                 matrix[2][0], matrix[2][1]);
     return determinant;
 }
 
@@ -120,16 +125,15 @@ double CalculateMinor(double A11, double A12, double A21, double A22)
     return (A11 * A22) - (A12 * A21);
 }
 
-void PrintMatrix(double* matrix)
+void PrintMatrix(ConstMatrix3x3 matrix)
 {
-    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; ++i)
+    for (int i = 0; i < MATRIX_SIZE; ++i)
     {
-        printf("%.3lf ", matrix[i]);
-
-        if (i % MATRIX_SIZE == MATRIX_SIZE - 1)
+        for (int j = 0; j < MATRIX_SIZE; ++j)
         {
-            printf("\n");
+            cout << setprecision(3) << fixed << matrix[i][j] << " ";
         }
+        cout << endl;
     }
     return;
 }
