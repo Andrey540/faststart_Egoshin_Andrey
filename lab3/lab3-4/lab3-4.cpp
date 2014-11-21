@@ -10,34 +10,24 @@
 #include <algorithm>
 #include <functional>
 #include <set>
+#include <vector>
 
 using namespace boost;
 using namespace std;
 
-bool CheckIsNumberPrime(long number, set<int>& const primeNumbersSet);
-set<int> GeneratePrimeNumbersSet(int upperBound);
-optional<int> GetUpperBoundSet(string const& str);
-set<int> GeneratePrimeNumbersSet(int upperBound);
-optional<int> ReadIntValue(string const& str, function<void(int value)> validate);
-void PrintSet(set<int>& const primeNumbersSet);
+optional<long> GetUpperBoundSet(const string& str);
+set<long> GeneratePrimeNumbersSet(const long& upperBound);
+optional<long> ReadIntValue(const string& str, function<void(long value)> validate);
 void PrintHelp();
+void TestGeneratePrimeNumbersEmptySet();
+void TestGeneratePrimeNumbersSet();
 
-const int MAX_UPPER_BOUND = 100000000;
+const long MAX_UPPER_BOUND = 100000000;
 
 int main(int argc, char* argv[])
 {
-    set<int> testSet;
-    testSet.insert(testSet.begin(), 1);
-    testSet.insert(testSet.begin(), 2);
-    testSet.insert(testSet.begin(), 3);
-    testSet.insert(testSet.begin(), 5);
-    testSet.insert(testSet.begin(), 7);
-    testSet.insert(testSet.begin(), 11);
-    testSet.insert(testSet.begin(), 13);
-    testSet.insert(testSet.begin(), 17);
-    testSet.insert(testSet.begin(), 19);
-
-    assert(GeneratePrimeNumbersSet(22) == testSet, "Algorithm error!");
+    TestGeneratePrimeNumbersEmptySet();
+    TestGeneratePrimeNumbersSet();
 
     if (argc != 2)
     {
@@ -48,9 +38,9 @@ int main(int argc, char* argv[])
 
     try
     {
-        optional<int> upperBoundSet = GetUpperBoundSet(argv[1]);
-        set<int> primeNumbersSet = GeneratePrimeNumbersSet(upperBoundSet.get());
-        PrintSet(primeNumbersSet);
+        optional<long> upperBoundSet = GetUpperBoundSet(argv[1]);
+        set<long> primeNumbersSet = GeneratePrimeNumbersSet(upperBoundSet.get());
+        copy(primeNumbersSet.begin(), primeNumbersSet.end(), ostream_iterator<long>(cout, " " ));
     }
     catch (std::exception const& e)
     {
@@ -60,26 +50,10 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool CheckIsNumberPrime(long number, set<int>& const primeNumbersSet)
+optional<long> GetUpperBoundSet(const string& str)
 {
-    for (auto i = primeNumbersSet.begin(); i != primeNumbersSet.end(); ++i)
-    {
-        if (*i > number / 2)
-        {
-            break;
-        }
-        if ((*i != 1) && (number % *i) == 0)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-optional<int> GetUpperBoundSet(string const& str)
-{
-    optional<int> setUpperBound;
-    setUpperBound = ReadIntValue(str, [](int value){
+    optional<long> setUpperBound;
+    setUpperBound = ReadIntValue(str, [](long value){
         if ((value <= 0) || (value > MAX_UPPER_BOUND))
         {
             throw domain_error("Upper bound must be greater than 0 and less than 100000000");
@@ -88,13 +62,25 @@ optional<int> GetUpperBoundSet(string const& str)
     return setUpperBound;
 }
 
-set<int> GeneratePrimeNumbersSet(int upperBound)
-{
-    set<int> primeNumbersSet;
-    primeNumbersSet.insert(primeNumbersSet.end(), 1);
-    for (int i = 2; i <= upperBound; ++i)
+set<long> GeneratePrimeNumbersSet(const long& upperBound)
+{    
+    vector<bool> prime(upperBound + 1, true);
+    long arithmeticBound = sqrt(upperBound);
+    for (long i = 2; i <= arithmeticBound; ++i)
     {
-        if (CheckIsNumberPrime(i, primeNumbersSet))
+        if (prime[i])
+        {
+            for (long j = i * i; j <= upperBound; j += i)
+            {
+                prime[j] = false;
+            }
+        }
+    }
+
+    set<long> primeNumbersSet;
+    for (long i = 1; i <= upperBound; ++i)
+    {
+        if (prime[i])
         {
             primeNumbersSet.insert(primeNumbersSet.end(), i);
         }
@@ -102,27 +88,18 @@ set<int> GeneratePrimeNumbersSet(int upperBound)
     return primeNumbersSet;         
 }
 
-optional<int> ReadIntValue(string const& str, function<void(int value)> validate)
+optional<long> ReadIntValue(const string& str, function<void(long value)> validate)
 {
     try
     {
-        int value = stoi(str);
+        long value = stoi(str);
         validate(value);
         return value;
     }
     catch (invalid_argument const&)
     {
-    throw domain_error("Upper bounce must be a number");
+        throw domain_error("Upper bounce must be a number");
     }
-}
-
-void PrintSet(set<int>& const primeNumbersSet)
-{
-    for_each(primeNumbersSet.begin(), primeNumbersSet.end(), [](int element){
-        cout << element << " ";
-    });
-
-    return;
 }
 
 void PrintHelp()
@@ -131,3 +108,24 @@ void PrintHelp()
     return;
 }
 
+void TestGeneratePrimeNumbersEmptySet()
+{
+    set<long> testSet;
+    assert(GeneratePrimeNumbersSet(0) == testSet && "Algorithm error!");
+}
+
+void TestGeneratePrimeNumbersSet()
+{
+    set<long> testSet;
+    testSet.insert(testSet.begin(), 1);
+    testSet.insert(testSet.begin(), 2);
+    testSet.insert(testSet.begin(), 3);
+    testSet.insert(testSet.begin(), 5);
+    testSet.insert(testSet.begin(), 7);
+    testSet.insert(testSet.begin(), 11);
+    testSet.insert(testSet.begin(), 13);
+    testSet.insert(testSet.begin(), 17);
+    testSet.insert(testSet.begin(), 19);
+
+    assert(GeneratePrimeNumbersSet(22) == testSet && "Algorithm error!");
+}

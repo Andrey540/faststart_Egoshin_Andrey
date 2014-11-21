@@ -5,6 +5,7 @@
 #include <string>
 #include <assert.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -16,9 +17,14 @@ using namespace std;
 
 void CalculateRepeatedWords(istream& inputStream, map<string, int>& repeatedWords);
 void PrintRepeatedWords(ostream& outputStream, map<string, int>& repeatedWords);
+void TestCalculateRepeatedWordsInEmptyString();
+void TestCalculateRepeatedWords();
 
 int main(int argc, char* argv[])
 {
+    TestCalculateRepeatedWordsInEmptyString();
+    TestCalculateRepeatedWords();
+
     cout << "Enter some strings, please. For end enter sign end of file" << endl;
     map<string, int> repeatedWords;
     CalculateRepeatedWords(cin, repeatedWords);
@@ -42,4 +48,25 @@ void PrintRepeatedWords(ostream& outputStream, map<string, int>& repeatedWords)
     {
         outputStream << i->first << ": " << i->second << endl;
     }
+}
+
+void TestCalculateRepeatedWordsInEmptyString()
+{
+    map<string, int> testRepeatedWords;
+    map<string, int> resultRepeatedWords;
+    istringstream inputStream(""); 
+    CalculateRepeatedWords(inputStream, testRepeatedWords);
+    assert(testRepeatedWords == resultRepeatedWords && "Algorithm error!");
+}
+
+void TestCalculateRepeatedWords()
+{
+    map<string, int> testRepeatedWords;
+    map<string, int> resultRepeatedWords;
+    resultRepeatedWords["begin"] = 2;
+    resultRepeatedWords["end"]   = 3;
+    resultRepeatedWords["until"] = 1;
+    istringstream inputStream("  end  until  begin  end begin end"); 
+    CalculateRepeatedWords(inputStream, testRepeatedWords);
+    assert(testRepeatedWords == resultRepeatedWords && "Algorithm error!");
 }
