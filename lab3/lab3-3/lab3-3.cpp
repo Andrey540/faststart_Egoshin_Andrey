@@ -15,8 +15,11 @@
 
 using namespace std;
 
-void CalculateRepeatedWords(istream& inputStream, map<string, int>& repeatedWords);
-void PrintRepeatedWords(ostream& outputStream, map<string, int>& repeatedWords);
+typedef map<string, int> WordFrequency;
+
+void CalculateRepeatedWords(istream& inputStream, WordFrequency& repeatedWords);
+void PrintRepeatedWords(ostream& outputStream, WordFrequency& repeatedWords);
+void AssertFrequencyMapsAreEqual(istringstream& inputStream, WordFrequency& comparedFrequency);
 void TestCalculateRepeatedWordsInEmptyString();
 void TestCalculateRepeatedWords();
 
@@ -26,13 +29,13 @@ int main(int argc, char* argv[])
     TestCalculateRepeatedWords();
 
     cout << "Enter some strings, please. For end enter sign end of file" << endl;
-    map<string, int> repeatedWords;
+    WordFrequency repeatedWords;
     CalculateRepeatedWords(cin, repeatedWords);
     PrintRepeatedWords(cout, repeatedWords);
 	return 0;
 }
 
-void CalculateRepeatedWords(istream& inputStream, map<string, int>& repeatedWords)
+void CalculateRepeatedWords(istream& inputStream, WordFrequency& repeatedWords)
 {
     string newString;
     while (inputStream >> newString)
@@ -42,7 +45,7 @@ void CalculateRepeatedWords(istream& inputStream, map<string, int>& repeatedWord
 	}
 }
 
-void PrintRepeatedWords(ostream& outputStream, map<string, int>& repeatedWords)
+void PrintRepeatedWords(ostream& outputStream, WordFrequency& repeatedWords)
 {
     for (auto i = repeatedWords.begin(); i != repeatedWords.end(); ++ i)
     {
@@ -50,23 +53,24 @@ void PrintRepeatedWords(ostream& outputStream, map<string, int>& repeatedWords)
     }
 }
 
-void TestCalculateRepeatedWordsInEmptyString()
+void AssertFrequencyMapsAreEqual(istringstream& inputStream, WordFrequency& comparedFrequency)
 {
     map<string, int> testRepeatedWords;
-    map<string, int> resultRepeatedWords;
-    istringstream inputStream(""); 
     CalculateRepeatedWords(inputStream, testRepeatedWords);
-    assert(testRepeatedWords == resultRepeatedWords && "Algorithm error!");
+    assert(testRepeatedWords == comparedFrequency && "Algorithm error!");
+}
+
+void TestCalculateRepeatedWordsInEmptyString()
+{
+    map<string, int> resultRepeatedWords;
+    AssertFrequencyMapsAreEqual(istringstream(""), resultRepeatedWords);
 }
 
 void TestCalculateRepeatedWords()
 {
-    map<string, int> testRepeatedWords;
     map<string, int> resultRepeatedWords;
     resultRepeatedWords["begin"] = 2;
     resultRepeatedWords["end"]   = 3;
     resultRepeatedWords["until"] = 1;
-    istringstream inputStream("  end  until  begin  end begin end"); 
-    CalculateRepeatedWords(inputStream, testRepeatedWords);
-    assert(testRepeatedWords == resultRepeatedWords && "Algorithm error!");
+    AssertFrequencyMapsAreEqual(istringstream("  end  until  begin  end begin end"), resultRepeatedWords);
 }

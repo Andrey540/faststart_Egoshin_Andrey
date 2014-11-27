@@ -41,7 +41,7 @@ string RemoveExtraSpaces(string const& arg)
             {
                 result += " ";
             }
-            result += arg.substr(prevWhiteSpace, currentPosition - prevWhiteSpace);
+            result.append(arg ,prevWhiteSpace, currentPosition - prevWhiteSpace);
         }
         prevWhiteSpace = whiteSpaceOffset + 1;
     }while (whiteSpaceOffset != string::npos);
@@ -63,7 +63,7 @@ void ConvertStream(istream& inputStream, ostream& outputStream)
 
 void TestRemoveExtraSpacesInEmptyText()
 {
-    assert(RemoveExtraSpaces("") == "" && "Algorithm error!");
+    assert(RemoveExtraSpaces("").empty() && "Algorithm error!");
     return;
 }
 

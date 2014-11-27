@@ -45,6 +45,9 @@ Protocol GetProtocol(string const& sourceUrl);
 string GetHost(string const& url);
 int GetPort(string const& url, const Protocol& protocol);
 string GetDocument(string const& url);
+size_t GetHostPosition(string const& url);
+size_t GetPortSeparatorPosition(string const& url);
+size_t GetDocumentSeparatorPosition(string const& url);
 int PortStringToInt(string const& str);
 
 void TestParseURLEmptyPortHTTP();
@@ -76,7 +79,6 @@ int main(int argc, char* argv[])
             cout << "Parse url error!" << endl;
         }
 	}
-
 	return 0;
 }
 
@@ -119,44 +121,28 @@ Protocol GetProtocol(string const& sourceUrl)
     {
         throw runtime_error("Undefind protocol!");
     }     
-
     return protocolType->second;
 }
 
 string GetHost(string const& url)
 {
-    size_t startPosition = url.find(PROTOCOL_SEPARATOR);
-    if (startPosition == string::npos)
-    {
-        throw runtime_error("Can not find host!");
-    }
-    startPosition += PROTOCOL_SEPARATOR.length();
-    size_t endPosition = url.find("/", startPosition + 1);
-    endPosition = (endPosition == string::npos) ? url.length() : endPosition;
-    size_t portPosition = url.find(":", startPosition + 1);
-    portPosition = (portPosition == string::npos) ? url.length() : portPosition;
-    endPosition = (endPosition > portPosition) ? portPosition : endPosition;
-
+    size_t startPosition = GetHostPosition(url);
+    size_t documentPosition = GetDocumentSeparatorPosition(url);
+    size_t portPosition = GetPortSeparatorPosition(url);
+    size_t endPosition = (documentPosition > portPosition) ? portPosition : documentPosition;
     return url.substr(startPosition, endPosition - startPosition);
 }
 
 int GetPort(string const& url, const Protocol& protocol)
 {
-    size_t startPosition = url.find(PROTOCOL_SEPARATOR);
-    if (startPosition == string::npos)
-    {
-        throw runtime_error("Incorrect url format!");
-    }
-    startPosition += PROTOCOL_SEPARATOR.length();
-    size_t endPosition = url.find("/", startPosition + 1);
-    endPosition = (endPosition == string::npos) ? url.length() : endPosition;
-    size_t portPosition = url.find(":", startPosition + 1);
-    portPosition = (portPosition == string::npos) ? url.length() : portPosition + 1;
+    size_t documentPosition = GetDocumentSeparatorPosition(url);
+    size_t portPosition = GetPortSeparatorPosition(url);
 
     int port = 0;
-    if (endPosition > portPosition)
+    if (documentPosition > portPosition)
     {   
-        string portString = url.substr(portPosition, endPosition - portPosition);
+        ++portPosition;
+        string portString = url.substr(portPosition, documentPosition - portPosition);
         port = PortStringToInt(portString);
     }
     else
@@ -167,30 +153,38 @@ int GetPort(string const& url, const Protocol& protocol)
         protocolsLib[FTP]   = 21;
         port = protocolsLib[protocol];
     }
-
     return port;
 }
 
 string GetDocument(string const& url)
 {
-    size_t startPosition = url.find(PROTOCOL_SEPARATOR);
-    if (startPosition == string::npos)
+    size_t startPosition = GetDocumentSeparatorPosition(url);
+    startPosition = (startPosition == url.length()) ? startPosition : startPosition + 1;
+    return url.substr(startPosition, url.length() - startPosition);
+}
+
+size_t GetHostPosition(string const& url)
+{
+    size_t position = url.find(PROTOCOL_SEPARATOR);
+    if (position == string::npos)
     {
         throw runtime_error("Incorrect url format!");
     }
-    startPosition += PROTOCOL_SEPARATOR.length();
-    size_t endPosition = url.find("/", startPosition + 1);
-    endPosition = (endPosition == string::npos) ? url.length() : endPosition + 1;
+    return position + PROTOCOL_SEPARATOR.length();
+}
 
-    if (endPosition == string::npos)
-    {
-        return "";
-    }
+size_t GetPortSeparatorPosition(string const& url)
+{
+    size_t startPosition = GetHostPosition(url);
+    size_t portPosition = url.find(":", startPosition);
+    return (portPosition == string::npos) ? url.length() : portPosition;
+}
 
-    startPosition = endPosition;
-    endPosition   = url.length();
-
-    return url.substr(startPosition, endPosition - startPosition);
+size_t GetDocumentSeparatorPosition(string const& url)
+{
+    size_t startPosition = GetHostPosition(url);
+    size_t documentSeparatorPosition = url.find("/", startPosition);
+    return (documentSeparatorPosition == string::npos) ? url.length() : documentSeparatorPosition;
 }
 
 int PortStringToInt(string const& str)

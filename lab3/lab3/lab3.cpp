@@ -14,7 +14,6 @@
 
 using namespace std;
 
-void ReadArray(vector<double>& array);
 void PrepareArray(vector<double>& array);
 void TestPrepareEmptyArray();
 void TestPrepareArray();
@@ -26,7 +25,7 @@ int main(int argc, char* argv[])
 
     vector<double> array;
     cout << "Enter float array" << endl;
-    ReadArray(array);
+    array.insert(array.end(), istream_iterator<double>(cin), istream_iterator<double>());
     PrepareArray(array);
     cout << "Result:" << endl;
     copy(array.begin(), array.end(), ostream_iterator<double>(cout, " " ));
@@ -58,18 +57,6 @@ void TestPrepareArray()
     PrepareArray(testVector);
 
     assert(testVector == resultVector && "Algorithm error!");
-    return;
-}
-
-void ReadArray(vector<double>& array)
-{
-    double element;
-    while (cin >> element)
-    {
-        double newElement = element;
-        array.push_back(element);
-    }
-
     return;
 }
 
