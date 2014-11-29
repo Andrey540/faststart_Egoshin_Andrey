@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <stdexcept>
 #include <boost\optional.hpp>
+#include <boost\iterator\counting_iterator.hpp>
 #include <string>
 #include <assert.h>
 #include <iostream>
@@ -17,7 +18,7 @@ using namespace std;
 
 optional<long> GetUpperBoundSet(const string& str);
 set<long> GeneratePrimeNumbersSet(const long& upperBound);
-optional<long> ReadIntValue(const string& str, function<void(long value)> validate);
+optional<long> ReadIntValue(const string& str, function<void(long value)> const& validate);
 void PrintHelp();
 void TestGeneratePrimeNumbersEmptySet();
 void TestGeneratePrimeNumbersSet();
@@ -54,7 +55,7 @@ optional<long> GetUpperBoundSet(const string& str)
 {
     optional<long> setUpperBound;
     setUpperBound = ReadIntValue(str, [](long value){
-        if ((value <= 0) || (value > MAX_UPPER_BOUND))
+        if ((value <= 1) || (value > MAX_UPPER_BOUND))
         {
             throw domain_error("Upper bound must be greater than 0 and less than 100000000");
         }
@@ -65,8 +66,7 @@ optional<long> GetUpperBoundSet(const string& str)
 set<long> GeneratePrimeNumbersSet(const long& upperBound)
 {    
     vector<bool> prime(upperBound + 1, true);
-    long arithmeticBound = sqrt(upperBound);
-    for (long i = 2; i <= arithmeticBound; ++i)
+    for (long i = 2; i * i <= upperBound; ++i)
     {
         if (prime[i])
         {
@@ -77,8 +77,8 @@ set<long> GeneratePrimeNumbersSet(const long& upperBound)
         }
     }
 
-    set<long> primeNumbersSet;
-    for (long i = 1; i <= upperBound; ++i)
+    set<long> primeNumbersSet;    
+    for (long i = 2; i <= upperBound; ++i)
     {
         if (prime[i])
         {
@@ -88,7 +88,7 @@ set<long> GeneratePrimeNumbersSet(const long& upperBound)
     return primeNumbersSet;         
 }
 
-optional<long> ReadIntValue(const string& str, function<void(long value)> validate)
+optional<long> ReadIntValue(const string& str, function<void(long value)> const& validate)
 {
     try
     {
@@ -110,14 +110,13 @@ void PrintHelp()
 
 void TestGeneratePrimeNumbersEmptySet()
 {
-    set<long> testSet;
+    set<long> testSet; testSet;
     assert(GeneratePrimeNumbersSet(0) == testSet && "Algorithm error!");
 }
 
 void TestGeneratePrimeNumbersSet()
 {
     set<long> testSet;
-    testSet.insert(testSet.begin(), 1);
     testSet.insert(testSet.begin(), 2);
     testSet.insert(testSet.begin(), 3);
     testSet.insert(testSet.begin(), 5);
