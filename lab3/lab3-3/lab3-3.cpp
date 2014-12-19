@@ -47,9 +47,9 @@ void CalculateRepeatedWords(istream& inputStream, WordFrequency& repeatedWords)
 
 void PrintRepeatedWords(ostream& outputStream, WordFrequency& repeatedWords)
 {
-    for (auto i = repeatedWords.begin(); i != repeatedWords.end(); ++ i)
+    for (auto repeatedWord:repeatedWords)
     {
-        outputStream << i->first << ": " << i->second << endl;
+        outputStream << repeatedWord.first << ": " << repeatedWord.second << endl;
     }
 }
 
@@ -69,8 +69,7 @@ void TestCalculateRepeatedWordsInEmptyString()
 void TestCalculateRepeatedWords()
 {
     map<string, int> resultRepeatedWords;
-    resultRepeatedWords["begin"] = 2;
-    resultRepeatedWords["end"]   = 3;
-    resultRepeatedWords["until"] = 1;
-    AssertFrequencyMapsAreEqual(istringstream("  end  until  begin  end begin end"), resultRepeatedWords);
+    pair<string, int> expectedItems[] = {make_pair("begin", 2), make_pair("end", 3), make_pair("until", 1)};
+    map<string, int> expectedMap(begin(expectedItems), end(expectedItems));
+    AssertFrequencyMapsAreEqual(istringstream("  end  until  begin  end begin end"), expectedMap);
 }
