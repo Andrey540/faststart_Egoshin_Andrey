@@ -1,17 +1,20 @@
 // lab3.cpp: определяет точку входа для консольного приложения.
 //
 
-#include "stdafx.h"
-#include <string>
-#include <iostream>
-#include <vector>
-#include <boost\optional.hpp>
-#include <algorithm>
-#include <numeric>
-#include <functional>
-#include <iterator>
-#include <assert.h>
 
+#include "stdafx.h"
+#include <stdexcept>
+#include <boost\optional.hpp>
+#include <string>
+#include <assert.h>
+#include <iostream>
+#include <algorithm>
+#include <functional>
+#include <map>
+#include <vector>
+#include <numeric>
+
+using namespace boost;
 using namespace std;
 
 void PrepareArray(vector<double>& array);
@@ -20,14 +23,15 @@ void TestPrepareArray();
 
 int main(int argc, char* argv[])
 {
-    void TestPrepareEmptyArray();
-    void TestPrepareArray();
+    TestPrepareEmptyArray();
+    TestPrepareArray();
 
     vector<double> array;
     cout << "Enter float array" << endl;
     array.insert(array.end(), istream_iterator<double>(cin), istream_iterator<double>());
     PrepareArray(array);
     cout << "Result:" << endl;
+    sort(array.begin(), array.end());
     copy(array.begin(), array.end(), ostream_iterator<double>(cout, " " ));
     
     return 0;
@@ -50,7 +54,7 @@ void TestPrepareArray()
     vector<double> testVector;
     testVector.insert(testVector.end(), begin(testArray), end(testArray));
 
-    double resultArray[] = {-42.558, -5.11885, 0.42, 4.90885};
+    double resultArray[] = {2.4, -33.9167, 22.4554, -12.4277};
     vector<double> resultVector;
     resultVector.insert(resultVector.end(), begin(resultArray), end(resultArray));
 
@@ -74,10 +78,8 @@ void PrepareArray(vector<double>& array)
     for (size_t i = 0; i < n; ++i, isEvenItem = !isEvenItem)
     {
        double & currentItem = array[i];
-       currentItem = isEvenItem ? (currentItem * 2) : (currentItem - sumOfNonNegativeElements);
-    }
-
-    sort(array.begin(), array.end());
+       array[i] = isEvenItem ? (currentItem * 2) : (currentItem - sumOfNonNegativeElements);
+    }    
 
     return;
 }
