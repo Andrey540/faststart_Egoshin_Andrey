@@ -9,8 +9,6 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include <map>
-#include <vector>
 
 using namespace boost;
 using namespace std;
@@ -29,7 +27,20 @@ struct URLData
     int port;
     string document;
 
-    bool URLData::operator == (URLData otherURLData)
+    URLData()
+    {
+    }
+
+    URLData(Protocol& protocol, int port, string& host, string document)
+    {
+        this->protocol = protocol;
+        this->host = host;
+        this->port = port;
+        this->document = document;
+        return;
+    }
+
+    bool const operator == (URLData otherURLData)
     {
         if (protocol == otherURLData.protocol && host == otherURLData.host &&
             port == otherURLData.port && document == otherURLData.document)
@@ -38,21 +49,31 @@ struct URLData
         }
         return false;
     }
+
+    bool const operator != (URLData otherURLData)
+    {
+        return !(*this == otherURLData);
+    }
 };
 
 bool ParseURL(string const& url, Protocol & protocol, int & port, string & host, string & document);
+bool BeginsWith(const string& haystack,const string& needle);
 Protocol GetProtocol(string const& sourceUrl);
-string GetHost(string const& url);
-int GetPort(string const& url, const Protocol& protocol);
-string GetDocument(string const& url);
+string GetHost(string const& url, size_t& position);
+int GetPort(string const& url, const Protocol& protocol, size_t& position);
+string GetDocument(string const& url, size_t& position);
 size_t GetHostPosition(string const& url);
 size_t GetPortSeparatorPosition(string const& url);
 size_t GetDocumentSeparatorPosition(string const& url);
 int PortStringToInt(string const& str);
 
+void AssertParsingURLSucceed(string const& url, Protocol protocol, int port, string host, string document);
+void AssertParsingErrorURL(string const& url, Protocol protocol, int port, string host, string document);
 void TestParseURLEmptyPortHTTP();
 void TestParseURLWithPortHTTP();
 void TestParseURLEmptyPortHTTPS();
+void TestParsingURLsWithDefaultPortAndEmptyDocument();
+void TestParsingURLsWithInvalidPort();
 
 const string PROTOCOL_SEPARATOR = "://";
 
@@ -61,6 +82,8 @@ int main(int argc, char* argv[])
     TestParseURLEmptyPortHTTP();
     TestParseURLWithPortHTTP();
     TestParseURLEmptyPortHTTPS();
+    TestParsingURLsWithDefaultPortAndEmptyDocument();
+    TestParsingURLsWithInvalidPort();
 
     string newString;
     cout << "Enter url" << endl;
@@ -86,10 +109,11 @@ bool ParseURL(string const& url, Protocol & protocol, int & port, string & host,
 {
     try
     {
+        size_t position;
         protocol = GetProtocol(url);
-        host     = GetHost(url);
-        port     = GetPort(url, protocol);
-        document = GetDocument(url);
+        host     = GetHost(url, position);
+        port     = GetPort(url, protocol, position);
+        document = GetDocument(url, position);
     }
     catch (std::exception const& e)
     {
@@ -99,68 +123,77 @@ bool ParseURL(string const& url, Protocol & protocol, int & port, string & host,
     return true;
 }
 
-Protocol GetProtocol(string const& sourceUrl)
+bool BeginsWith(const string& haystack,const string& needle)
 {
-    string url = sourceUrl;
-    transform(url.begin(), url.end(), url.begin(), ::tolower);
-
-    map <string, Protocol> protocolsLib;
-    protocolsLib["http"]  = HTTP;
-    protocolsLib["https"] = HTTPS;
-    protocolsLib["ftp"]   = FTP;
-
-    size_t position = url.find(PROTOCOL_SEPARATOR);
-    if (position == string::npos)
-    {
-        throw runtime_error("Can not find protocol!");
-    }
-    string protocolString = url.substr(0, position);
-
-    auto protocolType = protocolsLib.find(protocolString);
-    if (protocolType == protocolsLib.end())
-    {
-        throw runtime_error("Undefind protocol!");
-    }     
-    return protocolType->second;
+    return haystack.compare(0, needle.length(), needle) == 0;
 }
 
-string GetHost(string const& url)
+Protocol GetProtocol(string const& sourceUrl)
+{
+    Protocol result;
+
+    if (BeginsWith(sourceUrl, "http://"))
+    {
+        result = HTTP;
+    }
+    else if(BeginsWith(sourceUrl, "https://"))
+    {
+        result = HTTPS;
+    }
+    else if(BeginsWith(sourceUrl, "ftp://"))
+    {
+        result = FTP;
+    }
+    else
+    {
+        throw runtime_error("Undefind protocol!");
+    }
+
+    return result;
+}
+
+string GetHost(string const& url, size_t& position)
 {
     size_t startPosition = GetHostPosition(url);
     size_t documentPosition = GetDocumentSeparatorPosition(url);
     size_t portPosition = GetPortSeparatorPosition(url);
-    size_t endPosition = (documentPosition > portPosition) ? portPosition : documentPosition;
-    return url.substr(startPosition, endPosition - startPosition);
+    position = (documentPosition > portPosition) ? portPosition : documentPosition;
+    return url.substr(startPosition, position - startPosition);
 }
 
-int GetPort(string const& url, const Protocol& protocol)
+int GetPort(string const& url, const Protocol& protocol, size_t& position)
 {
     size_t documentPosition = GetDocumentSeparatorPosition(url);
-    size_t portPosition = GetPortSeparatorPosition(url);
-
     int port = 0;
-    if (documentPosition > portPosition)
+    if (documentPosition != position)
     {   
-        ++portPosition;
-        string portString = url.substr(portPosition, documentPosition - portPosition);
+        ++position;
+        string portString = url.substr(position, documentPosition - position);
         port = PortStringToInt(portString);
+        position = documentPosition;
     }
     else
     {
-        map<Protocol, int> protocolsLib;
-        protocolsLib[HTTP]  = 80;
-        protocolsLib[HTTPS] = 443;
-        protocolsLib[FTP]   = 21;
-        port = protocolsLib[protocol];
+        if (protocol == HTTP)
+        {
+            port = 80;
+        }
+        else if (protocol == HTTPS)
+        {
+            port = 443;
+        }
+        else
+        {
+            port = 21;
+        }
     }
     return port;
 }
 
-string GetDocument(string const& url)
+string GetDocument(string const& url, size_t& position)
 {
-    size_t startPosition = GetDocumentSeparatorPosition(url);
-    startPosition = (startPosition == url.length()) ? startPosition : startPosition + 1;
-    return url.substr(startPosition, url.length() - startPosition);
+    position = (position == url.length()) ? position : position + 1;
+    return url.substr(position, url.length() - position);
 }
 
 size_t GetHostPosition(string const& url)
@@ -190,56 +223,66 @@ size_t GetDocumentSeparatorPosition(string const& url)
 int PortStringToInt(string const& str)
 {
     const int MAX_PORT_NUMBER = 65535;
-    try
+    char* pLastChar = nullptr;
+
+    int value = strtol(str.c_str(), &pLastChar, 10);
+    if((str.c_str() == '\0') || (*pLastChar != '\0'))
     {
-        int value = stoi(str);
-        if ((value < 1) || (value > MAX_PORT_NUMBER))
-        {
-            throw domain_error("Port must be greater than 1 and less than 65535");
-        }
-        return value;
+        throw domain_error("Port must be a number\n");
     }
-    catch (invalid_argument const&)
+    if ((value < 1) || (value > MAX_PORT_NUMBER))
     {
-        throw domain_error("Port must be a number");
+        throw domain_error("Port must be greater than 1 and less than 65535\n");
     }
+    return value;
 }
 
 void TestParseURLEmptyPortHTTP()
 {
-    URLData urlTest;
-    URLData urlResult;
-    urlResult.protocol = HTTP;
-    urlResult.port     = 80;
-    urlResult.host     = "mysite.com";
-    urlResult.document = "doc/document1.html";
-
-    ParseURL("http://mysite.com/doc/document1.html", urlTest.protocol, urlTest.port, urlTest.host, urlTest.document);
-    assert(urlTest == urlResult && "Algorithm error!");
+    AssertParsingURLSucceed("http://mysite.com/doc/document1.html", HTTP, 80, "mysite.com", "doc/document1.html");
 }
 
 void TestParseURLWithPortHTTP()
 {
-    URLData urlTest;
-    URLData urlResult;
-    urlResult.protocol = HTTP;
-    urlResult.port     = 100;
-    urlResult.host     = "mysite.com";
-    urlResult.document = "doc/document1.html";
-
-    ParseURL("http://mysite.com:100/doc/document1.html", urlTest.protocol, urlTest.port, urlTest.host, urlTest.document);
-    assert(urlTest == urlResult && "Algorithm error!");
+    AssertParsingURLSucceed("http://mysite.com:100/doc/document1.html", HTTP, 100, "mysite.com", "doc/document1.html");
 }
 
 void TestParseURLEmptyPortHTTPS()
 {
-    URLData urlTest;
-    URLData urlResult;
-    urlResult.protocol = HTTPS;
-    urlResult.port     = 443;
-    urlResult.host     = "mysite.com";
-    urlResult.document = "doc/document1.html";
+    AssertParsingURLSucceed("https://mysite.com/doc/document1.html", HTTPS, 443, "mysite.com", "doc/document1.html");
+}
 
-    ParseURL("https://mysite.com/doc/document1.html", urlTest.protocol, urlTest.port, urlTest.host, urlTest.document);
+void TestParsingURLsWithDefaultPortAndEmptyDocument()
+{
+    AssertParsingURLSucceed("http://yandex.ru", HTTP, 80, "yandex.ru", "");
+    AssertParsingURLSucceed("https://yandex.ru", HTTPS, 443, "yandex.ru", "");
+    AssertParsingURLSucceed("ftp://yandex.ru", FTP, 21, "yandex.ru", "");
+}
+
+void TestParsingURLsWithInvalidPort()
+{
+    AssertParsingErrorURL("http://ya.ru:65535:/doc.txt", HTTP, 65535, "ya.ru", "doc.txt");
+    AssertParsingErrorURL("http://ya.ru:80doc", HTTPS, 80, "ya.ru", "");
+}
+
+void AssertParsingURLSucceed(string const& url, Protocol protocol, int port, string host, string document)
+{
+    URLData urlTest;
+    URLData urlResult(protocol, port, host, document);
+
+    ParseURL(url, urlTest.protocol, urlTest.port, urlTest.host, urlTest.document);
     assert(urlTest == urlResult && "Algorithm error!");
+
+    return;
+}
+
+void AssertParsingErrorURL(string const& url, Protocol protocol, int port, string host, string document)
+{
+    URLData urlTest;
+    URLData urlResult(protocol, port, host, document);
+
+    ParseURL(url, urlTest.protocol, urlTest.port, urlTest.host, urlTest.document);
+    assert(urlTest != urlResult && "Algorithm error!");
+
+    return;
 }
