@@ -117,14 +117,14 @@ void TestGeneratePrimeNumbersEmptySet()
 void TestGeneratePrimeNumbersSet()
 {
     set<long> testSet;
-    testSet.insert(testSet.begin(), 2);
-    testSet.insert(testSet.begin(), 3);
-    testSet.insert(testSet.begin(), 5);
-    testSet.insert(testSet.begin(), 7);
-    testSet.insert(testSet.begin(), 11);
-    testSet.insert(testSet.begin(), 13);
-    testSet.insert(testSet.begin(), 17);
-    testSet.insert(testSet.begin(), 19);
+    testSet.insert(testSet.end(), 2);
+    testSet.insert(testSet.end(), 3);
+    testSet.insert(testSet.end(), 5);
+    testSet.insert(testSet.end(), 7);
+    testSet.insert(testSet.end(), 11);
+    testSet.insert(testSet.end(), 13);
+    testSet.insert(testSet.end(), 17);
+    testSet.insert(testSet.end(), 19);
 
     assert(GeneratePrimeNumbersSet(22) == testSet && "Algorithm error!");
 }
