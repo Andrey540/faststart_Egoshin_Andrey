@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <string>
 #include <iostream>
+#include <conio.h>
 #include <fstream>
 #include <numeric>
 #include <assert.h>
@@ -11,21 +12,21 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <boost/iterator/transform_iterator.hpp>
 
-using namespace::std;
+using namespace std;
+
+using namespace boost;
 
 struct Translation
 {
     string word;
     bool isNew;
 
-    Translation()
-    {
-        isNew = false;
-    }
+    Translation() : isNew(false) {}
 };
 
-void TrnaslateWords(map<string, Translation>& vocabulary);
+void TranslateWords(map<string, Translation>& vocabulary);
 void ReadVocabulary(char* vocabularyFilePath, map<string, Translation>& vocabulary);
 void AppendVocabularyFromString(const string& currentString, map<string, Translation>& vocabulary);
 void SaveNewTranslations(char* vocabularyFilePath, map<string, Translation>& vocabulary);
@@ -42,7 +43,7 @@ int main(int argc, char* argv[])
     map<string, Translation> vocabulary;
     ReadVocabulary(argv[1], vocabulary);
 
-    TrnaslateWords(vocabulary);
+    TranslateWords(vocabulary);
 
     if (!CheckIsEmptyNewTranslations(vocabulary))
     {
@@ -59,28 +60,30 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void TrnaslateWords(map<string, Translation>& vocabulary)
+void TranslateWords(map<string, Translation>& vocabulary)
 {
     cout << "Enter word for translate, if you want to stop, enter ..." << endl;
     string newWord;
+    getline(cin, newWord);
 
-    while(cin >> newWord)
+    while(newWord != "...")
     {
-        if (newWord == "...")
+        if (newWord == "")
         {
-            break;
+            getline(cin, newWord);
+            continue;
         }
         transform(newWord.begin(), newWord.end(), newWord.begin(), ::tolower);
-
-        if (vocabulary.find(newWord) != vocabulary.end())
+        auto newWordIterator = vocabulary.find(newWord);
+        if (newWordIterator != vocabulary.end())
         {
-            cout << vocabulary[newWord].word << endl;
+            cout << (newWordIterator->second).word << endl;
         }
         else
         {
             cout << "Unknow word \"" << newWord << "\". Enter translation or N for cancel" << endl;
             Translation newTranslation;
-            cin >> newTranslation.word;
+            getline(cin, newTranslation.word);
             if (newTranslation.word == "N")
             {
                 cout << "Word \"" << newWord << "\" was ignored" << endl;
@@ -90,10 +93,10 @@ void TrnaslateWords(map<string, Translation>& vocabulary)
                 newTranslation.isNew = true;
                 vocabulary[newWord] = newTranslation;
                 cout << "Word \"" << newWord << "\" was saved in vocabulary like \"" << newTranslation.word << "\"." << endl;
-            }
-        }
+            }            
+        }        
+        getline(cin, newWord);
     }
-    return;
 }
 
 void ReadVocabulary(char* vocabularyFilePath, map<string, Translation>& vocabulary)
@@ -108,7 +111,6 @@ void ReadVocabulary(char* vocabularyFilePath, map<string, Translation>& vocabula
             AppendVocabularyFromString(newString, vocabulary);
         }
     }
-    return;
 }
 
 void AppendVocabularyFromString(const string& currentString, map<string, Translation>& vocabulary)
@@ -132,7 +134,6 @@ void AppendVocabularyFromString(const string& currentString, map<string, Transla
     {
         vocabulary[word] = translation;
     }
-    return;
 }
 
 void SaveNewTranslations(char* vocabularyFilePath, map<string, Translation>& vocabulary)
@@ -140,25 +141,17 @@ void SaveNewTranslations(char* vocabularyFilePath, map<string, Translation>& voc
     ofstream vocabularyFile(vocabularyFilePath, fstream::app);
     if (vocabularyFile.is_open())
     {
-        for (auto i = vocabulary.begin(); i != vocabulary.end(); ++i)
+        for (auto i : vocabulary)
         {
-            if (i->second.isNew)
+            if (i.second.isNew)
             {
-                vocabularyFile << "[" << i->first << "] "<< i->second.word << endl;
+                vocabularyFile << "[" << i.first << "] "<< i.second.word << endl;
             }
         }
     }
-    return;
 }
 
 bool CheckIsEmptyNewTranslations(const map<string, Translation>& vocabulary)
 {
-    for (auto i = vocabulary.begin(); i != vocabulary.end(); ++i)
-    {
-        if (i->second.isNew)
-        {
-            return false;
-        }
-    }
-    return true;
+    return find_if(vocabulary.begin(), vocabulary.end(), [](pair<string, Translation> item){return item.second.isNew;}) == vocabulary.end();
 }
