@@ -9,23 +9,13 @@ class CStudent : public CPerson
 {
 public:
     CStudent(void);
-    CStudent(bool isMan, unsigned age, double growth, double weight, const std::wstring& name, unsigned course, const CUniversity& university);
+    CStudent(bool isMan, unsigned age, double growth, double weight, const std::wstring& name,
+             unsigned course, const std::shared_ptr<CUniversity>& university);
     virtual ~CStudent(void);
     void SetCourse(unsigned course);
     unsigned GetCourse() const;
-    void SetUniversity(const CUniversity& university);
+    void SetUniversity(const std::shared_ptr<CUniversity>& university);
     const CUniversity& GetUniversity();
-
-    bool const operator == (const CStudent& other) const
-    {        
-        return ((CPerson)(*this) == (CPerson)(other)) && (m_course == other.m_course) && 
-                m_university == other.m_university;
-    }
-
-    bool const operator != (const CStudent& other) const
-    {             
-        return !(*this == other);
-    }
 
 private:
     unsigned m_course;

@@ -14,16 +14,16 @@ public:
     ~CUniversity(void);
     void SetName(const std::wstring& name);
     std::wstring GetName() const;
-    void AddStudent(const CStudent& student);
+    void AddStudent(const std::shared_ptr<CStudent>& student);
     void DeleteStudent(unsigned index);
-    void ChangeStudent(unsigned index, const CStudent& student);
+    void ChangeStudent(unsigned index, const std::shared_ptr<CStudent>& student);
     void ResetModified();
     bool IsModified();
     const std::vector<std::shared_ptr<CStudent>>& GetStudents() const;
 
     bool const operator == (const CUniversity& other) const
     {        
-        return (m_name == other.m_name) && m_students == other.m_students;
+        return this == std::addressof(other);
     }
 
     bool const operator != (const CUniversity& other) const

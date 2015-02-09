@@ -92,6 +92,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lab5-1\Body.cpp" />
     <ClCompile Include="..\lab5-1\Cone.cpp" />
     <ClCompile Include="..\lab5-1\Cylinder.cpp" />
     <ClCompile Include="..\lab5-1\Parallelepiped.cpp" />

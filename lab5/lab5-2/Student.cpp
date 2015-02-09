@@ -8,10 +8,11 @@ CStudent::CStudent(void)
       m_university(nullptr)
 {}
 
-CStudent::CStudent(bool isMan, unsigned age, double growth, double weight, const std::wstring& name, unsigned course, const CUniversity& university)
+CStudent::CStudent(bool isMan, unsigned age, double growth, double weight, const std::wstring& name,
+                   unsigned course, const std::shared_ptr<CUniversity>& university)
     : CPerson(isMan, age, growth, weight, name),
       m_course(course),
-      m_university(make_shared<const CUniversity>(university))
+      m_university(university)
 {}
 
 CStudent::~CStudent(void)
@@ -31,9 +32,9 @@ unsigned CStudent::GetCourse() const
     return m_course;
 }
 
-void CStudent::SetUniversity(const CUniversity& university)
+void CStudent::SetUniversity(const shared_ptr<CUniversity>& university)
 {
-    m_university = make_shared<const CUniversity>(university);
+    m_university = university;
 }
 
 const CUniversity& CStudent::GetUniversity()

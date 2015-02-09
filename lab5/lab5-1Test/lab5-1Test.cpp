@@ -7,6 +7,8 @@
 #include "..\lab5-1\Cone.h"
 #include "..\lab5-1\Parallelepiped.h"
 #include "..\lab5-1\Cylinder.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 struct SphereFixture
 {
@@ -31,12 +33,12 @@ BOOST_FIXTURE_TEST_SUITE(Sphere,  SphereFixture)
 
     BOOST_AUTO_TEST_CASE(HasVolume)
 	{
-        BOOST_CHECK_EQUAL(sphere.GetVolume(), 523.59877559829886);
+        BOOST_CHECK_CLOSE(sphere.GetVolume(), 4 * M_PI * pow(5, 3) / 3, 0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasWeight)
 	{
-        BOOST_CHECK_EQUAL(sphere.GetWeight(), 523598.77559829887);
+        BOOST_CHECK_CLOSE(sphere.GetWeight(), 4 * M_PI * pow(5, 3) * 1000/ 3, 0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasStringRepresentation)
@@ -74,12 +76,12 @@ BOOST_FIXTURE_TEST_SUITE(Cone, ConeFixture)
 
     BOOST_AUTO_TEST_CASE(HasVolume)
 	{
-        BOOST_CHECK_EQUAL(cone.GetVolume(), 157.07963267948966);
+        BOOST_CHECK_CLOSE(cone.GetVolume(), pow(5,2) * M_PI * 2,  0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasWeight)
 	{
-        BOOST_CHECK_EQUAL(cone.GetWeight(), 157079.63267948967);
+        BOOST_CHECK_CLOSE(cone.GetWeight(), pow(5,2) * M_PI * 2 * 1000,  0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasStringRepresentation)
@@ -118,12 +120,12 @@ BOOST_FIXTURE_TEST_SUITE(Cylinder, CylinderFixture)
 
     BOOST_AUTO_TEST_CASE(HasVolume)
 	{
-        BOOST_CHECK_EQUAL(cylinder.GetVolume(), 157.07963267948966);
+        BOOST_CHECK_CLOSE(cylinder.GetVolume(), pow(5,2) * M_PI * 2,  0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasWeight)
 	{
-        BOOST_CHECK_EQUAL(cylinder.GetWeight(), 157079.63267948967);
+        BOOST_CHECK_CLOSE(cylinder.GetWeight(), pow(5,2) * M_PI * 2 * 1000,  0.0001);
 	}
 
     BOOST_AUTO_TEST_CASE(HasStringRepresentation)

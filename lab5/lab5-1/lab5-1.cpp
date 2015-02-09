@@ -15,13 +15,14 @@
 
 using namespace std;
 
-shared_ptr<CBody> GetBodyFromStream(const string& bodyName, istream& stream);
-shared_ptr<CParallelepiped> GetParallelepiped(istream& stream);
-shared_ptr<CCone> GetCone(istream& stream);
-shared_ptr<CCylinder> GetCylinder(istream& stream);
-shared_ptr<CSphere> GetSphere(istream& stream);
+shared_ptr<CBody> CreateBodyFromStream(const string& bodyName, istream& stream);
+shared_ptr<CParallelepiped> CreateParallelepiped(istream& stream);
+shared_ptr<CCone> CreateCone(istream& stream);
+shared_ptr<CCylinder> CreateCylinder(istream& stream);
+shared_ptr<CSphere> CreateSphere(istream& stream);
 double ReadDoubleValue(istream& stream);
-bool CompareWeightInWater(CBody & b1, CBody & b2);
+bool CompareWeightInWater(const CBody & b1, const CBody & b2);
+double CalculateWeightInWater(const CBody & body);
 
 const double WATER_DENSITY = 1000;
 const double ACCELERATION_OF_GRAVITY = 10;
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
     {
         try
         {
-            threeDimensionalBody.push_back(GetBodyFromStream(newString, cin));
+            threeDimensionalBody.push_back(CreateBodyFromStream(newString, cin));
             cout << "Body added" << endl;
         }
         catch(std::exception const& e)
@@ -45,6 +46,13 @@ int main(int argc, char* argv[])
         }        
         cin >> newString;
     }
+
+    if (threeDimensionalBody.size() == 0)
+    {
+        cout << "There are no bodies" << endl;
+        return 0;
+    }
+
     cout << "Body with max weight:" << endl;
     auto body = max_element(threeDimensionalBody.begin(), threeDimensionalBody.end(), 
                             [](const shared_ptr<CBody>& b1, const shared_ptr<CBody>& b2) {
@@ -55,7 +63,7 @@ int main(int argc, char* argv[])
 
     cout << "Body wich has min weight in water:" << endl;
     body = min_element(threeDimensionalBody.begin(), threeDimensionalBody.end(), 
-                            [](shared_ptr<CBody> b1, shared_ptr<CBody> b2) {
+                            [](const shared_ptr<CBody>& b1, const shared_ptr<CBody>& b2) {
                                  return CompareWeightInWater(*b1, *b2);
                              });
     cout << (*body)->ToString() << endl;
@@ -63,30 +71,33 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool CompareWeightInWater(CBody & b1, CBody & b2)
+bool CompareWeightInWater(const CBody & b1, const CBody & b2)
 {
-    double weight1 = (b1.GetDensity() - WATER_DENSITY) * ACCELERATION_OF_GRAVITY * b1.GetVolume();
-    double weight2 = (b2.GetDensity() - WATER_DENSITY) * ACCELERATION_OF_GRAVITY * b2.GetVolume();
-    return weight1 < weight2;
+    return CalculateWeightInWater(b1) < CalculateWeightInWater(b2);
 }
 
-shared_ptr<CBody> GetBodyFromStream(const string& bodyName, istream& stream)
+double CalculateWeightInWater(const CBody & body)
+{
+    return (body.GetDensity() - WATER_DENSITY) * ACCELERATION_OF_GRAVITY * body.GetVolume();
+}
+
+shared_ptr<CBody> CreateBodyFromStream(const string& bodyName, istream& stream)
 {    
     if (bodyName == "Parallelepiped")
     {
-        return GetParallelepiped(stream);
+        return CreateParallelepiped(stream);
     }
     else if (bodyName == "Cone")
     {
-        return GetCone(stream);
+        return CreateCone(stream);
     }
     else if (bodyName == "Cylinder")
     {
-        return GetCylinder(stream);
+        return CreateCylinder(stream);
     }
     else if (bodyName == "Sphere")
     {
-        return GetSphere(stream);
+        return CreateSphere(stream);
     }
     else
     {
@@ -94,7 +105,7 @@ shared_ptr<CBody> GetBodyFromStream(const string& bodyName, istream& stream)
     }
 }
 
-shared_ptr<CParallelepiped> GetParallelepiped(istream& stream)
+shared_ptr<CParallelepiped> CreateParallelepiped(istream& stream)
 {
     double density = ReadDoubleValue(stream);
     double width   = ReadDoubleValue(stream);
@@ -103,7 +114,7 @@ shared_ptr<CParallelepiped> GetParallelepiped(istream& stream)
     return make_shared<CParallelepiped>(CParallelepiped(density, width, height, depth));
 }
 
-shared_ptr<CCone> GetCone(istream& stream)
+shared_ptr<CCone> CreateCone(istream& stream)
 {
     double density = ReadDoubleValue(stream);
     double radius  = ReadDoubleValue(stream);
@@ -111,7 +122,7 @@ shared_ptr<CCone> GetCone(istream& stream)
     return make_shared<CCone>(CCone(density, radius, height));
 }
 
-shared_ptr<CCylinder> GetCylinder(istream& stream)
+shared_ptr<CCylinder> CreateCylinder(istream& stream)
 {
     double density = ReadDoubleValue(stream);
     double radius  = ReadDoubleValue(stream);
@@ -119,7 +130,7 @@ shared_ptr<CCylinder> GetCylinder(istream& stream)
     return make_shared<CCylinder>(CCylinder(density, radius, height));
 }
 
-shared_ptr<CSphere> GetSphere(istream& stream)
+shared_ptr<CSphere> CreateSphere(istream& stream)
 {
     double density = ReadDoubleValue(stream);
     double radius  = ReadDoubleValue(stream);

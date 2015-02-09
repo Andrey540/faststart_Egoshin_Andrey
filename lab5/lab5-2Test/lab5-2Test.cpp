@@ -83,10 +83,10 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct UniversityFixture
 {
-	CUniversity university;
+	std::shared_ptr<CUniversity> university;
     UniversityFixture()
     {
-        university = CUniversity(L"МГУ");
+        university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
     }
 };
 
@@ -94,27 +94,27 @@ BOOST_FIXTURE_TEST_SUITE(University, UniversityFixture)
 
     BOOST_AUTO_TEST_CASE(HaveParametersTurnedToConstructor)
 	{
-        BOOST_CHECK_EQUAL(CheckEqualWstrings(university.GetName(), L"МГУ"), true);
+        BOOST_CHECK_EQUAL(CheckEqualWstrings(university->GetName(), L"МГУ"), true);
 	}
 
     BOOST_AUTO_TEST_CASE(CantSetEmptyName)
 	{
-        BOOST_CHECK_THROW(university.SetName(L""), std::domain_error);
-        BOOST_CHECK_EQUAL(CheckEqualWstrings(university.GetName(), L"МГУ"), true);
+        BOOST_CHECK_THROW(university->SetName(L""), std::domain_error);
+        BOOST_CHECK_EQUAL(CheckEqualWstrings(university->GetName(), L"МГУ"), true);
 	}
 
     BOOST_AUTO_TEST_CASE(CanSetName)
 	{
-        BOOST_CHECK_NO_THROW(university.SetName(L"Баумана"));
-        BOOST_CHECK_EQUAL(CheckEqualWstrings(university.GetName(), L"Баумана"), true);
+        BOOST_CHECK_NO_THROW(university->SetName(L"Баумана"));
+        BOOST_CHECK_EQUAL(CheckEqualWstrings(university->GetName(), L"Баумана"), true);
 	}
 
     BOOST_AUTO_TEST_CASE(CanAddStudent)
 	{
-        CStudent student = CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university);
-        BOOST_CHECK_EQUAL(university.GetStudents().size(), 0);
-        BOOST_CHECK_NO_THROW(university.AddStudent(student));
-        BOOST_CHECK_EQUAL(university.GetStudents().size(), 1);
+        std::shared_ptr<CStudent> student = std::make_shared<CStudent>(CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university));
+        BOOST_CHECK_EQUAL(university->GetStudents().size(), 0);
+        BOOST_CHECK_NO_THROW(university->AddStudent(student));
+        BOOST_CHECK_EQUAL(university->GetStudents().size(), 1);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -122,15 +122,15 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct UniversityWithStudentsFixture
 {
-	CUniversity university;
+	std::shared_ptr<CUniversity> university;
     UniversityWithStudentsFixture()
     {
-        university = CUniversity(L"МГУ");
-        CStudent student1 = CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university);
-        CStudent student2 = CStudent(true, 23, 190.9, 71.9, L"Витя", 2, university);
-        university.AddStudent(student1);
-        university.AddStudent(student2);
-        university.ResetModified();
+        university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
+        std::shared_ptr<CStudent> student1 = std::make_shared<CStudent>(CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university));
+        std::shared_ptr<CStudent> student2 = std::make_shared<CStudent>(CStudent(true, 23, 190.9, 71.9, L"Витя", 2, university));
+        university->AddStudent(student1);
+        university->AddStudent(student2);
+        university->ResetModified();
     }
 };
 
@@ -138,24 +138,24 @@ BOOST_FIXTURE_TEST_SUITE(UniversityWithStudents, UniversityWithStudentsFixture)
 
     BOOST_AUTO_TEST_CASE(Has2StudentsAndNotModified)
 	{
-        BOOST_CHECK_EQUAL(university.GetStudents().size(), 2);
-        BOOST_CHECK(!university.IsModified());
+        BOOST_CHECK_EQUAL(university->GetStudents().size(), 2);
+        BOOST_CHECK(!university->IsModified());
 	}
 
     BOOST_AUTO_TEST_CASE(CanDeleteFirstStudentAndBecomeChanged)
 	{
-        BOOST_CHECK_NO_THROW(university.DeleteStudent(1));
-        BOOST_CHECK_EQUAL(university.GetStudents().size(), 1);
-        BOOST_CHECK(university.IsModified());
+        BOOST_CHECK_NO_THROW(university->DeleteStudent(1));
+        BOOST_CHECK_EQUAL(university->GetStudents().size(), 1);
+        BOOST_CHECK(university->IsModified());
 	}
 
     BOOST_AUTO_TEST_CASE(CanChangeStudentAndBecomeChanged)
 	{
-        CStudent newStudent = CStudent(true, 20, 190.9, 70.9, L"Сергей", 2, university);   
-        BOOST_CHECK_NO_THROW(university.ChangeStudent(1, newStudent));
-        const std::vector<std::shared_ptr<CStudent>> students = university.GetStudents();
-        BOOST_CHECK(newStudent == *(students[0]));
-        BOOST_CHECK(university.IsModified());
+        auto newStudent = std::make_shared<CStudent>(CStudent(true, 20, 190.9, 70.9, L"Сергей", 2, university));   
+        BOOST_CHECK_NO_THROW(university->ChangeStudent(1, newStudent));
+        const std::vector<std::shared_ptr<CStudent>> students = university->GetStudents();
+        BOOST_CHECK(newStudent == students[0]);
+        BOOST_CHECK(university->IsModified());
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -163,10 +163,10 @@ BOOST_AUTO_TEST_SUITE_END()
 struct StudentFixture
 {
 	CStudent student;
-    CUniversity university;
+    std::shared_ptr<CUniversity> university;
     StudentFixture()
     {
-        university = CUniversity(L"МГУ");
+        university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
         student = CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university);
     }
 };
@@ -176,7 +176,7 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
     BOOST_AUTO_TEST_CASE(HaveParametersTurnedToConstructor)
 	{
         BOOST_CHECK_EQUAL(student.GetCourse(), 2);
-        BOOST_CHECK(student.GetUniversity() == university);
+        BOOST_CHECK(student.GetUniversity() == *university);
 	}
 
     BOOST_AUTO_TEST_CASE(CantSetCourseLessThanExist)
@@ -193,9 +193,37 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
 
     BOOST_AUTO_TEST_CASE(CanSetUniversity)
 	{
-        CUniversity university = CUniversity(L"Баумана");
-        BOOST_CHECK_NO_THROW(student.SetUniversity(university));
-        BOOST_CHECK(student.GetUniversity() == university);
+        auto university1 = std::make_shared<CUniversity>(CUniversity(L"Баумана"));
+        BOOST_CHECK_NO_THROW(student.SetUniversity(university1));
+        BOOST_CHECK(student.GetUniversity() == *university1);
+	}
+
+    BOOST_AUTO_TEST_CASE(NotEqualWithOtherPerson)
+	{
+        CPerson person(true, 16, 1.7, 70.9, L"Ivanov Ivan");
+        CStudent student(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
+        CPerson & studentAsPerson = student;
+        BOOST_CHECK(person != studentAsPerson); 
+        BOOST_CHECK(studentAsPerson != person);
+	}
+
+    BOOST_AUTO_TEST_CASE(NotEqualStudentCastedTpPersonWithOtherPerson)
+	{
+        CPerson person(true, 16, 1.7, 70.9, L"Ivanov Ivan");
+        CStudent student(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
+        BOOST_CHECK(person != student); 
+        BOOST_CHECK(student != person);
+	}
+
+    BOOST_AUTO_TEST_CASE(NotEqualWithOtherStudent)
+	{
+        auto otherUniversity = std::make_shared<CUniversity>(CUniversity(L"Баумана"));
+        CStudent student1(true, 16, 1.7, 70.9, L"Ivanov Ivan", 4, otherUniversity);
+        CStudent student2(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
+        CPerson &  student1AsPerson = student1;
+        CPerson &  student2AsPerson = student2;
+        BOOST_CHECK(student1AsPerson != student2AsPerson); 
+        BOOST_CHECK(student1 != student2);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -209,7 +237,7 @@ BOOST_FIXTURE_TEST_SUITE(EmptyUniversityCollectionManager, EmptyUniversityCollec
 
     BOOST_AUTO_TEST_CASE(CanAddUniversity)
 	{
-        CUniversity university = CUniversity(L"МГУ");
+        std::shared_ptr<CUniversity> university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
         BOOST_CHECK_NO_THROW(manager.AddUniversity(university));
         BOOST_CHECK_EQUAL(manager.GetUniversities().size(), 1);
 	}
@@ -222,9 +250,9 @@ struct UniversityCollectionManagerFixture
 
     UniversityCollectionManagerFixture()
     {
-        CUniversity university1 = CUniversity(L"МГУ");
+        std::shared_ptr<CUniversity> university1 = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
         manager.AddUniversity(university1);       
-        CUniversity university2 = CUniversity(L"Баумана");
+        std::shared_ptr<CUniversity> university2 = std::make_shared<CUniversity>(CUniversity(L"Баумана"));
         manager.AddUniversity(university2);
     }
 };
@@ -238,7 +266,7 @@ BOOST_FIXTURE_TEST_SUITE(UniversityCollectionManager, UniversityCollectionManage
 
     BOOST_AUTO_TEST_CASE(CantAddAlreadyExistUniversity)
 	{
-        CUniversity university = CUniversity(L"МГУ");
+        std::shared_ptr<CUniversity> university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
         BOOST_CHECK_THROW(manager.AddUniversity(university), std::domain_error);
         BOOST_CHECK_EQUAL(manager.GetUniversities().size(), 2);
 	}
@@ -264,10 +292,10 @@ BOOST_FIXTURE_TEST_SUITE(UniversityCollectionManager, UniversityCollectionManage
 
     BOOST_AUTO_TEST_CASE(CanChangeUniversity)
 	{
-        CUniversity university = CUniversity(L"ПГТУ");
+        auto university = std::make_shared<CUniversity>(CUniversity(L"ПГТУ"));
         BOOST_CHECK_NO_THROW(manager.ChangeUniversity(1, university));
         const std::vector<std::shared_ptr<CUniversity>> vectorUniversities = manager.GetUniversities();
-        BOOST_CHECK(*(vectorUniversities[0]) == university);
+        BOOST_CHECK(vectorUniversities[0] == university);
 	}
 
     BOOST_AUTO_TEST_CASE(CantSetAlreadyExistUniversityName)

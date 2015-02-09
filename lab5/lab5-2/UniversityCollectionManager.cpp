@@ -16,16 +16,16 @@ CUniversityCollectionManager::CUniversityCollectionManager(void)
 CUniversityCollectionManager::~CUniversityCollectionManager(void)
 {}
 
-void CUniversityCollectionManager::AddUniversity(const CUniversity& university)
+void CUniversityCollectionManager::AddUniversity(const shared_ptr<CUniversity>& university)
 {    
-    if (!IsNameUnique(university.GetName()))
+    if (!IsNameUnique(university->GetName()))
     {
-        wstring name = university.GetName();
+        wstring name = university->GetName();
         throw domain_error("University with name " + string(name.begin(), name.end()) + " already exist");
     }
-    wstring name = university.GetName();
-    m_universities.push_back(make_shared<CUniversity>(university));
-    m_relationships[make_shared<CUniversity>(university)] = string(name.begin(), name.end()) + ".txt";
+    wstring name = university->GetName();
+    m_universities.push_back(university);
+    m_relationships[university] = string(name.begin(), name.end()) + ".txt";
     m_isModified = true;
 }
 
@@ -40,17 +40,22 @@ void CUniversityCollectionManager::DeleteUniversity(unsigned index)
     m_isModified = true;
 }
 
-void CUniversityCollectionManager::ChangeUniversity(unsigned index, const CUniversity& newUniversity)
+void CUniversityCollectionManager::ChangeUniversity(unsigned index, const shared_ptr<CUniversity>& newUniversity)
 {
     if (index > m_universities.size() || index == 0)
     {
         throw domain_error("Incorrect university index");
     }
 
-    if (m_universities[index - 1]->GetName() == newUniversity.GetName() ||
-        IsNameUnique(newUniversity.GetName()))
+    if (m_universities[index - 1]->GetName() == newUniversity->GetName() ||
+        IsNameUnique(newUniversity->GetName()))
     {
-        m_universities[index - 1] = make_shared<CUniversity>(newUniversity);
+        m_universities[index - 1] = newUniversity;
+    }
+    else
+    {
+        wstring name = newUniversity->GetName();
+        throw domain_error("University with name " + string(name.begin(), name.end()) + " already exist");
     }
     m_isModified = true;
 }
@@ -110,7 +115,7 @@ shared_ptr<CUniversity> CUniversityCollectionManager::ReadUniversityFromFile(con
     file.imbue(m_locale);
     wstring str;
     getline(file, str);
-    CUniversity university(str);
+    shared_ptr<CUniversity> university = std::make_shared<CUniversity>(CUniversity(str));
 
     getline(file, str);
     while(!file.eof() && !str.empty())
@@ -121,13 +126,13 @@ shared_ptr<CUniversity> CUniversityCollectionManager::ReadUniversityFromFile(con
         double growth;
         unsigned course;        
         file >> isMan >> age >> growth >> weight >> course;
-        CStudent student(isMan, age, growth, weight, str, course, university);
-        university.AddStudent(student);
+        shared_ptr<CStudent> student = make_shared<CStudent>(CStudent(isMan, age, growth, weight, str, course, university));
+        university->AddStudent(student);
         getline(file, str);
     }
-    university.ResetModified();
+    university->ResetModified();
 
-    return make_shared<CUniversity>(university);
+    return university;
 }
 
 void CUniversityCollectionManager::SaveUniversityToFile(const std::string& filePath, const shared_ptr<CUniversity>& university) const

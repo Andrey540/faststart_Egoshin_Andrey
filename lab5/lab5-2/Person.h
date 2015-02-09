@@ -20,12 +20,8 @@ public:
     bool IsMan() const;
 
     bool const operator == (const CPerson& other) const
-    {        
-        return m_isMan == other.m_isMan &&
-               m_age == other.m_age &&
-               m_growth == other.m_growth &&
-               m_name == other.m_name &&
-               m_weight == other.m_weight;
+    {
+        return this == std::addressof(other);
     }
 
     bool const operator != (const CPerson& other) const

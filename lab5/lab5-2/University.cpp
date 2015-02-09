@@ -37,9 +37,9 @@ const std::vector<std::shared_ptr<CStudent>>& CUniversity::GetStudents() const
     return m_students;
 }
 
-void CUniversity::AddStudent(const CStudent& student)
+void CUniversity::AddStudent(const shared_ptr<CStudent>& student)
 {
-    m_students.push_back(make_shared<CStudent>(student));
+    m_students.push_back(student);
     m_isModified = true;
 }
 
@@ -63,13 +63,13 @@ void CUniversity::DeleteStudent(unsigned index)
     m_isModified = true;
 }
 
-void CUniversity::ChangeStudent(unsigned index, const CStudent& student)
+void CUniversity::ChangeStudent(unsigned index, const shared_ptr<CStudent>& student)
 {
     if (index > m_students.size() || index == 0)
     {
         throw runtime_error("Incorrect student index");
     }
-    m_students[index - 1] = std::make_shared<CStudent>(student);
+    m_students[index - 1] = student;
     m_isModified = true;
 }
 
