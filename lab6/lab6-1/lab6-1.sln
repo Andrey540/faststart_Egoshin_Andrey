@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lab6-1", "lab6-1\lab6-1.vcxproj", "{4A3D6114-596C-4307-AC2E-1DABA1A1D530}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lab6-1Test", "lab6-1Test\lab6-1Test.vcxproj", "{9E407976-DD82-46DE-9FAA-3CA358D8CA0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A3D6114-596C-4307-AC2E-1DABA1A1D530}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4A3D6114-596C-4307-AC2E-1DABA1A1D530}.Debug|Win32.Build.0 = Debug|Win32
+		{4A3D6114-596C-4307-AC2E-1DABA1A1D530}.Release|Win32.ActiveCfg = Release|Win32
+		{4A3D6114-596C-4307-AC2E-1DABA1A1D530}.Release|Win32.Build.0 = Release|Win32
+		{9E407976-DD82-46DE-9FAA-3CA358D8CA0D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E407976-DD82-46DE-9FAA-3CA358D8CA0D}.Debug|Win32.Build.0 = Debug|Win32
+		{9E407976-DD82-46DE-9FAA-3CA358D8CA0D}.Release|Win32.ActiveCfg = Release|Win32
+		{9E407976-DD82-46DE-9FAA-3CA358D8CA0D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
