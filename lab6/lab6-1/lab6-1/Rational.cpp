@@ -18,18 +18,7 @@ unsigned GCD(unsigned x, unsigned y)
 
 CRational::CRational(int numerator, int denominator)
 {
-	if (denominator == 0)
-	{
-		throw invalid_argument("Denominator must not be zero");
-	}
-	if (denominator < 0)
-	{
-		numerator = -numerator;
-		denominator = -denominator;
-	}
-	int gcd = GCD(abs(numerator), abs(denominator));
-	m_numerator = numerator / gcd;
-	m_denominator = denominator / gcd;
+	Assign(numerator, denominator);
 }
 
 // Возвращаем числитель
@@ -66,60 +55,35 @@ CRational& CRational::operator+()
     return *this;
 }
 
-const CRational CRational::operator + (CRational const & rhs)const
-{
-	return CRational(
-		m_numerator * rhs.m_denominator + rhs.m_numerator * m_denominator, 
-		m_denominator * rhs.m_denominator		
-	);
-}
 
-const CRational CRational::operator - (CRational const & rhs)const
+CRational& CRational::operator+=(CRational const& rhs)
 {
-	return CRational(
-		m_numerator * rhs.m_denominator - rhs.m_numerator * m_denominator, 
-		m_denominator * rhs.m_denominator		
-	);
-}
+	Assign(rhs.m_numerator * m_denominator + 
+		   rhs.m_denominator * m_numerator, 
+		   m_denominator * rhs.m_denominator);
 
-CRational& CRational::operator+=(CRational const & rhs)
-{
-    *this = *this + rhs;
-    return *this;
+	return *this;
 }
 
 CRational& CRational::operator-=(CRational const & rhs)
 {
-    *this = *this - rhs;
-    return *this;
-}
+	Assign(m_numerator * rhs.m_denominator - 
+		   m_denominator * rhs.m_numerator, 
+		   m_denominator * rhs.m_denominator);
 
-const CRational CRational::operator*(CRational const & rhs)const
-{
-	return CRational(
-		m_numerator * rhs.m_numerator, 
-		m_denominator * rhs.m_denominator		
-	);
-}
-
-const CRational CRational::operator/(CRational const & rhs)const
-{
-    return CRational(
-		m_numerator * rhs.m_denominator, 
-		m_denominator * rhs.m_numerator		
-	);
+	return *this;
 }
 
 CRational& CRational::operator*=(CRational const & rhs)
 {
-    *this = *this * rhs;
-    return *this;
+	Assign(rhs.m_numerator * m_numerator, rhs.m_denominator * m_denominator);
+	return *this;
 }
 
 CRational& CRational::operator/=(CRational const & rhs)
 {
-    *this = *this / rhs;
-    return *this;
+    Assign(m_numerator * rhs.m_denominator, m_denominator * rhs.m_numerator);
+	return *this;
 }
 
 bool CRational::operator<(CRational const & rhs)const
@@ -142,12 +106,41 @@ bool CRational::operator>=(CRational const & rhs)const
     return !(*this < rhs);
 }
 
+double CRational::ToDouble()const
+{
+    return static_cast<double>(m_numerator) / static_cast<double>(m_denominator);
+}
+
+CRational const operator+(CRational lhs, CRational const & rhs)
+{
+	return lhs += rhs;
+}
+
+CRational const operator-(CRational lhs, CRational const & rhs)
+{
+	return lhs -= rhs;
+}
+
+CRational const operator*(CRational lhs, CRational const & rhs)
+{
+	return lhs *= rhs;
+}
+
+CRational const operator/(CRational lhs, CRational const & rhs)
+{
+	return lhs /= rhs;
+}
+
 std::istream & operator>>(std::istream & is, CRational & rhs)
 {
     int numerator;
     int denominator;
     char delimiter;
     is >> numerator >> delimiter >> denominator;
+    if (delimiter != '/')
+    {
+        throw std::domain_error("Incorrect delimeter");
+    }
     rhs = CRational(numerator, denominator);
     return is;
 }
@@ -156,4 +149,20 @@ std::ostream & operator<<(std::ostream & os, CRational const & rhs)
 {
     os << rhs.GetNumerator() << "/" << rhs.GetDenominator();
     return os;
+}
+
+void CRational::Assign(int numerator, int denominator)
+{
+	if (denominator == 0)
+	{
+		throw std::invalid_argument("Denominator must not be zero");
+	}
+	if (denominator < 0)
+	{
+		numerator = -numerator;
+		denominator = -denominator;
+	}
+	int gcd = GCD(std::abs(numerator), denominator);
+	m_numerator = numerator / gcd;
+	m_denominator = denominator / gcd;
 }

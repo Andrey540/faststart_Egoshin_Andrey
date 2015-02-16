@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(UnaryPlus)
 BOOST_AUTO_TEST_CASE(Sum)
 {
 	BOOST_CHECK(CRational(1, 2) + CRational(1, 3) == CRational(5, 6));
-
+    BOOST_CHECK(CRational(1, 6) + CRational(1, 6) == CRational(1, 3));
     {
         CRational r(1, 2);
         r += CRational(1, 3);
@@ -123,6 +123,7 @@ BOOST_AUTO_TEST_CASE(Division)
     BOOST_CHECK(CRational(1, 2) / CRational(-1, 3) == CRational(-3, 2));
     BOOST_CHECK(CRational(-1, 2) / CRational(-1, 3) == CRational(3, 2));
     BOOST_CHECK(CRational(3, 2) / CRational(2, 3) == CRational(9, 4));
+    BOOST_CHECK(CRational(3, 2) / CRational(1, 2) == CRational(3, 1));
 
     {
         CRational r(3, 2);
@@ -221,5 +222,46 @@ BOOST_AUTO_TEST_CASE(DenominatorMustNotBeZero)
 	BOOST_CHECK_THROW((CRational(1, 0)), std::invalid_argument);
 }
 
+BOOST_AUTO_TEST_CASE(AdditionWithInteger)
+{
+	BOOST_CHECK(CRational(1, 2) + 1 == CRational(3, 2));
+	BOOST_CHECK(1 + CRational(1, 2) == CRational(3, 2));
+}
+
+BOOST_AUTO_TEST_CASE(MultiplicationWithInteger)
+{
+	BOOST_CHECK(CRational(1, 2) * 3 == CRational(3, 2));
+	BOOST_CHECK(3 * CRational(1, 2) == CRational(3, 2));
+}
+
+BOOST_AUTO_TEST_CASE(DivisionWithInteger)
+{
+	BOOST_CHECK(CRational(1, 2) / 3 == CRational(1, 6));
+	BOOST_CHECK(3 / CRational(1, 2) == CRational(6, 1));
+}
+
+BOOST_AUTO_TEST_CASE(SubstructionWithInteger)
+{
+	BOOST_CHECK(CRational(1, 2) - 2 == CRational(-3, 2));
+	BOOST_CHECK(2 - CRational(1, 2) == CRational(3, 2));
+}
+
+BOOST_AUTO_TEST_CASE(CanBeConvertToDouble)
+{
+    {
+        CRational r(1, 2);
+        BOOST_CHECK_CLOSE(r.ToDouble(), 1.0 / 2.0, 0.0001);
+    }
+
+    {
+        CRational r(5, 3);
+        BOOST_CHECK_CLOSE(r.ToDouble(), 5.0 / 3.0, 0.0001);
+    }
+
+    {
+        CRational r(-1, 8);
+        BOOST_CHECK_CLOSE(r.ToDouble(), -1.0 / 8.0, 0.0001);
+    }
+}
 
 BOOST_AUTO_TEST_SUITE_END()
