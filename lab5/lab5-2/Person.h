@@ -4,7 +4,6 @@
 class CPerson
 {
 public:
-    CPerson(void);
     CPerson(bool isMan, unsigned age, double growth, double weight, const std::wstring& name);
     virtual ~CPerson(void);
 
@@ -18,16 +17,6 @@ public:
     double GetWeight() const;
     double GetGrowth() const;
     bool IsMan() const;
-
-    bool const operator == (const CPerson& other) const
-    {
-        return this == std::addressof(other);
-    }
-
-    bool const operator != (const CPerson& other) const
-    {             
-        return !(*this == other);
-    }
 
 private:
     bool m_isMan;

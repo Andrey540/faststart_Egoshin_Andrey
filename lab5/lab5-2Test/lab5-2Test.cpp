@@ -6,6 +6,7 @@
 #include "..\lab5-2\University.h"
 #include "..\lab5-2\Student.h"
 #include "..\lab5-2\UniversityCollectionManager.h"
+#include <vld.h>
 
 bool CheckEqualWstrings(const std::wstring& s1, const std::wstring& s2)
 {
@@ -16,9 +17,8 @@ struct PersonFixture
 {
 	CPerson person;
     PersonFixture()
-    {
-        person = CPerson(true, 34, 190.9, 70.9, L"Николай");
-    }
+        : person(true, 34, 190.9, 70.9, L"Николай")
+    {}
 };
 
 BOOST_FIXTURE_TEST_SUITE(Person,  PersonFixture)
@@ -124,11 +124,11 @@ struct UniversityWithStudentsFixture
 {
 	std::shared_ptr<CUniversity> university;
     UniversityWithStudentsFixture()
-    {
-        university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
+        : university(std::make_shared<CUniversity>(CUniversity(L"МГУ")))
+    {               
         std::shared_ptr<CStudent> student1 = std::make_shared<CStudent>(CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university));
         std::shared_ptr<CStudent> student2 = std::make_shared<CStudent>(CStudent(true, 23, 190.9, 71.9, L"Витя", 2, university));
-        university->AddStudent(student1);
+        university->AddStudent(std::make_shared<CStudent>(CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university)));
         university->AddStudent(student2);
         university->ResetModified();
     }
@@ -162,13 +162,12 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct StudentFixture
 {
-	CStudent student;
     std::shared_ptr<CUniversity> university;
+	CStudent student;    
     StudentFixture()
-    {
-        university = std::make_shared<CUniversity>(CUniversity(L"МГУ"));
-        student = CStudent(true, 20, 190.9, 70.9, L"Николай", 2, university);
-    }
+        : university(std::make_shared<CUniversity>(CUniversity(L"МГУ"))), 
+          student(true, 20, 190.9, 70.9, L"Николай", 2, university)
+    {}
 };
 
 BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
@@ -176,7 +175,7 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
     BOOST_AUTO_TEST_CASE(HaveParametersTurnedToConstructor)
 	{
         BOOST_CHECK_EQUAL(student.GetCourse(), 2);
-        BOOST_CHECK(student.GetUniversity() == *university);
+        BOOST_CHECK(student.GetUniversity() == university);
 	}
 
     BOOST_AUTO_TEST_CASE(CantSetCourseLessThanExist)
@@ -195,7 +194,7 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
 	{
         auto university1 = std::make_shared<CUniversity>(CUniversity(L"Баумана"));
         BOOST_CHECK_NO_THROW(student.SetUniversity(university1));
-        BOOST_CHECK(student.GetUniversity() == *university1);
+        BOOST_CHECK(student.GetUniversity() == university1);
 	}
 
     BOOST_AUTO_TEST_CASE(NotEqualWithOtherPerson)
@@ -203,16 +202,16 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
         CPerson person(true, 16, 1.7, 70.9, L"Ivanov Ivan");
         CStudent student(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
         CPerson & studentAsPerson = student;
-        BOOST_CHECK(person != studentAsPerson); 
-        BOOST_CHECK(studentAsPerson != person);
+        BOOST_CHECK(&person != &studentAsPerson); 
+        BOOST_CHECK(&studentAsPerson != &person);
 	}
 
     BOOST_AUTO_TEST_CASE(NotEqualStudentCastedTpPersonWithOtherPerson)
 	{
         CPerson person(true, 16, 1.7, 70.9, L"Ivanov Ivan");
         CStudent student(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
-        BOOST_CHECK(person != student); 
-        BOOST_CHECK(student != person);
+        BOOST_CHECK(&person != &student); 
+        BOOST_CHECK(&student != &person);
 	}
 
     BOOST_AUTO_TEST_CASE(NotEqualWithOtherStudent)
@@ -222,8 +221,8 @@ BOOST_FIXTURE_TEST_SUITE(Student, StudentFixture)
         CStudent student2(true, 16, 1.7, 70.9, L"Ivanov Ivan", 3, university);
         CPerson &  student1AsPerson = student1;
         CPerson &  student2AsPerson = student2;
-        BOOST_CHECK(student1AsPerson != student2AsPerson); 
-        BOOST_CHECK(student1 != student2);
+        BOOST_CHECK(&student1AsPerson != &student2AsPerson); 
+        BOOST_CHECK(&student1 != &student2);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

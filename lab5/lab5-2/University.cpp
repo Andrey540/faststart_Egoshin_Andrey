@@ -4,11 +4,6 @@
 
 using namespace std;
 
-CUniversity::CUniversity(void)
-    : m_name(L""),
-      m_isModified(false)
-{}
-
 CUniversity::CUniversity(const wstring& name)
     : m_name(name),
       m_isModified(false)
@@ -17,9 +12,7 @@ CUniversity::CUniversity(const wstring& name)
 }
 
 CUniversity::~CUniversity(void)
-{
-    m_students.clear();
-}
+{}
 
 void CUniversity::SetName(const std::wstring& name)
 {

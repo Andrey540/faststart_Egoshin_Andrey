@@ -8,14 +8,6 @@
 
 using namespace std;
 
-CPerson::CPerson(void)
-    : m_isMan(true),
-      m_age(0),
-      m_growth(0),
-      m_weight(0),
-      m_name(L"")
-{}
-
 CPerson::CPerson(bool isMan, unsigned age, double growth, double weight, const wstring& name)
     : m_isMan(isMan),
       m_age(age),

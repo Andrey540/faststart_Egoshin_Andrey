@@ -3,11 +3,6 @@
 
 using namespace std;
 
-CStudent::CStudent(void)
-    : m_course(0),
-      m_university(nullptr)
-{}
-
 CStudent::CStudent(bool isMan, unsigned age, double growth, double weight, const std::wstring& name,
                    unsigned course, const std::shared_ptr<CUniversity>& university)
     : CPerson(isMan, age, growth, weight, name),
@@ -37,7 +32,7 @@ void CStudent::SetUniversity(const shared_ptr<CUniversity>& university)
     m_university = university;
 }
 
-const CUniversity& CStudent::GetUniversity()
+const shared_ptr<CUniversity> CStudent::GetUniversity() const
 {
-    return *m_university;
+    return shared_ptr<CUniversity>(m_university);
 }

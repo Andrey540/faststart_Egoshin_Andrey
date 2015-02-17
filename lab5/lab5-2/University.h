@@ -9,7 +9,6 @@ class CStudent;
 class CUniversity
 {
 public:
-    CUniversity(void);
     CUniversity(const std::wstring& name);
     ~CUniversity(void);
     void SetName(const std::wstring& name);
@@ -20,16 +19,6 @@ public:
     void ResetModified();
     bool IsModified();
     const std::vector<std::shared_ptr<CStudent>>& GetStudents() const;
-
-    bool const operator == (const CUniversity& other) const
-    {        
-        return this == std::addressof(other);
-    }
-
-    bool const operator != (const CUniversity& other) const
-    {             
-        return !(*this == other);
-    }    
 
 private:
     std::wstring m_name;
