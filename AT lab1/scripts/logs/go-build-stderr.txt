@@ -1,0 +1,3 @@
+main.go:3:8: cannot find package "github.com/gin-gonic/gin" in any of:
+	C:\Program Files\Go\src\github.com\gin-gonic\gin (from $GOROOT)
+	D:\домашка\Теория Автоматов\AT_Lab1\AT_Lab1_GoExamples\src\github.com\gin-gonic\gin (from $GOPATH)
