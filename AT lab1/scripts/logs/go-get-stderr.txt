@@ -1,4 +1,0 @@
-# github.com/gin-gonic/gin/binding
-D:\�������\������ ���������\AT_Lab1\AT_Lab1_GoExamples\src\github.com\gin-gonic\gin\binding\default_validator.go:7: can't find import: "gopkg.in/bluesuncorp/validator.v5"
-# github.com/mattn/go-colorable
-D:\�������\������ ���������\AT_Lab1\AT_Lab1_GoExamples\src\github.com\mattn\go-colorable\colorable_windows.go:13: can't find import: "github.com/mattn/go-isatty"
