@@ -4,6 +4,7 @@ type SiteUser struct {
   nickname string
   email string
   password string
+  passwordRepeat string
 }
 
 type SiteUsersCache struct {
