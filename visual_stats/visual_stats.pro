@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     insertrowdialog.cpp \
     customtableview.cpp \
     savechangesdialog.cpp \
-    insertcommand.cpp
+    insertcommand.cpp \
+    deletecommand.cpp
 
 HEADERS  += mainwindow.h \
     statstablemodel.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     insertrowdialog.h \
     customtableview.h \
     savechangesdialog.h \
-    insertcommand.h
+    insertcommand.h \
+    deletecommand.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui \
