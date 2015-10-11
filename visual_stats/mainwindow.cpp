@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    saveNotSavedDocumentChanges();
     delete m_ui;
 }
 
