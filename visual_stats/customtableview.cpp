@@ -15,3 +15,7 @@ std::set<int> CustomTableView::selectedRows() const
     return rows;
 }
 
+QModelIndexList CustomTableView::selectedTableIndexes() const
+{
+    return selectedIndexes();
+}

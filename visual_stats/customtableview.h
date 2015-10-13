@@ -10,4 +10,5 @@ public:
     CustomTableView(QWidget *parent = 0);
 
     std::set<int> selectedRows() const;
+    QModelIndexList selectedTableIndexes() const;
 };

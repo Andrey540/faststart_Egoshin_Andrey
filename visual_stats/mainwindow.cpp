@@ -10,7 +10,8 @@
 #include <unordered_set>
 #include <QMessageBox>
 #include <QResizeEvent>
-#include <QSortFilterProxyModel>
+#include "insertcommand.h"
+#include "deletecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,9 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
 
     m_tableModel = std::make_shared<StatsTableModel>();
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setSourceModel(m_tableModel.get());
-    m_ui->tableData->setModel(proxyModel);
+    m_proxyModel = std::make_shared<QSortFilterProxyModel>(new QSortFilterProxyModel(this));
+    m_proxyModel->setSourceModel(m_tableModel.get());
+    m_ui->tableData->setModel(m_proxyModel.get());
     m_ui->tableData->setAlternatingRowColors(true);
     m_ui->tableData->setSortingEnabled(true);
 
@@ -31,11 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->saveDocumentAs->setShortcut(QKeySequence(QKeySequence::SaveAs));
 
     m_document.reset(new StatsDocument(this, *m_tableModel));
+    m_commandStack.reset(new QUndoStack());
 }
 
 MainWindow::~MainWindow()
-{
-    saveNotSavedDocumentChanges();
+{    
     delete m_ui;
 }
 
@@ -84,31 +85,33 @@ void MainWindow::on_actionInsertRow_triggered()
 
 void MainWindow::onRowReady(QString text, int value)
 {
-    auto model = m_tableModel->statsModel();
-    model.append(text, value);
-    m_tableModel->setStatsModel(model);
+    m_commandStack->push(new InsertCommand(m_tableModel, text, value));
 }
 
 void MainWindow::on_actionDeleteRow_triggered()
 {
-    std::set<int> deletedRows = m_ui->tableData->selectedRows();
-    if (deletedRows.size() == 0)
+    std::set<int> deletedRows;
+    for (const auto &index : m_ui->tableData->selectedTableIndexes())
     {
-        return;
+        auto proxyItem = m_proxyModel->mapToSource(index);
+        deletedRows.insert(proxyItem.row());
     }
 
     auto statsModel = m_tableModel->statsModel();
-    StatsKeyValueModel newModel;
-    for (size_t i = 0, n = statsModel.size(); i < n; ++i)
+    for (int i = statsModel.size() - 1; i >= 0; --i)
     {
         if (deletedRows.count(i))
         {
-            continue;
+            m_commandStack->push(new DeleteCommand(m_tableModel, i));
         }
-        newModel.append(statsModel.key(i), statsModel.value(i));
     }
-    m_tableModel->setStatsModel(newModel);
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+ {
+     saveNotSavedDocumentChanges();
+     event->accept();
+ }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
@@ -132,4 +135,14 @@ void MainWindow::onDoSave(bool needSave)
     {
         m_document->save();
     }
+}
+
+void MainWindow::on_actionUndo_triggered()
+{
+    m_commandStack->undo();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+    m_commandStack->redo();
 }

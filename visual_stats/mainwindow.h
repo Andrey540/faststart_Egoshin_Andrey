@@ -3,6 +3,8 @@
 #include <QMainWindow>
 #include <QString>
 #include <memory>
+#include <QUndoStack>
+#include <QSortFilterProxyModel>
 
 namespace Ui {
 class MainWindow;
@@ -34,14 +36,21 @@ private slots:
 
     void on_actionDeleteRow_triggered();
 
+    void on_actionUndo_triggered();
+
+    void on_actionRedo_triggered();
+
 private:
     void saveNotSavedDocumentChanges();    
 
+    std::unique_ptr<QUndoStack> m_commandStack;
+    std::shared_ptr<QSortFilterProxyModel> m_proxyModel;
     Ui::MainWindow *m_ui;
     std::shared_ptr<StatsTableModel> m_tableModel;
     std::unique_ptr<StatsDocument> m_document;
 
     // QWidget interface
 protected:
+    void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *);
 };
