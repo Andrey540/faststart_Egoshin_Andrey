@@ -136,7 +136,7 @@ void MainWindow::on_actionDeleteRow_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)
  {
-   //  saveNotSavedDocumentChanges();
+     saveNotSavedDocumentChanges();
      event->accept();
  }
 

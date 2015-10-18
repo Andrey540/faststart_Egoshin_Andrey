@@ -62,6 +62,11 @@ public:
         m_items.push_back(Item(key, value));
     }
 
+    void insert(int index, TKey const& key, TValue const& value)
+    {
+        m_items.insert(m_items.begin() + index, Item(key, value));
+    }
+
     bool operator == (const BaseKeyValueModel& other) const
     {
         if (m_items.size() != other.size())
