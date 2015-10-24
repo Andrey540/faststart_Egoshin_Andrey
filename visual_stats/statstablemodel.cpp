@@ -108,14 +108,22 @@ bool StatsTableModel::setData(const QModelIndex &index, const QVariant &value, i
         switch (index.column())
         {
         case COLUMN_ID_NAME:
-            m_statsModel.setKey(index.row(), value.toString());
+            emit rowChanged(index.row(), value.toString(), m_statsModel.value(index.row()));
             return true;
         case COLUMN_ID_VALUE:
-            m_statsModel.setValue(index.row(), value.toInt());
+            emit rowChanged(index.row(), m_statsModel.key(index.row()), value.toInt());
             return true;
         default:
             break;
         }
     }
     return QAbstractTableModel::setData(index, value, role);
+}
+
+bool StatsTableModel::setRowData(int index, const QString &text, int value)
+{
+    m_statsModel.setKey(index, text);
+    m_statsModel.setValue(index, value);
+    emit layoutChanged();
+    return true;
 }

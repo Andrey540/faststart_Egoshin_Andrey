@@ -33,6 +33,7 @@ private slots:
     void on_actionInsertRow_triggered();
     void onRowReady(QString text, int value);
     void onDoSave(bool needSave);
+    void onRowChanged(int index, QString text, int value);
     void onModelChanged();
 
     void on_actionDeleteRow_triggered();

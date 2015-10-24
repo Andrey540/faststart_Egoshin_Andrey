@@ -73,7 +73,7 @@ public:
         {
             return false;
         }
-        for (unsigned int i = 0; i <= m_items.size(); ++i)
+        for (unsigned int i = 0; i < m_items.size(); ++i)
         {
             if (key(i) != other.key(i) ||
                 value(i) != other.value(i))

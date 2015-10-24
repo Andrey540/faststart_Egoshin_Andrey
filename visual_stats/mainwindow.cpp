@@ -13,6 +13,7 @@
 #include <QPainter>
 #include "insertcommand.h"
 #include "deletecommand.h"
+#include "editcommand.h"
 
 static const qreal M_PI = 3.14159265358979323846;
 
@@ -55,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_document.reset(new StatsDocument(this, *m_tableModel));
     m_commandStack.reset(new QUndoStack());
+    connect(m_tableModel.get(), SIGNAL(rowChanged(int, QString, int)), this, SLOT(onRowChanged(int, QString, int)));
 }
 
 MainWindow::~MainWindow()
@@ -154,6 +156,11 @@ void MainWindow::saveNotSavedDocumentChanges()
         connect(dialog.get(), SIGNAL(doSave(bool)), this, SLOT(onDoSave(bool)));
         dialog->exec();
     }
+}
+
+void MainWindow::onRowChanged(int index, QString text, int value)
+{
+    m_commandStack->push(new EditCommand(m_tableModel, index, text, value));
 }
 
 void MainWindow::onDoSave(bool needSave)
