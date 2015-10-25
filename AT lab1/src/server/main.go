@@ -33,6 +33,13 @@ func RenderRegisterForm(ctx *gin.Context, result *RegisterResult, user *SiteUser
   ctx.HTML(http.StatusOK, "reg-form.tpl", tplData)
 }
 
+func RenderLivePage(ctx *gin.Context) {
+  tplData := gin.H{
+    "title": "Automata Theory - Lab 1, form validation",
+  }
+  ctx.HTML(http.StatusOK, "live.tpl", tplData)
+}
+
 func RenderUserPage(ctx *gin.Context, user *SiteUser) {
   ctx.HTML(http.StatusOK, "reg-results.tpl", gin.H{
     "title": "Automata Theory - Lab 1, form validation",
@@ -51,7 +58,7 @@ func main() {
   router.LoadHTMLGlob("../site-content/tpl/*.tpl")
   router.GET("/form", func(ctx *gin.Context) {
     RenderRegisterForm(ctx, nil, nil)
-  })
+  })  
   router.POST("/form", func(ctx *gin.Context) {
     user := &SiteUser{
       nickname: ctx.PostForm("userNickname"),
@@ -67,6 +74,9 @@ func main() {
     } else {
       RenderRegisterForm(ctx, &checkResult, user)
     }
+  })
+  router.GET("/live", func(ctx *gin.Context) {
+    RenderLivePage(ctx)
   })
   router.Run(":8080")
 }
