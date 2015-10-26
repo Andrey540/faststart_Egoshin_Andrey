@@ -25,6 +25,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 void AboutDialog::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
+
     drawLetterE(painter);
     drawLetterA(painter);
     drawLetterC(painter);

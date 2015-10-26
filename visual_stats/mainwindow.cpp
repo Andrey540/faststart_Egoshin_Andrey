@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include <QResizeEvent>
 #include <QPainter>
+#include <QMatrix>
+#include <QTimer>
 #include "insertcommand.h"
 #include "deletecommand.h"
 #include "editcommand.h"
@@ -21,6 +23,9 @@ const int RADIUS = 100;
 const int RADIUS_LABEL = 130;
 const int CENTER_CHART_X = 650 + RADIUS;
 const int CENTER_CHART_Y = 150 + RADIUS;
+const int CHART_X_3D = 650;
+const int CHART_Y_3D = 150;
+const int CHART_HEIGHT = 20;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -36,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_chartColors.push_back(Qt::magenta);
     m_chartColors.push_back(Qt::yellow);
 
-    m_angle = -1;
+    m_angle = 0;
 
     setMouseTracking(true);
 
@@ -57,6 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_document.reset(new StatsDocument(this, *m_tableModel));
     m_commandStack.reset(new QUndoStack());
     connect(m_tableModel.get(), SIGNAL(rowChanged(int, QString, int)), this, SLOT(onRowChanged(int, QString, int)));
+
+    m_timer = std::make_shared<QTimer>(new QTimer(this));
+    connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(onRotate()));
+    m_timer->start(50);
 }
 
 MainWindow::~MainWindow()
@@ -185,52 +194,12 @@ void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     paintChart(painter);
+
+    m_angle = (m_angle == 359) ? 0 : ++m_angle;
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    int x = event->pos().x();
-    int y = event->pos().y();
-
-    int dx = x - CENTER_CHART_X;
-    int dy = y - CENTER_CHART_Y;
-
-    int angle = atan2(dy, dx) * 180 / M_PI * -1;
-    if (angle < 0)
-    {
-        angle = 360 + angle;
-    }
-
-    int xR = RADIUS * cos(angle * M_PI / 180) + CENTER_CHART_X;
-    int yR = -1 * RADIUS * sin(angle * M_PI / 180) + CENTER_CHART_Y;
-
-    int prevAngle = m_angle;
-
-    if (angle >= 0 && angle < 90)
-    {
-        m_angle = ((x >= CENTER_CHART_X && x <= xR) && (y <= CENTER_CHART_Y && y >= yR)) ?
-                    angle : -1;
-    }
-    else if (angle >= 90 && angle < 180)
-    {
-        m_angle = ((x <= CENTER_CHART_X && x >= xR) && (y <= CENTER_CHART_Y && y >= yR)) ?
-                    angle : -1;
-    }
-    else if (angle >= 180 && angle < 270)
-    {
-        m_angle = ((x <= CENTER_CHART_X && x >= xR) && (y >= CENTER_CHART_Y && y <= yR)) ?
-                    angle : -1;
-    }
-    else if (angle >= 270 && angle < 360)
-    {
-        m_angle = ((x >= CENTER_CHART_X && x <= xR) && (y >= CENTER_CHART_Y && y <= yR)) ?
-                    angle : -1;
-    }
-
-    if ((m_angle > 0) || (prevAngle > 0 && m_angle < 0))
-    {
-        update();
-    }
 }
 
 void MainWindow::paintChart(QPainter &painter)
@@ -245,15 +214,15 @@ void MainWindow::paintChart(QPainter &painter)
     for (size_t i = 0, n = statsModel.size(); i < n; ++i)
     {
         QColor color = m_chartColors[i % m_chartColors.size()];
-        paintChartSegment(painter, sum, position, statsModel.key(i), statsModel.value(i), color);
+        paintChartSegment(painter, sum, position, statsModel.value(i), color);
         position += statsModel.value(i);
     }
 }
 
-void MainWindow::paintChartSegment(QPainter &painter, int sum, int position, const QString& name, int value, QColor color)
+void MainWindow::paintChartSegment(QPainter &painter, int sum, int position, int value, QColor color)
 {
-    QRectF rectangle(CENTER_CHART_X - RADIUS, CENTER_CHART_Y - RADIUS, RADIUS * 2, RADIUS * 2);
-    int startAngle = calcAngel(sum, position);
+    QRectF rectangle(CENTER_CHART_X - RADIUS, CENTER_CHART_Y - RADIUS * cos(60 * M_PI / 180), RADIUS * 2, cos(60 * M_PI / 180) * RADIUS * 2);
+    int startAngle = calcAngel(sum, position) + m_angle;
     int spanAngle = calcAngel(sum, value);
 
     if (m_angle >= startAngle && m_angle < startAngle + spanAngle)
@@ -265,28 +234,51 @@ void MainWindow::paintChartSegment(QPainter &painter, int sum, int position, con
     painter.setBrush(QBrush(color, Qt::SolidPattern));
     painter.drawPie(rectangle, startAngle * 16, spanAngle * 16);
 
-    QString label = name + ", " + QString::number(100 * value / sum) + "%";
-    addLabel(painter, startAngle, startAngle + spanAngle, label);
+    addBottomPart(painter, startAngle, spanAngle, color);
 }
 
-void MainWindow::addLabel(QPainter &painter, int startAngle, int endAngle, const QString& label)
+void MainWindow::addBottomPart(QPainter &painter, int startAngle, int spanAngle, QColor color)
 {
-    int middleAngel = (startAngle + endAngle) / 2;
-    int shift = 30;
-    if (middleAngel > 90 && middleAngel < 270)
+    startAngle = startAngle % 360;
+    if ((startAngle < 180) && (startAngle + spanAngle < 180))
     {
-        shift *= -1;
+        return;
     }
-    int x1 = RADIUS * cos(middleAngel * M_PI / 180) + CENTER_CHART_X;
-    int x2 = RADIUS_LABEL * cos(middleAngel * M_PI / 180) + CENTER_CHART_X;
-    int y1 = -1 * RADIUS * sin(middleAngel * M_PI / 180) + CENTER_CHART_Y;
-    int y2 = -1 * RADIUS_LABEL * sin(middleAngel * M_PI / 180) + CENTER_CHART_Y;
+    if (startAngle < 180)
+    {
+        spanAngle = spanAngle - (180 - startAngle);
+        startAngle = 180;
+    }
+    if (startAngle + spanAngle > 360)
+    {
+        spanAngle = 360 - startAngle;
+    }
 
-    painter.setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(x1, y1, x2, y2);
-    painter.drawLine(x2, y2, x2 + shift, y2);
-    int xText = (shift > 0) ? x2 : (x2 + shift);
-    painter.drawText(xText, y2 - 10, label);
+    startAngle = (startAngle < 180) ? 180 : startAngle;
+    QRectF rectangle(CENTER_CHART_X - RADIUS, CENTER_CHART_Y - RADIUS * cos(60 * M_PI / 180), RADIUS * 2, cos(60 * M_PI / 180) * RADIUS * 2);
+    QRectF rectangleBottom(CENTER_CHART_X - RADIUS, CENTER_CHART_Y - RADIUS * cos(60 * M_PI / 180) + CHART_HEIGHT, RADIUS * 2, cos(60 * M_PI / 180) * RADIUS * 2);
+    painter.setPen(QPen(color, 1, Qt::SolidLine, Qt::RoundCap));
+    painter.setBrush(QBrush(color, Qt::SolidPattern));
+
+    QPainterPath path;
+
+    int x = RADIUS * cos((startAngle + spanAngle) * M_PI / 180) + CENTER_CHART_X;
+    int y = -1 * RADIUS * cos(60 * M_PI / 180) * sin((startAngle + spanAngle) * M_PI / 180) + CENTER_CHART_Y;
+    int x1 = RADIUS * cos(startAngle * M_PI / 180) + CENTER_CHART_X;
+    int y1 = -1 * RADIUS * cos(60 * M_PI / 180) * sin((startAngle) * M_PI / 180) + CENTER_CHART_Y + CHART_HEIGHT;
+
+    path.moveTo(x, y);
+    path.arcTo(rectangle, startAngle + spanAngle, -spanAngle);
+    path.lineTo(x1, y1);
+
+    path.arcTo(rectangleBottom, startAngle, spanAngle);
+    path.lineTo(x, y );
+
+    painter.drawPath(path);
+}
+
+void MainWindow::onRotate(){
+    update();
 }
 
 int MainWindow::calcAngel(int sum, int position)

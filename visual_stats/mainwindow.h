@@ -35,6 +35,7 @@ private slots:
     void onDoSave(bool needSave);
     void onRowChanged(int index, QString text, int value);
     void onModelChanged();
+    void onRotate();
 
     void on_actionDeleteRow_triggered();
 
@@ -45,7 +46,9 @@ private slots:
 private:
     void saveNotSavedDocumentChanges();
     void paintChart(QPainter &painter);
-    void paintChartSegment(QPainter &painter, int sum, int position, const QString& name, int value, QColor color);
+    void paintChart3D(QPainter &painter);
+    void paintChartSegment(QPainter &painter, int sum, int position, int value, QColor color);
+    void addBottomPart(QPainter &painter, int startAngle, int endAngle, QColor color);
     void addLabel(QPainter &painter, int startAngle, int endAngle, const QString& label);
     int calcAngel(int sum, int position);
 
@@ -55,6 +58,7 @@ private:
     std::shared_ptr<StatsTableModel> m_tableModel;
     std::unique_ptr<StatsDocument> m_document;    
     std::vector<QColor> m_chartColors;
+    std::shared_ptr<QTimer> m_timer;
     int m_angle;
 
     // QWidget interface
