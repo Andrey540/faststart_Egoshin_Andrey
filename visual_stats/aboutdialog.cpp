@@ -12,13 +12,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);    
 
-    m_angel = 0;
-    m_EOffset = 0;
-    m_AOffset = 15;
-    m_COffset = 30;
-
-    m_timer = std::make_shared<QTimer>(new QTimer(this));
-    connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(onMove()));
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onMove()));
     m_timer->start(50);
 }
 
@@ -28,13 +23,11 @@ void AboutDialog::paintEvent(QPaintEvent *)
 
     drawLetterE(painter);
     drawLetterA(painter);
-    drawLetterC(painter);
-
-    m_angel = (m_angel == 359) ? 0 : ++m_angel;
+    drawLetterC(painter);    
 }
 
 void AboutDialog::drawLetterE(QPainter& painter){
-    int offset = AMPLITUDE * sin(m_angel +  m_EOffset);
+    int offset = AMPLITUDE * sin(m_angle +  m_EOffset);
     int top = TOP + offset;
     painter.setPen(QPen(Qt::green, 1, Qt::SolidLine, Qt::RoundCap));
     painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
@@ -45,7 +38,7 @@ void AboutDialog::drawLetterE(QPainter& painter){
 }
 
 void AboutDialog::drawLetterA(QPainter& painter){
-    int offset = AMPLITUDE * sin(m_angel +  m_AOffset);
+    int offset = AMPLITUDE * sin(m_angle +  m_AOffset);
     int top = TOP + offset;
     painter.setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap));
     painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
@@ -57,7 +50,7 @@ void AboutDialog::drawLetterA(QPainter& painter){
 }
 
 void AboutDialog::drawLetterC(QPainter& painter){
-    int offset = AMPLITUDE * sin(m_angel +  m_COffset);
+    int offset = AMPLITUDE * sin(m_angle +  m_COffset);
     int top = TOP + offset;
     painter.setPen(QPen(Qt::yellow, 1, Qt::SolidLine, Qt::RoundCap));
     painter.setBrush(QBrush(Qt::yellow, Qt::SolidPattern));
@@ -67,6 +60,7 @@ void AboutDialog::drawLetterC(QPainter& painter){
 }
 
 void AboutDialog::onMove(){
+    m_angle = (m_angle + 1) % 360;
     update();
 }
 

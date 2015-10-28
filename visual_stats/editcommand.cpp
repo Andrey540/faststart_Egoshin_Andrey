@@ -10,14 +10,19 @@ EditCommand::EditCommand(std::shared_ptr<StatsTableModel> tableModel, int row, Q
 
 void EditCommand::undo()
 {
-    m_tableModel->setRowData(m_row, m_oldKey, m_oldValue);
+    auto model = m_tableModel->statsModel();
+    model.setKey(m_row, m_oldKey);
+    model.setValue(m_row, m_oldValue);
+    m_tableModel->setStatsModel(model);
 }
 
 void EditCommand::redo()
 {
-    auto statsModel = m_tableModel->statsModel();
-    m_oldValue = statsModel.value(m_row);
-    m_oldKey = statsModel.key(m_row);
+    auto model = m_tableModel->statsModel();
+    m_oldValue = model.value(m_row);
+    m_oldKey = model.key(m_row);
 
-    m_tableModel->setRowData(m_row, m_key, m_value);
+    model.setKey(m_row, m_key);
+    model.setValue(m_row, m_value);
+    m_tableModel->setStatsModel(model);
 }

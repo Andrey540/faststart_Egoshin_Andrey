@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     m_ui->setupUi(this);
 
-    m_chartColors.push_back(Qt::gray);
     m_chartColors.push_back(Qt::red);
     m_chartColors.push_back(Qt::green);
     m_chartColors.push_back(Qt::blue);
@@ -41,16 +40,14 @@ MainWindow::MainWindow(QWidget *parent) :
     m_chartColors.push_back(Qt::magenta);
     m_chartColors.push_back(Qt::yellow);
 
-    m_angle = 0;
-
     setMouseTracking(true);
 
     m_tableModel = std::make_shared<StatsTableModel>();
-    m_proxyModel = std::make_shared<QSortFilterProxyModel>(new QSortFilterProxyModel(this));
-    connect(m_proxyModel.get(), SIGNAL(layoutChanged()), this, SLOT(onModelChanged()));
+    m_proxyModel =  new QSortFilterProxyModel(this);
+    connect(m_proxyModel, SIGNAL(layoutChanged()), this, SLOT(onModelChanged()));
 
     m_proxyModel->setSourceModel(m_tableModel.get());
-    m_ui->tableData->setModel(m_proxyModel.get());
+    m_ui->tableData->setModel(m_proxyModel);
     m_ui->tableData->setAlternatingRowColors(true);
     m_ui->tableData->setSortingEnabled(true);
 
@@ -76,7 +73,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_newDocument_triggered()
 {
     saveNotSavedDocumentChanges();
-    m_document->createNew();
+    if (!m_actionCanceled)
+    {
+        m_document->createNew();
+    }
 }
 
 void MainWindow::on_saveDocument_triggered()
@@ -87,7 +87,10 @@ void MainWindow::on_saveDocument_triggered()
 void MainWindow::on_openDocument_triggered()
 {
     saveNotSavedDocumentChanges();
-    m_document->open();
+    if (!m_actionCanceled)
+    {
+        m_document->open();
+    }
 }
 
 void MainWindow::on_saveDocumentAs_triggered()
@@ -148,7 +151,14 @@ void MainWindow::on_actionDeleteRow_triggered()
 void MainWindow::closeEvent(QCloseEvent *event)
  {
      saveNotSavedDocumentChanges();
-     event->accept();
+     if (!m_actionCanceled)
+     {
+        event->setAccepted(true);
+     }
+     else
+     {
+         event->setAccepted(false);
+     }
  }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -161,8 +171,10 @@ void MainWindow::saveNotSavedDocumentChanges()
 {
     if (m_document->isModelChanged())
     {
+        m_actionCanceled = false;
         std::unique_ptr<SaveChangesDialog> dialog(new SaveChangesDialog(this));
         connect(dialog.get(), SIGNAL(doSave(bool)), this, SLOT(onDoSave(bool)));
+        connect(dialog.get(), SIGNAL(doCancel()), this, SLOT(onDoCancel()));
         dialog->exec();
     }
 }
@@ -180,6 +192,11 @@ void MainWindow::onDoSave(bool needSave)
     }
 }
 
+void MainWindow::onDoCancel()
+{
+    m_actionCanceled = true;
+}
+
 void MainWindow::on_actionUndo_triggered()
 {
     m_commandStack->undo();
@@ -193,13 +210,7 @@ void MainWindow::on_actionRedo_triggered()
 void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    paintChart(painter);
-
-    m_angle = (m_angle == 359) ? 0 : ++m_angle;
-}
-
-void MainWindow::mouseMoveEvent(QMouseEvent *event)
-{
+    paintChart(painter);    
 }
 
 void MainWindow::paintChart(QPainter &painter)
@@ -230,11 +241,11 @@ void MainWindow::paintChartSegment(QPainter &painter, int sum, int position, int
         color = color.light();
     }
 
+    addBottomPart(painter, startAngle, spanAngle, color);
+
     painter.setPen(QPen(color, 1, Qt::SolidLine, Qt::RoundCap));
     painter.setBrush(QBrush(color, Qt::SolidPattern));
-    painter.drawPie(rectangle, startAngle * 16, spanAngle * 16);
-
-    addBottomPart(painter, startAngle, spanAngle, color);
+    painter.drawPie(rectangle, startAngle * 16, spanAngle * 16);    
 }
 
 void MainWindow::addBottomPart(QPainter &painter, int startAngle, int spanAngle, QColor color)
@@ -251,6 +262,10 @@ void MainWindow::addBottomPart(QPainter &painter, int startAngle, int spanAngle,
     }
     if (startAngle + spanAngle > 360)
     {
+        if (startAngle + spanAngle > 540)
+        {
+            addBottomPart(painter, 180, (startAngle + spanAngle) % 360 - 180, color);
+        }
         spanAngle = 360 - startAngle;
     }
 
@@ -278,10 +293,11 @@ void MainWindow::addBottomPart(QPainter &painter, int startAngle, int spanAngle,
 }
 
 void MainWindow::onRotate(){
+    m_angle = (m_angle + 1) % 360;
     update();
 }
 
 int MainWindow::calcAngel(int sum, int position)
 {
-    return position * 360 / sum;
+    return (float)position / sum * 360;
 }

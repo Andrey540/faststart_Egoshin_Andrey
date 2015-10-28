@@ -28,7 +28,6 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-    bool setRowData(int index, const QString &text, int value);
 
 signals:
     void rowChanged(int index, QString text, int value);

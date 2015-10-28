@@ -17,7 +17,7 @@ void DeleteCommand::redo()
 {
     auto statsModel = m_tableModel->statsModel();
     StatsKeyValueModel newModel;
-    for (size_t i = 0, n = statsModel.size(); i < n; ++i)
+    for (int i = 0, n = statsModel.size(); i < n; ++i)
     {
         if (m_row == i)
         {

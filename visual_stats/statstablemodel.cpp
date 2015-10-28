@@ -119,11 +119,3 @@ bool StatsTableModel::setData(const QModelIndex &index, const QVariant &value, i
     }
     return QAbstractTableModel::setData(index, value, role);
 }
-
-bool StatsTableModel::setRowData(int index, const QString &text, int value)
-{
-    m_statsModel.setKey(index, text);
-    m_statsModel.setValue(index, value);
-    emit layoutChanged();
-    return true;
-}

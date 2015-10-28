@@ -33,6 +33,7 @@ private slots:
     void on_actionInsertRow_triggered();
     void onRowReady(QString text, int value);
     void onDoSave(bool needSave);
+    void onDoCancel();
     void onRowChanged(int index, QString text, int value);
     void onModelChanged();
     void onRotate();
@@ -53,18 +54,18 @@ private:
     int calcAngel(int sum, int position);
 
     std::unique_ptr<QUndoStack> m_commandStack;
-    std::shared_ptr<QSortFilterProxyModel> m_proxyModel;
+    QSortFilterProxyModel *m_proxyModel;
     Ui::MainWindow *m_ui;
     std::shared_ptr<StatsTableModel> m_tableModel;
     std::unique_ptr<StatsDocument> m_document;    
     std::vector<QColor> m_chartColors;
     std::shared_ptr<QTimer> m_timer;
-    int m_angle;
+    int m_angle = 0;
+    bool m_actionCanceled;
 
     // QWidget interface
 protected:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
-    void mouseMoveEvent(QMouseEvent *event);
 };

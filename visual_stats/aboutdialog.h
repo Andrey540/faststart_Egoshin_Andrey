@@ -24,11 +24,11 @@ private slots:
 
 private:
     Ui::AboutDialog *ui;
-    std::shared_ptr<QTimer> m_timer;
-    int m_angel;
-    int m_EOffset;
-    int m_AOffset;
-    int m_COffset;
+    QTimer *m_timer;
+    int m_angle = 0;
+    int m_EOffset = 0;
+    int m_AOffset = 15;
+    int m_COffset = 30;
 
     void drawLetterE(QPainter& painter);
     void drawLetterA(QPainter& painter);

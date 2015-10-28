@@ -2,6 +2,7 @@
 #define SAVECHANGESDIALOG
 
 #include <QDialog>
+#include <QAbstractButton>
 
 namespace Ui {
 class SaveChangesDialog;
@@ -17,9 +18,11 @@ public:
 
 signals:
     void doSave(bool needSave);
+    void doCancel();
 
 private slots:
     void onAccepted();
+    void onClicked(QAbstractButton * button);
 
 private:
     Ui::SaveChangesDialog *ui;
