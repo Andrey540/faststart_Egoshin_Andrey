@@ -35,9 +35,19 @@ func RenderRegisterForm(ctx *gin.Context, result *RegisterResult, user *SiteUser
 
 func RenderLivePage(ctx *gin.Context) {
   tplData := gin.H{
-    "title": "Automata Theory - Lab 1, form validation",
+    "title": "Automata Theory - Lab 2",
   }
   ctx.HTML(http.StatusOK, "live.tpl", tplData)
+}
+
+func RenderCalcForm(ctx *gin.Context, result float64, alert string) {
+  tplData := gin.H{
+    "title": "Automata Theory - Lab 3",
+	"result": result,
+	"showAlertExpression": len(alert) > 0,
+	"alertMessage": alert,
+  }
+  ctx.HTML(http.StatusOK, "calc.tpl", tplData)
 }
 
 func RenderUserPage(ctx *gin.Context, user *SiteUser) {
@@ -77,6 +87,17 @@ func main() {
   })
   router.GET("/live", func(ctx *gin.Context) {
     RenderLivePage(ctx)
+  })
+  router.GET("/calc", func(ctx *gin.Context) {
+    RenderCalcForm(ctx, 0, "")
+  })
+  router.POST("/calc", func(ctx *gin.Context) {
+    expression:= ctx.PostForm("expression")
+	
+	calculator := new(Calculator)
+	result, alert := calculator.calculate(expression);
+
+    RenderCalcForm(ctx, result, alert)
   })
   router.Run(":8080")
 }
