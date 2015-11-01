@@ -119,214 +119,52 @@ World.prototype = {
 	
 	startGosper: function()
 	{
-		this.map[10][14] = new Cell;
-		this.map[11][13] = new Cell;
-		this.map[11][14] = new Cell;
-		
-		this.map[20][12] = new Cell;
-		this.map[20][13] = new Cell;
-		this.map[20][14] = new Cell;
-		this.map[21][11] = new Cell;
-		this.map[21][15] = new Cell;
-		this.map[22][10] = new Cell;
-		this.map[22][16] = new Cell;
-		this.map[23][10] = new Cell;
-		this.map[23][16] = new Cell;
-		
-		this.map[33][13] = new Cell;
-		this.map[33][17] = new Cell;
-		this.map[34][12] = new Cell;
-		this.map[34][13] = new Cell;
-		this.map[34][17] = new Cell;
-		this.map[34][18] = new Cell;
-		this.map[36][14] = new Cell;
-		this.map[36][15] = new Cell;
-		this.map[36][16] = new Cell;
-		this.map[37][14] = new Cell;
-		this.map[37][15] = new Cell;
-		this.map[37][16] = new Cell;
-		this.map[38][15] = new Cell;
-		
-		this.map[44][16] = new Cell;
-		this.map[45][15] = new Cell;
-		this.map[45][16] = new Cell;
-
-		this.drawCellCallback(10, 14);
-		this.drawCellCallback(11, 13);
-		this.drawCellCallback(11, 14);
-		
-		this.drawCellCallback(20, 12);
-		this.drawCellCallback(20, 13);
-		this.drawCellCallback(20, 14);
-		this.drawCellCallback(21, 11);
-		this.drawCellCallback(21, 15);
-		this.drawCellCallback(22, 10);
-		this.drawCellCallback(22, 16);
-		this.drawCellCallback(23, 10);
-		this.drawCellCallback(23, 16);
-		
-		this.drawCellCallback(33, 13);
-		this.drawCellCallback(33, 17);
-		this.drawCellCallback(34, 12);
-		this.drawCellCallback(34, 13);
-		this.drawCellCallback(34, 17);
-		this.drawCellCallback(34, 18);
-		this.drawCellCallback(36, 14);
-		this.drawCellCallback(36, 15);
-		this.drawCellCallback(36, 16);
-		this.drawCellCallback(37, 14);
-		this.drawCellCallback(37, 15);
-		this.drawCellCallback(37, 16);
-		this.drawCellCallback(38, 15);
-		
-		this.drawCellCallback(44, 16);
-		this.drawCellCallback(45, 13);
-		this.drawCellCallback(45, 16);
+		var points = [[10, 14], [11, 13], [11, 14], [20, 12], [20, 13], [20, 14], [21, 11], [21, 15], [22, 10], [22, 16], [23, 10], [23, 16],
+					  [33, 13], [33, 17], [34, 12], [34, 13], [34, 17], [34, 18], [36, 14], [36, 15], [36, 16], [37, 14], [37, 15], [37, 16],
+					  [38, 15], [44, 16], [45, 15], [45, 16]];
+	    for (var index = 0; index < points.length; ++index)
+		{
+			this.createCell(points[index][0], points[index][1]);
+		}
 	},
 	
 	startGlaider: function()
 	{
-		this.map[10][12] = new Cell;
-		this.map[11][10] = new Cell;
-		this.map[12][10] = new Cell;
-		this.map[13][10] = new Cell;
-		this.map[13][11] = new Cell;
-
-		this.drawCellCallback(10, 12);
-		this.drawCellCallback(11, 10);
-		this.drawCellCallback(12, 10);
-		this.drawCellCallback(13, 10);
-		this.drawCellCallback(13, 11);
+		var points = [[10, 12], [11, 10], [12, 10], [13, 10], [13, 11]];
+		for (var index = 0; index < points.length; ++index)
+		{
+			this.createCell(points[index][0], points[index][1]);
+		}
 	},
 	
 	startCat: function()
-	{
-		this.map[10][12] = new Cell;
-		this.map[10][13] = new Cell;
-		this.map[10][14] = new Cell;
-		this.map[11][10] = new Cell;
-		this.map[11][11] = new Cell;
-		this.map[11][15] = new Cell;
-		this.map[12][11] = new Cell;
-		this.map[12][13] = new Cell;
-		this.map[12][15] = new Cell;
-		this.map[13][11] = new Cell;
-		this.map[13][13] = new Cell;
-		this.map[13][15] = new Cell;
-		this.map[14][10] = new Cell;
-		this.map[14][11] = new Cell;
-		this.map[14][15] = new Cell;
-		this.map[15][12] = new Cell;
-		this.map[15][13] = new Cell;
-		this.map[15][14] = new Cell;
-
-		this.drawCellCallback(10, 12);
-		this.drawCellCallback(10, 13);
-		this.drawCellCallback(10, 14);
-		this.drawCellCallback(11, 10);
-		this.drawCellCallback(11, 11);
-		this.drawCellCallback(11, 15);
-		this.drawCellCallback(12, 11);
-		this.drawCellCallback(12, 13);
-		this.drawCellCallback(12, 15);
-		this.drawCellCallback(13, 11);
-		this.drawCellCallback(13, 13);
-		this.drawCellCallback(13, 15);
-		this.drawCellCallback(14, 10);
-		this.drawCellCallback(14, 11);
-		this.drawCellCallback(14, 15);
-		this.drawCellCallback(15, 12);
-		this.drawCellCallback(15, 13);
-		this.drawCellCallback(15, 14);
+	{		
+		var points = [[10, 12], [10, 13], [10, 14], [11, 10], [11, 11], [11, 15], [12, 11], [12, 13], [12, 15], [13, 11], [13, 13], [13, 15],
+					  [14, 10], [14, 11], [14, 15], [15, 12], [15, 13], [15, 14]];
+		for (var index = 0; index < points.length; ++index)
+		{
+			this.createCell(points[index][0], points[index][1]);
+		}
 	},
 	
 	startStick: function()
 	{
-		this.map[10][10] = new Cell;
-		this.map[10][11] = new Cell;
-		this.map[11][10] = new Cell;
-		this.map[12][11] = new Cell;
-		this.map[12][13] = new Cell;
-		this.map[14][13] = new Cell;
-		this.map[14][15] = new Cell;
-		this.map[16][15] = new Cell;
-		this.map[16][17] = new Cell;
-		this.map[18][17] = new Cell;
-		this.map[18][19] = new Cell;
-		this.map[20][19] = new Cell;
-		this.map[20][21] = new Cell;
-		this.map[21][22] = new Cell;
-		this.map[22][21] = new Cell;
-		this.map[22][22] = new Cell;
-
-		this.drawCellCallback(10, 10);
-		this.drawCellCallback(10, 11);
-		this.drawCellCallback(11, 10);
-		this.drawCellCallback(12, 11);
-		this.drawCellCallback(12, 13);
-		this.drawCellCallback(14, 13);
-		this.drawCellCallback(14, 15);
-		this.drawCellCallback(16, 15);
-		this.drawCellCallback(16, 17);
-		this.drawCellCallback(18, 17);
-		this.drawCellCallback(18, 19);
-		this.drawCellCallback(20, 19);
-		this.drawCellCallback(20, 21);
-		this.drawCellCallback(21, 22);
-		this.drawCellCallback(22, 21);
-		this.drawCellCallback(22, 22);
+		var points = [[10, 10], [10, 11], [11, 10], [12, 11], [12, 13], [14, 13], [14, 15], [16, 15], [16, 17], [18, 17], [18, 19], [20, 19],
+					  [20, 21], [21, 22], [22, 21], [22, 22]];
+		for (var index = 0; index < points.length; ++index)
+		{
+			this.createCell(points[index][0], points[index][1]);
+		}
 	},
 	
 	startBreaker: function()
 	{
-		this.map[10][13] = new Cell;
-		this.map[10][14] = new Cell;
-		this.map[10][15] = new Cell;		
-		this.map[11][10] = new Cell;		
-		this.map[11][11] = new Cell;
-		this.map[11][15] = new Cell;
-		this.map[12][10] = new Cell;
-		this.map[12][11] = new Cell;
-		this.map[12][12] = new Cell;
-		this.map[12][13] = new Cell;
-		this.map[12][14] = new Cell;
-		
-		this.map[14][10] = new Cell;
-		this.map[14][11] = new Cell;
-		this.map[14][12] = new Cell;
-		this.map[14][13] = new Cell;
-		this.map[14][14] = new Cell;
-		this.map[15][10] = new Cell;		
-		this.map[15][11] = new Cell;
-		this.map[15][15] = new Cell;
-		this.map[16][13] = new Cell;
-		this.map[16][14] = new Cell;
-		this.map[16][15] = new Cell;
-		
-		this.drawCellCallback(10, 13);
-		this.drawCellCallback(10, 14);
-		this.drawCellCallback(10, 15);
-		this.drawCellCallback(11, 10);
-		this.drawCellCallback(11, 11);
-		this.drawCellCallback(11, 15);
-		this.drawCellCallback(12, 10);
-		this.drawCellCallback(12, 11);
-		this.drawCellCallback(12, 12);
-		this.drawCellCallback(12, 13);
-		this.drawCellCallback(12, 14);
-		
-		this.drawCellCallback(14, 10);
-		this.drawCellCallback(14, 11);
-		this.drawCellCallback(14, 12);
-		this.drawCellCallback(14, 13);
-		this.drawCellCallback(14, 14);
-		this.drawCellCallback(15, 10);
-		this.drawCellCallback(15, 11);
-		this.drawCellCallback(15, 15);
-		this.drawCellCallback(16, 13);
-		this.drawCellCallback(16, 14);
-		this.drawCellCallback(16, 15);
-
+		var points = [[10, 13], [10, 14], [10, 15], [11, 10], [11, 11], [11, 15], [12, 10], [12, 11], [12, 12], [12, 13], [12, 14], [14, 10],
+					  [14, 11], [14, 12], [14, 13], [14, 14], [15, 10], [15, 11], [15, 15], [16, 13], [16, 14], [16, 15]];
+		for (var index = 0; index < points.length; ++index)
+		{
+			this.createCell(points[index][0], points[index][1]);
+		}
 	},
 
 	start: function()
@@ -393,15 +231,6 @@ World.prototype = {
 		this._changeQueue.push([burnNote.length, deathNote.length]);
 		if (this._changeQueue.length > 3)
 			this._changeQueue.shift();
-
-		/*if (this._changeQueue[2][0] === deathNote.length &&
-			this._changeQueue[2][1] === burnNote.length &&
-			this._changeQueue[1][0] === deathNote.length &&
-			this._changeQueue[1][1] === burnNote.length &&
-			this._changeQueue[0][0] === deathNote.length &&
-			this._changeQueue[0][1] === burnNote.length
-		)
-			this.stop();*/
 
 		if (this.started) {
 			var that = this;
@@ -473,5 +302,11 @@ World.prototype = {
 		for (var i in this.map)
 			for (var j in this.map[i])
 				this.killCell(i, j);
+	},
+	
+	createCell: function(x, y)
+	{
+		this.map[x][y] = new Cell;
+		this.drawCellCallback(x, y);
 	}
 }
