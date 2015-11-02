@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QMatrix>
 #include <QTimer>
+#include <QTime>
 #include "insertcommand.h"
 #include "deletecommand.h"
 #include "editcommand.h"
@@ -26,6 +27,7 @@ const int CENTER_CHART_Y = 150 + RADIUS;
 const int CHART_X_3D = 650;
 const int CHART_Y_3D = 150;
 const int CHART_HEIGHT = 20;
+const int ROTATION_SPEED = 50;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -60,9 +62,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_commandStack.reset(new QUndoStack());
     connect(m_tableModel.get(), SIGNAL(rowChanged(int, QString, int)), this, SLOT(onRowChanged(int, QString, int)));
 
-    m_timer = std::make_shared<QTimer>(new QTimer(this));
-    connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(onRotate()));
+    m_time = std::make_shared<QTime>();
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onRotate()));
     m_timer->start(50);
+    m_time->start();
 }
 
 MainWindow::~MainWindow()
@@ -293,7 +297,7 @@ void MainWindow::addBottomPart(QPainter &painter, int startAngle, int spanAngle,
 }
 
 void MainWindow::onRotate(){
-    m_angle = (m_angle + 1) % 360;
+    m_angle = (m_time->elapsed() / ROTATION_SPEED) % 360;
     update();
 }
 

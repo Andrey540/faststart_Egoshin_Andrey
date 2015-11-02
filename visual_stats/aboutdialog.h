@@ -25,6 +25,7 @@ private slots:
 private:
     Ui::AboutDialog *ui;
     QTimer *m_timer;
+    std::shared_ptr<QTime> m_time;
     int m_angle = 0;
     int m_EOffset = 0;
     int m_AOffset = 15;

@@ -59,9 +59,10 @@ private:
     std::shared_ptr<StatsTableModel> m_tableModel;
     std::unique_ptr<StatsDocument> m_document;    
     std::vector<QColor> m_chartColors;
-    std::shared_ptr<QTimer> m_timer;
+    QTimer *m_timer;
     int m_angle = 0;
     bool m_actionCanceled;
+    std::shared_ptr<QTime> m_time;
 
     // QWidget interface
 protected:

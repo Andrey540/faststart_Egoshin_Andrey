@@ -2,9 +2,11 @@
 #include "ui_aboutdialog.h"
 #include <QPainter>
 #include <QTimer>
+#include <QTime>
 
 const int AMPLITUDE = 10;
 const int TOP = 70;
+const int ANIMATION_SPEED = 50;
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
@@ -12,9 +14,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);    
 
+    m_time = std::make_shared<QTime>();
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onMove()));
     m_timer->start(50);
+    m_time->start();
 }
 
 void AboutDialog::paintEvent(QPaintEvent *)
@@ -60,7 +64,7 @@ void AboutDialog::drawLetterC(QPainter& painter){
 }
 
 void AboutDialog::onMove(){
-    m_angle = (m_angle + 1) % 360;
+    m_angle = (m_time->elapsed() / ANIMATION_SPEED) % 360;
     update();
 }
 
