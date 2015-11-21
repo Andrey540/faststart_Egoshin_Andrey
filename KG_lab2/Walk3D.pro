@@ -22,7 +22,10 @@ SOURCES += main.cpp \
     gl/basescene.cpp \
     gameapplication.cpp \
     gl/scenecamera.cpp \
-    gl/glhelper.cpp
+    gl/glhelper.cpp \
+    ui/rotatecameracontroller.cpp \
+    ui/movecameracontroller.cpp \
+    scenedeserializer.cpp
 
 HEADERS  += \
     ui/window3d.h \
@@ -32,6 +35,10 @@ HEADERS  += \
     gameapplication.h \
     gl/iscenecamera.h \
     gl/scenecamera.h \
-    gl/glhelper.h
+    gl/glhelper.h \
+    ui/iinputcontroller.h \
+    ui/rotatecameracontroller.h \
+    ui/movecameracontroller.h \
+    scenedeserializer.h
 
 FORMS    +=

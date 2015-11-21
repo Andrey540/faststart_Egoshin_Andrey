@@ -1,0 +1,20 @@
+{
+	"camera": {
+		"eye": [10, 10, 0.5],
+		"center" : [0, 0, 0.5],
+		"up" : [0, 0, 1]
+	},
+	"objects" : [
+		{
+			"class": "ColoredCube",
+			"scale" : 1.1,
+			"position" : [0, 0, 1]
+		},
+		{
+			"class": "ColoredCube",
+			"scale" : 1.5,
+			"position" : [2, -1, 0]
+		}
+	]
+}
+

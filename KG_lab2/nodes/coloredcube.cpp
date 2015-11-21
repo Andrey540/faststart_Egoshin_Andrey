@@ -20,7 +20,7 @@ struct SimpleVertex
     Color4 color;
 };
 
-static void drawOpenGLCube(bool showWired)
+static void drawOpenGLCube(bool showWired, float scale, QVector3D position)
 {
     /*
 
@@ -53,6 +53,15 @@ static void drawOpenGLCube(bool showWired)
         {{+1, +1, +1}, {0, 255, 255, 255}},		// 6
         {{-1, +1, +1}, {0, 0, 255, 255}},		// 7
     };
+
+    for (SimpleVertex &vert : vertices) {
+        vert.pos.x += position.x();
+        vert.pos.y += position.y();
+        vert.pos.z += position.z();
+        vert.pos.x *= scale;
+        vert.pos.y *= scale;
+        vert.pos.z *= scale;
+    }
 
     if (showWired) {
         for (SimpleVertex &vert : vertices) {
@@ -110,8 +119,18 @@ void ColoredCube::render(QPainter &painter)
 {
     (void)painter;
 
-    drawOpenGLCube(false);
+    drawOpenGLCube(false, m_scale, m_position);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    drawOpenGLCube(true);
+    drawOpenGLCube(true, m_scale, m_position);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void ColoredCube::setScale(float scale)
+{
+    m_scale = scale;
+}
+
+void ColoredCube::setPosition(QVector3D position)
+{
+    m_position = position;
 }

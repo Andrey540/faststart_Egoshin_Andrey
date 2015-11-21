@@ -12,14 +12,21 @@ void SceneCamera::loadMatrix()
 {
     QMatrix4x4 matrix;
     matrix.lookAt(m_eye, m_eye + m_front, m_up);
-    matrix.rotate(m_rotationAngle, m_rotate);
+    doRotates(matrix);
+    doTranslate(matrix);
     GLHelper::setModelViewMatrix(matrix);
 }
 
 void SceneCamera::rotate(float angle, const QVector3D &vec)
 {
-    m_rotationAngle = angle;
-    m_rotate = vec;
+    m_rotations.push_back(Rotation(angle, vec));
+}
+
+void SceneCamera::translate(float positionX, float positionY, float positionZ)
+{
+    m_positionX = positionX;
+    m_positionY = positionY;
+    m_positionZ = positionZ;
 }
 
 void SceneCamera::lookAt(const QVector3D &eye, const QVector3D &at, const QVector3D &up)
@@ -57,6 +64,16 @@ QVector3D SceneCamera::eye() const
     return m_eye;
 }
 
+QVector3D SceneCamera::at() const
+{
+    return m_eye + m_front;
+}
+
+QVector3D SceneCamera::up() const
+{
+    return m_up;
+}
+
 void SceneCamera::setSpeed(QVector3D speed)
 {
     m_speed = speed;
@@ -65,4 +82,21 @@ void SceneCamera::setSpeed(QVector3D speed)
 QVector3D SceneCamera::speed() const
 {
     return m_speed;
+}
+
+void SceneCamera::doRotates(QMatrix4x4 &matrix)
+{
+    for (unsigned int i = 0; i < m_rotations.size(); ++i)
+    {
+        matrix.rotate(m_rotations[i].first, m_rotations[i].second);
+    }
+    m_rotations.clear();
+}
+
+void SceneCamera::doTranslate(QMatrix4x4 &matrix)
+{
+    matrix.translate(m_positionX, m_positionY, m_positionZ);
+    m_positionX = 0.5f;
+    m_positionY = 0.5f;
+    m_positionZ = 0.5f;
 }

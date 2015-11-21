@@ -14,5 +14,8 @@ private slots:
     void loadScene();
 
 private:
+    bool loadSceneFromJSON();
+
+private:
     Window3D m_window;
 };
