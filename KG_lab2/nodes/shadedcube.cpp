@@ -1,11 +1,9 @@
-#include "coloredcube.h"
-#include <QMatrix4x4>
+#include "shadedcube.h"
 
 static const QLatin1String KEY_CUBE_SCALE("scale");
 static const QLatin1String KEY_CUBE_POSITION("position");
-static const QLatin1String KEY_CUBE_SPEED("speed");
 
-static void drawOpenGLCube(bool showWired, float scale, QVector3D position, float angle)
+static void drawOpenGLCube(bool showWired, float scale, QVector3D position)
 {
     /*
 
@@ -20,35 +18,29 @@ static void drawOpenGLCube(bool showWired, float scale, QVector3D position, floa
        3----2
       /    /|
      /    / |
-    7----6  |
+(11)7----6(10)
     |  0 |  1
     |    | /
     |    |/
-    4----5
+ (8)4----5(9)
     */
     // Массив координат вершин
-    SimpleVertex vertices[8] =
+    SimpleVertex vertices[12] =
     {
-        {{-1, -1, -1}, {255, 0, 0, 255}},		// 0
-        {{+1, -1, -1}, {255, 255, 0, 255}},		// 1
-        {{+1, +1, -1}, {0, 255, 0, 255}},		// 2
-        {{-1, +1, -1}, {0, 0, 0, 255}},			// 3
-        {{-1, -1, +1}, {255, 0, 255, 255}},		// 4
-        {{+1, -1, +1}, {255, 255, 255, 255}},	// 5
-        {{+1, +1, +1}, {0, 255, 255, 255}},		// 6
-        {{-1, +1, +1}, {0, 0, 255, 255}},		// 7
+        {{-1, -1, -1}, {0, 155, 0, 255}},	// 0
+        {{+1, -1, -1}, {0, 155, 0, 255}},	// 1
+        {{+1, +1, -1}, {0, 155, 0, 255}},	// 2
+        {{-1, +1, -1}, {0, 155, 0, 255}},	// 3
+        {{-1, -1, +1}, {0, 155, 0, 255}},	// 4
+        {{+1, -1, +1}, {0, 155, 0, 255}},	// 5
+        {{+1, +1, +1}, {0, 155, 0, 255}},	// 6
+        {{-1, +1, +1}, {0, 155, 0, 255}},	// 7
+
+        {{-1, -1, +1}, {0, 255, 0, 255}},	// 8
+        {{+1, -1, +1}, {0, 255, 0, 255}},	// 9
+        {{+1, +1, +1}, {0, 255, 0, 255}},	// 10
+        {{-1, +1, +1}, {0, 255, 0, 255}},	// 11
     };
-
-    QMatrix4x4 matrix;
-    matrix.rotate(angle, 0.0, 0.0, 1.0);
-
-    for (SimpleVertex &vert : vertices) {
-        QVector3D p(vert.pos.x, vert.pos.y, vert.pos.z);
-        p = matrix * p;
-        vert.pos.x = p.x();
-        vert.pos.y = p.y();
-        vert.pos.z = p.z();
-    }
 
     for (SimpleVertex &vert : vertices) {
         vert.pos.x += position.x();
@@ -57,7 +49,7 @@ static void drawOpenGLCube(bool showWired, float scale, QVector3D position, floa
         vert.pos.x *= scale;
         vert.pos.y *= scale;
         vert.pos.z *= scale;
-    }    
+    }
 
     if (showWired) {
         for (SimpleVertex &vert : vertices) {
@@ -80,7 +72,7 @@ static void drawOpenGLCube(bool showWired, float scale, QVector3D position, floa
         {4, 0, 1, 5},	// грань y<0
         {7, 6, 2, 3},	// грань y>0
         {0, 3, 2, 1},	// грань z<0
-        {4, 5, 6, 7},	// грань z>0
+        {8, 9, 10, 11},	// грань z>0
     };
 
     // Передаем информацию о массиве вершин
@@ -101,30 +93,28 @@ static void drawOpenGLCube(bool showWired, float scale, QVector3D position, floa
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-ColoredCube::ColoredCube(SceneNode *parent)
+ShadedCube::ShadedCube(SceneNode *parent)
     : SceneNode(parent)
 {
 }
 
-void ColoredCube::advance(int64_t msec)
+void ShadedCube::advance(int64_t msec)
 {
     (void)msec;
 }
 
-void ColoredCube::render(QPainter &painter)
+void ShadedCube::render(QPainter &painter)
 {
     (void)painter;
 
-    drawOpenGLCube(false, m_scale, m_position, m_angle);
+    drawOpenGLCube(false, m_scale, m_position);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    drawOpenGLCube(true, m_scale, m_position, m_angle);
+    drawOpenGLCube(true, m_scale, m_position);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    m_angle = (m_angle + m_speed);
 }
 
-void ColoredCube::load(const QJsonObject &jsonObj)
+void ShadedCube::load(const QJsonObject &jsonObj)
 {
     m_scale = jsonObj[KEY_CUBE_SCALE].toDouble();
     m_position = ParseUtils::parseVector3D(jsonObj[KEY_CUBE_POSITION].toArray());
-    m_speed = jsonObj[KEY_CUBE_SPEED].toDouble();
 }

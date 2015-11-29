@@ -5,10 +5,10 @@
 #include "../parseutils.h"
 #include <QVector3D>
 
-class ColoredCube : public SceneNode, public ILoadableNode
+class ColoredTetrahedron : public SceneNode, public ILoadableNode
 {
 public:
-    ColoredCube(SceneNode *parent);
+    ColoredTetrahedron(SceneNode *parent);
 
     void advance(int64_t msec) override;
     void render(QPainter &painter) override;
@@ -17,6 +17,4 @@ public:
 private:
     QVector3D m_position;
     float m_scale = 1.0f;
-    float m_angle = 0.0f;
-    float m_speed = 0.0f;
 };

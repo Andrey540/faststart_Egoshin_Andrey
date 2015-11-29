@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     gl/glhelper.cpp \
     ui/rotatecameracontroller.cpp \
     ui/movecameracontroller.cpp \
-    scenedeserializer.cpp
+    scenedeserializer.cpp \
+    nodes/shadedcube.cpp \
+    nodes/coloredtetrahedron.cpp
 
 HEADERS  += \
     ui/window3d.h \
@@ -39,6 +41,10 @@ HEADERS  += \
     ui/iinputcontroller.h \
     ui/rotatecameracontroller.h \
     ui/movecameracontroller.h \
-    scenedeserializer.h
+    scenedeserializer.h \
+    nodes/iloadablenode.h \
+    parseutils.h \
+    nodes/shadedcube.h \
+    nodes/coloredtetrahedron.h
 
 FORMS    +=

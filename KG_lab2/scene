@@ -8,12 +8,24 @@
 		{
 			"class": "ColoredCube",
 			"scale" : 1.1,
+			"speed" : 0.4,
 			"position" : [0, 0, 1]
 		},
 		{
 			"class": "ColoredCube",
 			"scale" : 1.5,
+			"speed" : 1.2,
 			"position" : [2, -1, 0]
+		},
+		{
+			"class": "ShadedCube",
+			"scale" : 1.25,
+			"position" : [-2, -1, 0]
+		},
+		{
+			"class": "ColoredTetrahedron",
+			"scale" : 1.5,
+			"position" : [-3, 3, 0]
 		}
 	]
 }

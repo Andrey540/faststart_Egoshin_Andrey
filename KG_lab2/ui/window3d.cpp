@@ -9,6 +9,9 @@ Window3D::Window3D(QWindow *parent)
 {
     setSurfaceType(QWindow::OpenGLSurface);
     setFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+    m_rotateCameraController = std::make_shared<RotateCameraController>();
+    m_moveCameraController   = std::make_shared<MoveCameraController>();
+    m_cameraController       = m_rotateCameraController;
     this->installEventFilter(this);
 }
 
@@ -22,6 +25,8 @@ void Window3D::pushScene(std::shared_ptr<BaseScene> scene)
 {
     m_sceneStack.push_back(scene);
     scene->onPush();
+    m_rotateCameraController->setScene(scene);
+    m_moveCameraController->setScene(scene);
 }
 
 void Window3D::popScene()
@@ -136,8 +141,8 @@ void Window3D::updateScene(BaseScene &scene)
 
     QOpenGLPaintDevice device(size());
     QPainter painter(&device);
-    scene.camera().rotate(m_rotationAngle, QVector3D(6, 3, 2));
-    scene.camera().loadMatrix();    
+
+    m_cameraController->updateCamera();
     scene.render(painter);
     scene.visit([&](SceneNode & node) {
         node.render(painter);
@@ -148,8 +153,13 @@ void Window3D::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_leftMouseButtomPressed)
     {
-        m_rotationAngle += event->x() - m_horizontalCursorPosition;
+        m_rotationZAngle += event->x() - m_horizontalCursorPosition;
+        m_rotationYAngle += event->y() - m_verticalCursorPosition;
         m_horizontalCursorPosition = event->x();
+        m_verticalCursorPosition   = event->y();
+
+        m_rotationYAngle = qMax(0.0f, m_rotationYAngle);
+        m_rotationYAngle = qMin(90.0f, m_rotationYAngle);
     }
 }
 
@@ -159,6 +169,7 @@ void Window3D::mousePressEvent(QMouseEvent *event)
     {
         m_leftMouseButtomPressed = true;
         m_horizontalCursorPosition = event->x();
+        m_verticalCursorPosition   = event->y();
     }
 }
 
@@ -168,4 +179,38 @@ void Window3D::mouseReleaseEvent(QMouseEvent *event)
     {
         m_leftMouseButtomPressed = false;
     }
+}
+
+void Window3D::wheelEvent(QWheelEvent* event)
+{
+    int numDegrees = event->delta() / 8;
+    float numSteps = numDegrees / 30.0f;
+
+    if (event->orientation() == Qt::Vertical) {
+        m_distance += numSteps;
+        m_distance = qMax(1.0f, m_distance);
+        m_distance = qMin(5.0f, m_distance);
+    }
+}
+
+bool Window3D::eventFilter(QObject* obj, QEvent* event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+         QKeyEvent *key = static_cast<QKeyEvent*>(event);
+         if (key->key() == Qt::Key_Tab)
+         {
+             if (m_cameraController == m_rotateCameraController)
+             {
+                 m_cameraController = m_moveCameraController;
+             }
+             else
+             {
+                 m_cameraController = m_rotateCameraController;
+             }
+             return true;
+         }
+    }
+    m_cameraController->acceptEvent(event);
+    return false;
 }

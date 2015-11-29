@@ -5,6 +5,8 @@
 #include <QTime>
 #include <memory>
 #include "../gl/basescene.h"
+#include "rotatecameracontroller.h"
+#include "movecameracontroller.h"
 
 class Window3D : public QWindow
 {
@@ -26,6 +28,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent* event);
+    bool eventFilter(QObject* obj, QEvent* event);
 
 private slots:
     void deferRender();
@@ -40,7 +44,13 @@ private:
     bool m_updatePending = false;
     bool m_leftMouseButtomPressed = false;
     float m_horizontalCursorPosition = 0;
-    float m_rotationAngle = 0;
+    float m_verticalCursorPosition = 0;
+    float m_rotationZAngle = 0;
+    float m_rotationYAngle = 0;
+    float m_distance = 1.0f;
+    std::shared_ptr<RotateCameraController> m_rotateCameraController;
+    std::shared_ptr<MoveCameraController> m_moveCameraController;
+    std::shared_ptr<IInputController> m_cameraController;
     std::vector<std::shared_ptr<BaseScene>> m_sceneStack;
     QOpenGLContext *m_pContext = nullptr;
 };
