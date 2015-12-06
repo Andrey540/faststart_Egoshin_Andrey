@@ -59,6 +59,10 @@ func RenderUserPage(ctx *gin.Context, user *SiteUser) {
 }
 
 func main() {
+  lexer := new(Lexer)
+  lexer.parseTokens("  1 + 3 4534 78")
+
+
   cache := NewSiteUsersCache()
   validator := new(RegisterFormValidator)
 
@@ -99,5 +103,5 @@ func main() {
 
     RenderCalcForm(ctx, result, alert)
   })
-  router.Run(":8080")
+  router.Run(":8080")  
 }
