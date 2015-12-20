@@ -15,13 +15,14 @@ QVector3D QJsonObjectWrapper::getVector3D(const QLatin1String &key) const
     if (array.size() != 3)
     {
         assert(!"incorrect array length");
+        return QVector3D(0.0f, 0.0f, 0.0f);
     }
 
     float vecArray[3];
     int counter = 0;
     for (QJsonValue const& value : array)
     {
-        vecArray[counter] = value.toDouble();
+        vecArray[counter] = (float)value.toDouble();
         ++counter;
     }
     return QVector3D(vecArray[0], vecArray[1], vecArray[2]);
