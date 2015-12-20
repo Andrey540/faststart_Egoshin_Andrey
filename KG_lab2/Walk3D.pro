@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     ui/movecameracontroller.cpp \
     scenedeserializer.cpp \
     nodes/shadedcube.cpp \
-    nodes/coloredtetrahedron.cpp
+    nodes/coloredtetrahedron.cpp \
+    qjsonobjectwrapper.cpp
 
 HEADERS  += \
     ui/window3d.h \
@@ -43,8 +44,8 @@ HEADERS  += \
     ui/movecameracontroller.h \
     scenedeserializer.h \
     nodes/iloadablenode.h \
-    parseutils.h \
     nodes/shadedcube.h \
-    nodes/coloredtetrahedron.h
+    nodes/coloredtetrahedron.h \
+    qjsonobjectwrapper.h
 
 FORMS    +=

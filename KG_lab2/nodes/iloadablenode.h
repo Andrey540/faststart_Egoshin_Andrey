@@ -4,6 +4,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QPainter>
+#include "qjsonobjectwrapper.h"
 
 
 // Структура - трехмерный вектор
@@ -30,5 +31,5 @@ class ILoadableNode
 public:
     virtual ~ILoadableNode() = default;
 
-    virtual void load(const QJsonObject &jsonObj) = 0;
+    virtual void load(const QJsonObjectWrapper &jsonObjWrapper) = 0;
 };

@@ -113,8 +113,8 @@ void ShadedCube::render(QPainter &painter)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void ShadedCube::load(const QJsonObject &jsonObj)
+void ShadedCube::load(const QJsonObjectWrapper &jsonObjWrapper)
 {
-    m_scale = jsonObj[KEY_CUBE_SCALE].toDouble();
-    m_position = ParseUtils::parseVector3D(jsonObj[KEY_CUBE_POSITION].toArray());
+    m_scale = jsonObjWrapper.getDouble(KEY_CUBE_SCALE);
+    m_position = jsonObjWrapper.getVector3D(KEY_CUBE_POSITION);
 }

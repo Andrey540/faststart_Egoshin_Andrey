@@ -1,8 +1,8 @@
 #include "scenedeserializer.h"
-#include "parseutils.h"
 #include "nodes/coloredcube.h"
 #include "nodes/shadedcube.h"
 #include "nodes/coloredtetrahedron.h"
+#include "qjsonobjectwrapper.h"
 #include <QDebug>
 
 static const QLatin1String KEY_CAMERA("camera");
@@ -69,16 +69,16 @@ bool SceneDeserializer::load(std::shared_ptr<BaseScene> scene)
 
 void SceneDeserializer::deserialize(const QJsonObject &source, std::shared_ptr<BaseScene> scene)
 {
-    QJsonObject cameraObj = source[KEY_CAMERA].toObject();
-    QVector3D eyeVec    = ParseUtils::parseVector3D(cameraObj[KEY_CAMERA_EYE].toArray());
-    QVector3D centerVec = ParseUtils::parseVector3D(cameraObj[KEY_CAMERA_CENTER].toArray());
-    QVector3D upVec     = ParseUtils::parseVector3D(cameraObj[KEY_CAMERA_UP].toArray());
+    QJsonObjectWrapper cameraObjWrapper = QJsonObjectWrapper(source[KEY_CAMERA].toObject());
+    QVector3D eyeVec    = cameraObjWrapper.getVector3D(KEY_CAMERA_EYE);
+    QVector3D centerVec = cameraObjWrapper.getVector3D(KEY_CAMERA_CENTER);
+    QVector3D upVec     = cameraObjWrapper.getVector3D(KEY_CAMERA_UP);
 
     QJsonArray values = source[KEY_OBJECTS].toArray();
     for (QJsonValue const& value : values)
     {
-        QJsonObject nodeObj = value.toObject();
-        QString nodeClass = nodeObj[KEY_CLASS].toString();
+        QJsonObjectWrapper nodeObjWrapper = value.toObject();
+        QString nodeClass = nodeObjWrapper.getString(KEY_CLASS);
 
         ILoadableNode* node;
         if (nodeClass == COLOREDCUBE)
@@ -97,7 +97,7 @@ void SceneDeserializer::deserialize(const QJsonObject &source, std::shared_ptr<B
         {
             assert(!"Undefined node class");
         }
-        node->load(nodeObj);
+        node->load(nodeObjWrapper);
     }
     scene->camera().lookAt(eyeVec, centerVec, upVec);
 }
