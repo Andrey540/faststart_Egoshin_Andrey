@@ -5,71 +5,26 @@ static const QLatin1String KEY_CUBE_SCALE("scale");
 static const QLatin1String KEY_CUBE_POSITION("position");
 static const QLatin1String KEY_CUBE_SPEED("speed");
 
-static void drawOpenGLCube(bool showWired, float scale, QVector3D position, float angle)
+
+ColoredCube::ColoredCube(SceneNode *parent)
+    : BaseSceneElement(parent)
+{}
+
+void ColoredCube::generateVertices()
 {
-    /*
+    m_vertices.clear();
+    m_vertices.push_back({{-1, -1, -1}, {255, 0, 0, 255}});
+    m_vertices.push_back({{+1, -1, -1}, {255, 255, 0, 255}});
+    m_vertices.push_back({{+1, +1, -1}, {0, 255, 0, 255}});
+    m_vertices.push_back({{-1, +1, -1}, {0, 0, 0, 255}});
+    m_vertices.push_back({{-1, -1, +1}, {255, 0, 255, 255}});
+    m_vertices.push_back({{+1, -1, +1}, {255, 255, 255, 255}});
+    m_vertices.push_back({{+1, +1, +1}, {0, 255, 255, 255}});
+    m_vertices.push_back({{-1, +1, +1}, {0, 0, 255, 255}});
+}
 
-       Y
-       |
-       |
-       |
-       +---X
-      /
-     /
-    Z
-       3----2
-      /    /|
-     /    / |
-    7----6  |
-    |  0 |  1
-    |    | /
-    |    |/
-    4----5
-    */
-    // Массив координат вершин
-    SimpleVertex vertices[8] =
-    {
-        {{-1, -1, -1}, {255, 0, 0, 255}},		// 0
-        {{+1, -1, -1}, {255, 255, 0, 255}},		// 1
-        {{+1, +1, -1}, {0, 255, 0, 255}},		// 2
-        {{-1, +1, -1}, {0, 0, 0, 255}},			// 3
-        {{-1, -1, +1}, {255, 0, 255, 255}},		// 4
-        {{+1, -1, +1}, {255, 255, 255, 255}},	// 5
-        {{+1, +1, +1}, {0, 255, 255, 255}},		// 6
-        {{-1, +1, +1}, {0, 0, 255, 255}},		// 7
-    };
-
-    QMatrix4x4 matrix;
-    matrix.rotate(angle, 0.0, 0.0, 1.0);
-
-    for (SimpleVertex &vert : vertices) {
-        QVector3D p(vert.pos.x, vert.pos.y, vert.pos.z);
-        p = matrix * p;
-        vert.pos.x = p.x();
-        vert.pos.y = p.y();
-        vert.pos.z = p.z();
-    }
-
-    for (SimpleVertex &vert : vertices) {
-        vert.pos.x += position.x();
-        vert.pos.y += position.y();
-        vert.pos.z += position.z();
-        vert.pos.x *= scale;
-        vert.pos.y *= scale;
-        vert.pos.z *= scale;
-    }    
-
-    if (showWired) {
-        for (SimpleVertex &vert : vertices) {
-            vert.pos.x *= 1.01;
-            vert.pos.y *= 1.01;
-            vert.pos.z *= 1.01;
-            vert.color.r = 0;
-            vert.color.g = 0;
-            vert.color.b = 0;
-        }
-    }
-
+void ColoredCube::drawFaces()
+{
     // Массив граней, а точнее, индексов составляющих их вершин.
     // Индексы вершин граней перечисляются в порядке их обхода
     // против часовой стрелки (если смотреть на грань снаружи)
@@ -83,43 +38,7 @@ static void drawOpenGLCube(bool showWired, float scale, QVector3D position, floa
         {4, 5, 6, 7},	// грань z>0
     };
 
-    // Передаем информацию о массиве вершин
-    glVertexPointer(3, GL_FLOAT, sizeof(SimpleVertex), &vertices[0].pos);
-
-    // и массиве цветов
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SimpleVertex), &vertices[0].color);
-
-    // Разрешаем использование массива координат вершин и цветов
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-
     glDrawElements(GL_QUADS, 24, GL_UNSIGNED_BYTE, faces);
-
-    // Выключаем использовнием массива цветов
-    glDisableClientState(GL_COLOR_ARRAY);
-    // Выключаем использование массива координат вершин
-    glDisableClientState(GL_VERTEX_ARRAY);
-}
-
-ColoredCube::ColoredCube(SceneNode *parent)
-    : SceneNode(parent)
-{
-}
-
-void ColoredCube::advance(int64_t msec)
-{
-    (void)msec;
-}
-
-void ColoredCube::render(QPainter &painter)
-{
-    (void)painter;
-
-    drawOpenGLCube(false, m_scale, m_position, m_angle);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    drawOpenGLCube(true, m_scale, m_position, m_angle);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    m_angle = (m_angle + m_speed);
 }
 
 void ColoredCube::load(const QJsonObjectWrapper &jsonObjWrapper)

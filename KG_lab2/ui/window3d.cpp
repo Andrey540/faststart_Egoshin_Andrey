@@ -8,11 +8,9 @@ Window3D::Window3D(QWindow *parent)
     : QWindow(parent)
 {
     setSurfaceType(QWindow::OpenGLSurface);
-    setFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     m_rotateCameraController = std::make_shared<RotateCameraController>();
     m_moveCameraController   = std::make_shared<MoveCameraController>();
     m_cameraController       = m_rotateCameraController;
-    this->installEventFilter(this);
 }
 
 void Window3D::setFixedSize(QSize size)
@@ -161,6 +159,7 @@ void Window3D::mouseMoveEvent(QMouseEvent *event)
         m_rotationYAngle = qMax(0.0f, m_rotationYAngle);
         m_rotationYAngle = qMin(90.0f, m_rotationYAngle);
     }
+    m_cameraController->mouseMoveEvent(event);
 }
 
 void Window3D::mousePressEvent(QMouseEvent *event)
@@ -171,6 +170,7 @@ void Window3D::mousePressEvent(QMouseEvent *event)
         m_horizontalCursorPosition = event->x();
         m_verticalCursorPosition   = event->y();
     }
+    m_cameraController->mousePressEvent(event);
 }
 
 void Window3D::mouseReleaseEvent(QMouseEvent *event)
@@ -179,6 +179,7 @@ void Window3D::mouseReleaseEvent(QMouseEvent *event)
     {
         m_leftMouseButtomPressed = false;
     }
+    m_cameraController->mouseReleaseEvent(event);
 }
 
 void Window3D::wheelEvent(QWheelEvent* event)
@@ -191,26 +192,26 @@ void Window3D::wheelEvent(QWheelEvent* event)
         m_distance = qMax(1.0f, m_distance);
         m_distance = qMin(5.0f, m_distance);
     }
+    m_cameraController->wheelEvent(event);
 }
 
-bool Window3D::eventFilter(QObject* obj, QEvent* event)
+void Window3D::keyPressEvent(QKeyEvent* event)
 {
-    if (event->type() == QEvent::KeyPress)
+    if (event->key() == Qt::Key_Tab)
     {
-         QKeyEvent *key = static_cast<QKeyEvent*>(event);
-         if (key->key() == Qt::Key_Tab)
-         {
-             if (m_cameraController == m_rotateCameraController)
-             {
-                 m_cameraController = m_moveCameraController;
-             }
-             else
-             {
-                 m_cameraController = m_rotateCameraController;
-             }
-             return true;
-         }
+        changeCameraController();
     }
-    m_cameraController->acceptEvent(event);
-    return false;
+    m_cameraController->keyPressEvent(event);
+}
+
+void Window3D::changeCameraController()
+{
+    if (m_cameraController == m_rotateCameraController)
+    {
+        m_cameraController = m_moveCameraController;
+    }
+    else
+    {
+        m_cameraController = m_rotateCameraController;
+    }
 }

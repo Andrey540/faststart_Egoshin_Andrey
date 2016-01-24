@@ -12,27 +12,29 @@ void MoveCameraController::setScene(std::shared_ptr<BaseScene> scene)
     m_up  = scene->camera().up();
 }
 
-void MoveCameraController::acceptEvent(QEvent *event)
+void MoveCameraController::keyPressEvent(QKeyEvent* event)
 {
-    if (event->type() == QEvent::KeyPress)
+    QVector2D front((m_at - m_eye).normalized());
+    QVector2D tangent(front.y(), -front.x());
+    if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left)
     {
-         QKeyEvent *key = static_cast<QKeyEvent*>(event);
-         if (key->key() == Qt::Key_A || key->key() == Qt::Key_Left)
-         {
-             m_positionY -= 0.3f;
-         }
-         if (key->key() == Qt::Key_D || key->key() == Qt::Key_Right)
-         {
-             m_positionY += 0.3f;
-         }
-         if (key->key() == Qt::Key_W || key->key() == Qt::Key_Up)
-         {
-             m_positionX += 0.3f;
-         }
-         if (key->key() == Qt::Key_S || key->key() == Qt::Key_Down)
-         {
-             m_positionX -= 0.3f;
-         }
+        m_at  += -tangent;
+        m_eye += -tangent;
+    }
+    if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right)
+    {
+        m_at  += tangent;
+        m_eye += tangent;
+    }
+    if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up)
+    {
+        m_at  += front;
+        m_eye += front;
+    }
+    if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down)
+    {
+        m_at  += -front;
+        m_eye += -front;
     }
 }
 
@@ -41,7 +43,26 @@ void MoveCameraController::updateCamera()
     if (m_scene)
     {
         m_scene->camera().lookAt(m_eye, m_at, m_up);
-        m_scene->camera().translate(m_positionX, m_positionY, m_positionZ);
         m_scene->camera().loadMatrix();
     }
+}
+
+void MoveCameraController::wheelEvent(QWheelEvent* event)
+{
+    (void)event;
+}
+
+void MoveCameraController::mouseMoveEvent(QMouseEvent* event)
+{
+    (void)event;
+}
+
+void MoveCameraController::mousePressEvent(QMouseEvent* event)
+{
+    (void)event;
+}
+
+void MoveCameraController::mouseReleaseEvent(QMouseEvent* event)
+{
+    (void)event;
 }

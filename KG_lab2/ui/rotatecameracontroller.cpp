@@ -12,30 +12,6 @@ void RotateCameraController::setScene(std::shared_ptr<BaseScene> scene)
     m_up  = scene->camera().up();
 }
 
-void RotateCameraController::acceptEvent(QEvent *event)
-{
-    if (event->type() == QEvent::Wheel)
-    {
-        QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-        processWheelEvent(wheelEvent);
-    }
-    else if (event->type() == QEvent::MouseMove)
-    {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        processMouseMoveEvent(mouseEvent);
-    }
-    else if (event->type() == QEvent::MouseButtonPress)
-    {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        processMousePressEvent(mouseEvent);
-    }
-    else if (event->type() == QEvent::MouseButtonRelease)
-    {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        processMouseReleaseEvent(mouseEvent);
-    }
-}
-
 void RotateCameraController::updateCamera()
 {
     if (m_scene)
@@ -47,7 +23,7 @@ void RotateCameraController::updateCamera()
     }
 }
 
-void RotateCameraController::processWheelEvent(QWheelEvent* event)
+void RotateCameraController::wheelEvent(QWheelEvent* event)
 {
     int numDegrees = event->delta() / 8;
     float numSteps = numDegrees / 30.0f;
@@ -60,7 +36,7 @@ void RotateCameraController::processWheelEvent(QWheelEvent* event)
     }
 }
 
-void RotateCameraController::processMouseMoveEvent(QMouseEvent* event)
+void RotateCameraController::mouseMoveEvent(QMouseEvent* event)
 {
     if (m_leftMouseButtomPressed)
     {
@@ -74,7 +50,7 @@ void RotateCameraController::processMouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void RotateCameraController::processMousePressEvent(QMouseEvent* event)
+void RotateCameraController::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -84,10 +60,15 @@ void RotateCameraController::processMousePressEvent(QMouseEvent* event)
     }
 }
 
-void RotateCameraController::processMouseReleaseEvent(QMouseEvent* event)
+void RotateCameraController::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton)
     {
         m_leftMouseButtomPressed = false;
     }
+}
+
+void RotateCameraController::keyPressEvent(QKeyEvent* event)
+{
+    (void)event;
 }

@@ -25,11 +25,11 @@ protected:
     void exposeEvent(QExposeEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent* event);
-    bool eventFilter(QObject* obj, QEvent* event);
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 private slots:
     void deferRender();
@@ -53,4 +53,6 @@ private:
     std::shared_ptr<IInputController> m_cameraController;
     std::vector<std::shared_ptr<BaseScene>> m_sceneStack;
     QOpenGLContext *m_pContext = nullptr;
+
+    void changeCameraController();
 };

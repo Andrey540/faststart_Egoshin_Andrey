@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     scenedeserializer.cpp \
     nodes/shadedcube.cpp \
     nodes/coloredtetrahedron.cpp \
-    qjsonobjectwrapper.cpp
+    qjsonobjectwrapper.cpp \
+    nodes/basesceneelement.cpp
 
 HEADERS  += \
     ui/window3d.h \
@@ -46,6 +47,7 @@ HEADERS  += \
     nodes/iloadablenode.h \
     nodes/shadedcube.h \
     nodes/coloredtetrahedron.h \
-    qjsonobjectwrapper.h
+    qjsonobjectwrapper.h \
+    nodes/basesceneelement.h
 
 FORMS    +=
