@@ -22,9 +22,6 @@ func (self *StackMachine)Execute(fi *bufio.Reader) {
 		if err == io.EOF {
 			break
 		}	
-		if command == "exit" {
-				break
-			}
 		switch num {
 			case 0:
 	            panic(errors.New("unexpected scan error"))
