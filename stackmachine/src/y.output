@@ -1,0 +1,478 @@
+
+state 0
+	$accept: .list $end 
+	list: .    (1)
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 4
+	.  reduce 1 (src line 58)
+
+	expr  goto 3
+	number  goto 10
+	statement  goto 2
+	list  goto 1
+
+state 1
+	$accept:  list.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	list:  statement.    (2)
+
+	.  reduce 2 (src line 59)
+
+
+state 3
+	statement:  expr.    (3)
+	statement:  expr.EOF 
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	EOF  shift 13
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	.  reduce 3 (src line 62)
+
+
+state 4
+	statement:  IDENTIFIER.ASSIGNED expr 
+	expr:  IDENTIFIER.    (16)
+
+	ASSIGNED  shift 19
+	.  reduce 16 (src line 165)
+
+
+state 5
+	expr:  LPAREN.expr RPAREN 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 20
+	number  goto 10
+
+state 6
+	expr:  SIN.LPAREN expr RPAREN 
+
+	LPAREN  shift 22
+	.  error
+
+
+state 7
+	expr:  COS.LPAREN expr RPAREN 
+
+	LPAREN  shift 23
+	.  error
+
+
+state 8
+	expr:  SQRT.LPAREN expr RPAREN 
+
+	LPAREN  shift 24
+	.  error
+
+
+state 9
+	expr:  SUB.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 25
+	number  goto 10
+
+state 10
+	expr:  number.    (17)
+
+	.  reduce 17 (src line 169)
+
+
+state 11
+	number:  INT_NUMBER.    (18)
+
+	.  reduce 18 (src line 176)
+
+
+state 12
+	number:  FLOAT_NUMBER.    (19)
+
+	.  reduce 19 (src line 182)
+
+
+state 13
+	statement:  expr EOF.    (5)
+
+	.  reduce 5 (src line 71)
+
+
+state 14
+	expr:  expr ADD.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 26
+	number  goto 10
+
+state 15
+	expr:  expr SUB.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 27
+	number  goto 10
+
+state 16
+	expr:  expr MUL.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 28
+	number  goto 10
+
+state 17
+	expr:  expr QUO.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 29
+	number  goto 10
+
+state 18
+	expr:  expr REM.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 30
+	number  goto 10
+
+state 19
+	statement:  IDENTIFIER ASSIGNED.expr 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 31
+	number  goto 10
+
+state 20
+	expr:  LPAREN expr.RPAREN 
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	RPAREN  shift 32
+	.  error
+
+
+state 21
+	expr:  IDENTIFIER.    (16)
+
+	.  reduce 16 (src line 165)
+
+
+state 22
+	expr:  SIN LPAREN.expr RPAREN 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 33
+	number  goto 10
+
+state 23
+	expr:  COS LPAREN.expr RPAREN 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 34
+	number  goto 10
+
+state 24
+	expr:  SQRT LPAREN.expr RPAREN 
+
+	INT_NUMBER  shift 11
+	FLOAT_NUMBER  shift 12
+	SUB  shift 9
+	SIN  shift 6
+	COS  shift 7
+	SQRT  shift 8
+	LPAREN  shift 5
+	IDENTIFIER  shift 21
+	.  error
+
+	expr  goto 35
+	number  goto 10
+
+state 25
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+	expr:  SUB expr.    (15)
+
+	.  reduce 15 (src line 156)
+
+
+state 26
+	expr:  expr.ADD expr 
+	expr:  expr ADD expr.    (7)
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	.  reduce 7 (src line 84)
+
+
+state 27
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr SUB expr.    (8)
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	.  reduce 8 (src line 94)
+
+
+state 28
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr MUL expr.    (9)
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	.  reduce 9 (src line 104)
+
+
+state 29
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr QUO expr.    (10)
+	expr:  expr.REM expr 
+
+	.  reduce 10 (src line 114)
+
+
+state 30
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+	expr:  expr REM expr.    (11)
+
+	.  reduce 11 (src line 123)
+
+
+state 31
+	statement:  IDENTIFIER ASSIGNED expr.    (4)
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	.  reduce 4 (src line 67)
+
+
+state 32
+	expr:  LPAREN expr RPAREN.    (6)
+
+	.  reduce 6 (src line 79)
+
+
+state 33
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+	expr:  SIN LPAREN expr.RPAREN 
+
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	RPAREN  shift 36
+	.  error
+
+
+state 34
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+	expr:  COS LPAREN expr.RPAREN 
+
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	RPAREN  shift 37
+	.  error
+
+
+state 35
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.REM expr 
+	expr:  SQRT LPAREN expr.RPAREN 
+
+	ADD  shift 14
+	SUB  shift 15
+	MUL  shift 16
+	QUO  shift 17
+	REM  shift 18
+	RPAREN  shift 38
+	.  error
+
+
+state 36
+	expr:  SIN LPAREN expr RPAREN.    (12)
+
+	.  reduce 12 (src line 132)
+
+
+state 37
+	expr:  COS LPAREN expr RPAREN.    (13)
+
+	.  reduce 13 (src line 140)
+
+
+state 38
+	expr:  SQRT LPAREN expr RPAREN.    (14)
+
+	.  reduce 14 (src line 148)
+
+
+19 terminals, 5 nonterminals
+20 grammar rules, 39/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+54 working sets used
+memory: parser 25/30000
+13 extra closures
+141 shift entries, 1 exceptions
+15 goto entries
+11 entries saved by goto default
+Optimizer space used: output 101/30000
+101 table entries, 28 zero
+maximum spread: 18, maximum offset: 24
