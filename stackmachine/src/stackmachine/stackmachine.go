@@ -37,7 +37,6 @@ func (self *StackMachine)Execute(fi *bufio.Reader) {
 				} else {
 					panic(errors.New("unexpected command " + command))
 				}
-				fmt.Println(value)
 	    }  
     }
 }

@@ -157,7 +157,6 @@ func main() {
 func readline(fi *bufio.Reader) (string, bool) {
 	s, err := fi.ReadString('\n')
 	if err != nil {
-		fmt.Println(err)
 		return "", false
 	}
 	return s, true
