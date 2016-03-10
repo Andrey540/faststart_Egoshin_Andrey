@@ -14,16 +14,13 @@ class FlyWithWings : public IFlyBehavior
 {
 public:
     FlyWithWings() 
-    {
-        m_SortiesCount = 0;
-    }
+    {}
 	void Fly() override
 	{
-		++m_SortiesCount;
-		cout << "I'm flying with wings!! It's sortie number " << m_SortiesCount << endl;
+		cout << "I'm flying with wings!! It is sortie number " << ++m_sortiesCount << endl;
 	}
 private:
-    unsigned m_SortiesCount;
+    size_t m_sortiesCount = 0;
 };
 
 class FlyNoWay : public IFlyBehavior
@@ -209,7 +206,6 @@ void PlayWithDuck(Duck & duck)
 	DrawDuck(duck);
 	duck.Fly();
 }
-
 
 void main()
 {
