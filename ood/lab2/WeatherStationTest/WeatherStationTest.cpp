@@ -23,13 +23,18 @@ private:
 BOOST_AUTO_TEST_CASE(IsRomoveIntoUppdateProcessCorrect)
 {
 	CWeatherData wd;
+
+	CDisplay display1;
+	wd.RegisterObserver(display1);
+
 	CTestDisplay testDisplay(wd);
 	wd.RegisterObserver(testDisplay);
 
-	CDisplay display;
-	wd.RegisterObserver(display);
+	CDisplay display2;
+	wd.RegisterObserver(display2);
 
 	wd.SetMeasurements(3, 0.7, 760);
+	std::cout << "+++++++++++++++++++++" << std::endl;
 	wd.SetMeasurements(4, 0.8, 761);
 }
 
