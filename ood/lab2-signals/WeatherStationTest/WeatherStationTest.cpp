@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "..\WeatherStation\WeatherData.h"
-
+/*
 class CTestDisplay : public IObserver<SWeatherInfo>
 {
 public:
@@ -118,4 +118,4 @@ BOOST_AUTO_TEST_CASE(IsEconomocalDisplayWorksCorrect)
 	display.SetNeedTemperature(true);
 	wdEconomical.SetMeasurements(23, 0.6);
 	std::cout << "=====================" << std::endl;
-}
+}*/
