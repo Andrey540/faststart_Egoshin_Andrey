@@ -3,13 +3,25 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <string>
 #include <boost\signals2.hpp>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "Observer.h"
 
 using namespace std;
 
-typedef boost::signals2::signal<void(double, const std::string&)> UpdateHandlerSingle;
-typedef boost::signals2::signal<void(double, double, const std::string&)> UpdateHandlerDouble;
+class IProvidableName
+{
+public:
+	virtual ~IProvidableName() = default;
+	virtual const std::string& GetName() const = 0;
+};
+
+typedef boost::signals2::signal<void(double, const IProvidableName&)> UpdateHandlerSingle;
+typedef boost::signals2::signal<void(double, double, const IProvidableName&)> UpdateHandlerDouble;
 
 class CStatsWindOrientation
 {
@@ -25,16 +37,17 @@ public:
 		{
 			m_maxValue = orientation;
 		}
-		double y = speed * sin(orientation / 100);
-		double x = speed * cos(orientation / 100);
+		double y = speed * sin(orientation * M_PI / 180);		
+		double x = speed * cos(orientation * M_PI / 180);
+
 		m_calcX += x;
 		m_calcY += y;
 	}
 	void PrintData()
 	{
-		std::cout << "Max " << m_name.c_str() << " " << m_maxValue << std::endl;
-		std::cout << "Min " << m_name.c_str() << " " << m_minValue << std::endl;
-		std::cout << "Average " << m_name.c_str() << " " << atan(m_calcY / m_calcX) * 100 << std::endl;
+		std::cout << "Max " << m_name << " " << m_maxValue << std::endl;
+		std::cout << "Min " << m_name << " " << m_minValue << std::endl;
+		std::cout << "Average " << m_name << " " << std::atan2(m_calcY, m_calcX) * 180 / M_PI  << std::endl;
 		std::cout << "----------------" << std::endl;
 	}
 
@@ -65,9 +78,9 @@ public:
 	}
 	void PrintData()
 	{
-		std::cout << "Max " << m_name.c_str() << " " << m_maxValue << std::endl;
-		std::cout << "Min " << m_name.c_str() << " " << m_minValue << std::endl;
-		std::cout << "Average " << m_name.c_str() << " " << (m_accValue / m_countAcc) << std::endl;
+		std::cout << "Max " << m_name << " " << m_maxValue << std::endl;
+		std::cout << "Min " << m_name << " " << m_minValue << std::endl;
+		std::cout << "Average " << m_name << " " << (m_accValue / m_countAcc) << std::endl;
 		std::cout << "----------------" << std::endl;
 	}
 
@@ -82,38 +95,35 @@ private:
 class CDisplay
 {
 public:
-	void OnUpdateTemperature(double data, const std::string & stationName)
+	void OnUpdateTemperature(double data, const IProvidableName & providableName)
 	{
-		PrintStationName(stationName);
+		PrintStationName(providableName);
 		std::cout << "Current Temp " << data << std::endl;
 	}
-	void OnUpdateHumidity(double data, const std::string & stationName)
+	void OnUpdateHumidity(double data, const IProvidableName & providableName)
 	{
-		PrintStationName(stationName);
+		PrintStationName(providableName);
 		std::cout << "Current Hum " << data << std::endl;
 	}
-	void OnUpdatePressure(double data, const std::string & stationName)
+	void OnUpdatePressure(double data, const IProvidableName & providableName)
 	{
-		PrintStationName(stationName);
+		PrintStationName(providableName);
 		std::cout << "Current Pressure " << data << std::endl;
 	}
-	void OnUpdateWindSpeed(double data, const std::string & stationName)
+	void OnUpdateWindSpeed(double data, const IProvidableName & providableName)
 	{
-		PrintStationName(stationName);
+		PrintStationName(providableName);
 		std::cout << "Current Wind Speed " << data << std::endl;
 	}
-	void OnUpdateWindOrientation(double speed, double orientation, const std::string & stationName)
+	void OnUpdateWindOrientation(double speed, double orientation, const IProvidableName & providableName)
 	{
-		PrintStationName(stationName);
+		PrintStationName(providableName);
 		std::cout << "Current Wind Orientation " << orientation << std::endl;
 	}
 private:
-	void PrintStationName(const std::string & stationName)
+	void PrintStationName(const IProvidableName & providableName)
 	{
-		if (stationName.size() > 0)
-		{
-			std::cout << "Data from " << stationName.c_str() << " station" << std::endl;
-		}
+		std::cout << "Data from " << providableName.GetName() << " station" << std::endl;
 	}
 };
 
@@ -126,27 +136,27 @@ public:
 					  m_windSpeed(std::string("Wind Speed")),
 					  m_windOrientation(std::string("Wind Orientation"))
 	{}
-	void OnUpdateTemperature(double data, const std::string & name)
+	void OnUpdateTemperature(double data, const IProvidableName & providableName)
 	{
 		m_temperature.UpdateData(data);
 		m_temperature.PrintData();
 	}
-	void OnUpdateHumidity(double data, const std::string & name)
+	void OnUpdateHumidity(double data, const IProvidableName & providableName)
 	{
 		m_humidity.UpdateData(data);
 		m_humidity.PrintData();
 	}
-	void OnUpdatePressure(double data, const std::string & name)
+	void OnUpdatePressure(double data, const IProvidableName & providableName)
 	{
 		m_pressure.UpdateData(data);
 		m_pressure.PrintData();
 	}
-	void OnUpdateWindSpeed(double data, const std::string & name)
+	void OnUpdateWindSpeed(double data, const IProvidableName & providableName)
 	{
 		m_windSpeed.UpdateData(data);
 		m_windSpeed.PrintData();
 	}
-	void OnUpdateWindOrientation(double speed, double orientation, const std::string & name)
+	void OnUpdateWindOrientation(double speed, double orientation, const IProvidableName & providableName)
 	{
 		m_windOrientation.UpdateData(speed, orientation);
 		m_windOrientation.PrintData();
@@ -159,7 +169,66 @@ private:
 	CStatsWindOrientation m_windOrientation;
 };
 
-class CWeatherData
+
+class CWeatherEconomicalData : public IProvidableName
+{
+public:
+
+	CWeatherEconomicalData(std::string name = "") : m_name(move(name)) {}
+	void SetMeasurements(double temp, double pressure)
+	{
+		m_temperature = temp;
+		m_pressure    = pressure;
+
+		MeasurementsChanged();
+	}
+
+	boost::signals2::connection SubscribeToTemperature(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	{
+		return m_sigTemperature.connect(priority, handler);
+	}
+	boost::signals2::connection SubscribeToPressure(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	{
+		return m_sigPressure.connect(priority, handler);
+	}
+
+	void MeasurementsChanged()
+	{
+		NotifyObservers();
+	}
+
+	void NotifyObservers()
+	{
+		if (m_temperature != m_prevTemperature)
+		{
+			m_sigTemperature(m_temperature, *this);
+			m_prevTemperature = m_temperature;
+		}
+		if (m_pressure != m_prevPressure)
+		{
+			m_sigPressure(m_pressure, *this);
+			m_prevPressure = m_pressure;
+		}
+	}
+
+	const std::string& GetName() const override
+	{
+		return m_name;
+	}
+
+private:	
+	double m_temperature = 0.0;
+	double m_prevTemperature = 0.0;
+	double m_prevPressure = 0.0;
+	double m_pressure = 760.0;
+
+	std::string m_name;
+
+	UpdateHandlerSingle m_sigTemperature;
+	UpdateHandlerSingle m_sigPressure;
+};
+
+class CWeatherData : public IProvidableName
 {
 public:
 
@@ -173,21 +242,17 @@ public:
 		MeasurementsChanged();
 	}
 
-	void SubscribeToTemperature(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	boost::signals2::connection SubscribeToTemperature(UpdateHandlerSingle::slot_type handler, int priority = 0)
 	{
-		m_sigTemperature.connect(priority, handler);
+		return m_sigTemperature.connect(priority, handler);
 	}
-	void SubscribeToHumidity(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	boost::signals2::connection SubscribeToHumidity(UpdateHandlerSingle::slot_type handler, int priority = 0)
 	{
-		m_sigHumidity.connect(priority, handler);
+		return m_sigHumidity.connect(priority, handler);
 	}
-	void SubscribeToPressure(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	boost::signals2::connection SubscribeToPressure(UpdateHandlerSingle::slot_type handler, int priority = 0)
 	{
-		m_sigPressure.connect(priority, handler);
-	}
-	void UnsubscribeFromTEmperature(const UpdateHandlerSingle::slot_function_type & handler)
-	{
-		//m_sigTemperature.disconnect(handler);
+		return m_sigPressure.connect(priority, handler);
 	}
 
 	void MeasurementsChanged()
@@ -197,9 +262,14 @@ public:
 
 	virtual void NotifyObservers()
 	{
-		m_sigTemperature(m_temperature, m_name);
-		m_sigHumidity(m_humidity, m_name);
-		m_sigPressure(m_pressure, m_name);
+		m_sigTemperature(m_temperature, *this);
+		m_sigHumidity(m_humidity, *this);
+		m_sigPressure(m_pressure, *this);
+	}
+
+	const std::string& GetName() const
+	{
+		return m_name;
 	}
 
 protected:
@@ -220,13 +290,13 @@ class CWeatherDataPro : public CWeatherData
 public:
 	CWeatherDataPro(std::string name = "") : CWeatherData(move(name)) {}
 
-	void SubscribeToWindSpeed(UpdateHandlerSingle::slot_type handler, int priority = 0)
+	boost::signals2::connection SubscribeToWindSpeed(UpdateHandlerSingle::slot_type handler, int priority = 0)
 	{
-		m_sigWindSpeed.connect(priority, handler);
+		return m_sigWindSpeed.connect(priority, handler);
 	}
-	void SubscribeToWindOrientation(UpdateHandlerDouble::slot_type handler, int priority = 0)
+	boost::signals2::connection SubscribeToWindOrientation(UpdateHandlerDouble::slot_type handler, int priority = 0)
 	{
-		m_sigWindOrientation.connect(priority, handler);
+		return m_sigWindOrientation.connect(priority, handler);
 	}
 
 	void SetMeasurements(double temp, double humidity, double pressure, double windSpeed = 0, double windOrientation = 0)
@@ -241,8 +311,8 @@ public:
 	{
 		CWeatherData::NotifyObservers();
 
-		m_sigWindSpeed(m_windSpeed, m_name);
-		m_sigWindOrientation(m_windSpeed, m_windOrientation, m_name);
+		m_sigWindSpeed(m_windSpeed, *this);
+		m_sigWindOrientation(m_windSpeed, m_windOrientation, *this);
 	}
 private:
 	double m_windSpeed = 0;

@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FCDB7FE8-7A0C-43DC-B476-4AB6B6DF5933}</ProjectGuid>
+    <ProjectGuid>{64AC1F14-C772-4F7A-BB38-AF610C4C4B6E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>WeatherStation</RootNamespace>
+    <RootNamespace>streams</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,11 +146,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DecryptStreamDecorator.cpp" />
+    <ClCompile Include="EncryptStreamDecorator.cpp" />
+    <ClCompile Include="FileInputStream.cpp" />
+    <ClCompile Include="FileOutputStream.cpp" />
+    <ClCompile Include="InputStreamDecorator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MemoryInputStream.cpp" />
+    <ClCompile Include="MemoryOutputStream.cpp" />
+    <ClCompile Include="OutputStreamDecorator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Observer.h" />
-    <ClInclude Include="WeatherData.h" />
+    <ClInclude Include="DecryptStreamDecorator.h" />
+    <ClInclude Include="EncryptStreamDecorator.h" />
+    <ClInclude Include="FileInputStream.h" />
+    <ClInclude Include="FileOutputStream.h" />
+    <ClInclude Include="IInputStream.h" />
+    <ClInclude Include="InputStreamDecorator.h" />
+    <ClInclude Include="IOutputStream.h" />
+    <ClInclude Include="MemoryInputStream.h" />
+    <ClInclude Include="MemoryOutputStream.h" />
+    <ClInclude Include="OutputStreamDecorator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,13 @@
 #include <iterator>
 #include <functional>
 
+class IProvidableName
+{
+public:
+	virtual ~IProvidableName() = default;
+	virtual const std::string& GetName() const = 0;
+};
+
 /*
 Шаблонный интерфейс IObserver. Его должен реализовывать класс, 
 желающий получать уведомления от соответствующего IObservable
@@ -14,16 +21,9 @@ template <typename T>
 class IObserver
 {
 public:
-	virtual void Update(T const& data, const std::string & stationName) = 0;
+	virtual void Update(T const& data, const IProvidableName & providableName) = 0;
 	virtual void GetInterestData(T & info) const = 0;
 	virtual ~IObserver() = default;
-};
-
-template <typename T, typename S>
-class IDuoObserver : public IObserver<T>, public IObserver<S>
-{
-public:
-	virtual ~IDuoObserver() = default;
 };
 
 /*
@@ -42,7 +42,7 @@ public:
 
 // Реализация интерфейса IObservable
 template <class T>
-class CObservable : public IObservable<T>
+class CObservable : public IObservable<T>, public IProvidableName
 {
 public:
 	CObservable(std::string && name = "") : m_name(move(name)) {}
@@ -71,7 +71,7 @@ public:
 		{
 			if (IsNeedUpdateObserver(*observer.first))
 			{
-				observer.first->Update(data, m_name);
+				observer.first->Update(data, *this);
 			}
 		}		
 	}
@@ -85,6 +85,11 @@ public:
 		{
 			m_observers.erase(iter);
 		}
+	}
+	
+	const std::string& GetName() const override
+	{
+		return m_name;
 	}
 
 protected:

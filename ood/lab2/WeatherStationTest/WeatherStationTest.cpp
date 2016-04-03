@@ -11,7 +11,7 @@ public:
 	void GetInterestData(SWeatherInfo & info) const override
 	{
 	}
-	void Update(SWeatherInfo const& data, const std::string & stationName) override
+	void Update(SWeatherInfo const& data, const IProvidableName & providableName) override
 	{
 		std::cout << "Current Temp of test display " << data.temperature << std::endl;
 		std::cout << "Current Hum of test display " << data.humidity << std::endl;

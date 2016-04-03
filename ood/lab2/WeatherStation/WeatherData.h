@@ -3,6 +3,10 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <string>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include "Observer.h"
 
 using namespace std;
@@ -38,16 +42,16 @@ public:
 		{
 			m_maxValue = orientation;
 		}
-		double y = speed * sin(orientation / 100);
-		double x = speed * cos(orientation / 100);
+		double y = speed * sin(orientation * M_PI / 180);
+		double x = speed * cos(orientation * M_PI / 180);
 		m_calcX += x;
 		m_calcY += y;
 	}
 	void PrintData()
 	{
-		std::cout << "Max " << m_name.c_str() << " " << m_maxValue << std::endl;
-		std::cout << "Min " << m_name.c_str() << " " << m_minValue << std::endl;
-		std::cout << "Average " << m_name.c_str() << " " << atan(m_calcY / m_calcX) * 100 << std::endl;
+		std::cout << "Max " << m_name << " " << m_maxValue << std::endl;
+		std::cout << "Min " << m_name << " " << m_minValue << std::endl;
+		std::cout << "Average " << m_name << " " << std::atan2(m_calcY,  m_calcX) * 180 / M_PI << std::endl;
 		std::cout << "----------------" << std::endl;
 	}
 
@@ -78,9 +82,9 @@ public:
 	}
 	void PrintData()
 	{
-		std::cout << "Max " << m_name.c_str() << " " << m_maxValue << std::endl;
-		std::cout << "Min " << m_name.c_str() << " " << m_minValue << std::endl;
-		std::cout << "Average " << m_name.c_str() << " " << (m_accValue / m_countAcc) << std::endl;
+		std::cout << "Max " << m_name << " " << m_maxValue << std::endl;
+		std::cout << "Min " << m_name << " " << m_minValue << std::endl;
+		std::cout << "Average " << m_name << " " << (m_accValue / m_countAcc) << std::endl;
 		std::cout << "----------------" << std::endl;
 	}
 
@@ -108,12 +112,9 @@ public:
 		info.temperature = m_needTemperature;
 		info.pressure = m_needPressure;
 	}
-	void Update(SWeatherEconomicalInfo const& data, const std::string & stationName) override
+	void Update(SWeatherEconomicalInfo const& data, const IProvidableName & providableName) override
 	{
-		if (stationName.size() > 0)
-		{
-			std::cout << "Data from " << stationName.c_str() << " station" << std::endl;
-		}
+		std::cout << "Data from " << providableName.GetName() << " station" << std::endl;
 		std::cout << "Current Temp " << data.temperature << std::endl;
 		std::cout << "Current Pressure " << data.pressure << std::endl;
 		std::cout << "----------------" << std::endl;
@@ -123,25 +124,22 @@ private:
 	bool m_needPressure = false;
 };
 
-class CDisplay : public IDuoObserver<SWeatherInfo, SWeatherInfoPro>
+class CDisplay : public IObserver<SWeatherInfo>, public IObserver<SWeatherInfoPro>
 {
 public:
 	void GetInterestData(SWeatherInfo & info) const override {}
 	void GetInterestData(SWeatherInfoPro & info) const override {}
-	void Update(SWeatherInfo const& data, const std::string & stationName) override
+	void Update(SWeatherInfo const& data, const IProvidableName & providableName) override
 	{
-		if (stationName.size() > 0)
-		{
-			std::cout << "Data from " << stationName.c_str() << " station" << std::endl;
-		}
+		std::cout << "Data from " << providableName.GetName() << " station" << std::endl;
 		std::cout << "Current Temp " << data.temperature << std::endl;
 		std::cout << "Current Hum " << data.humidity << std::endl;
 		std::cout << "Current Pressure " << data.pressure << std::endl;
 		std::cout << "----------------" << std::endl;
 	}
-	void Update(SWeatherInfoPro const& data, const std::string & stationName) override
+	void Update(SWeatherInfoPro const& data, const IProvidableName & providableName) override
 	{
-		Update(static_cast<SWeatherInfo>(data), stationName);
+		Update(static_cast<SWeatherInfo>(data), providableName);
 
 		std::cout << "Current Wind Speed " << data.windSpeed << std::endl;
 		std::cout << "Current Wind Orientation " << data.windOrientation << std::endl;
@@ -149,7 +147,7 @@ public:
 	}
 };
 
-class CStatsDisplay : public IDuoObserver<SWeatherInfo, SWeatherInfoPro>
+class CStatsDisplay : public IObserver<SWeatherInfo>, public IObserver<SWeatherInfoPro>
 {
 public:
 	CStatsDisplay() : m_temperature(std::string("Temperature")),
@@ -160,7 +158,7 @@ public:
 	{}
 	void GetInterestData(SWeatherInfo & info) const override {}
 	void GetInterestData(SWeatherInfoPro & info) const override {}
-	void Update(SWeatherInfo const& data, const std::string & name) override
+	void Update(SWeatherInfo const& data, const IProvidableName & providableName) override
 	{
 		m_temperature.UpdateData(data.temperature);
 		m_humidity.UpdateData(data.humidity);
@@ -170,9 +168,9 @@ public:
 		m_humidity.PrintData();
 		m_pressure.PrintData();
 	}
-	void Update(SWeatherInfoPro const& data, const std::string & name) override
+	void Update(SWeatherInfoPro const& data, const IProvidableName & providableName) override
 	{
-		Update(static_cast<SWeatherInfo>(data), name);
+		Update(static_cast<SWeatherInfo>(data), providableName);
 
 		m_windSpeed.UpdateData(data.windSpeed);
 		m_windOrientation.UpdateData(data.windSpeed, data.windOrientation);

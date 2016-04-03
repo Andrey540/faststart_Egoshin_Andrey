@@ -15,11 +15,13 @@ int main()
 
 	wdIn.SubscribeToTemperature(boost::bind(&CStatsDisplay::OnUpdateTemperature, &statsDisplay, _1, _2));
 	wdIn.SubscribeToHumidity(boost::bind(&CStatsDisplay::OnUpdateHumidity, &statsDisplay, _1, _2));
-	wdIn.SubscribeToPressure(boost::bind(&CStatsDisplay::OnUpdatePressure, &statsDisplay, _1, _2));
+	auto pressureConnection = wdIn.SubscribeToPressure(boost::bind(&CStatsDisplay::OnUpdatePressure, &statsDisplay, _1, _2));
 
 	wdIn.SetMeasurements(3, 0.7, 760);
 	wdIn.SetMeasurements(4, 0.8, 761);
 
+	pressureConnection.disconnect();
+	
 	wdIn.SetMeasurements(10, 0.8, 761);
 	wdIn.SetMeasurements(-10, 0.8, 761);
 	
