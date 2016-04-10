@@ -26,7 +26,10 @@ uint8_t CFileInputStream::ReadByte()
 	{
 		throw std::ios_base::failure("Can not read file");
 	}
-	CheckIsEOF();
+	if (m_file.peek() == EOF)
+	{
+		m_file.setstate(std::ios::eofbit);
+	}
 	return result;
 }
 
@@ -38,14 +41,5 @@ std::streamsize CFileInputStream::ReadBlock(void * dstBuffer, std::streamsize si
 	}
 	char* dataPtr = static_cast<char*>(dstBuffer);
 	m_file.read(dataPtr, size * sizeof(char));
-	CheckIsEOF();
 	return m_file.gcount();
-}
-
-void CFileInputStream::CheckIsEOF()
-{
-	if (m_file.peek() == EOF)
-	{
-		m_file.setstate(std::ios::eofbit);
-	}
 }
