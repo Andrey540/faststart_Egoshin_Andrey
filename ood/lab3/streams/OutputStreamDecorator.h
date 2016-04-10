@@ -7,11 +7,11 @@ public:
 	COutputStreamDecorator(IOutputStreamPtr && outputStreame);
 	~COutputStreamDecorator();
 
-	void WriteByte(BYTE byte) override;
-	void WriteBlock(const std::vector<BYTE>& srcData, size_t dataSize) override;
+	void WriteByte(uint8_t byte) override;
+	void WriteBlock(const void * srcData, std::streamsize size) override;
 
-	virtual BYTE DecoratorByte(BYTE byte) = 0;
-	virtual const std::vector<BYTE>& DecoratorBlock(const std::vector<BYTE>& srcData, size_t dataSize) = 0;
+	virtual uint8_t DecorateByte(uint8_t byte) = 0;
+	virtual const std::vector<uint8_t>& DecorateBlock(const void * srcData, std::streamsize size) = 0;
 private:
 	IOutputStreamPtr m_outputStream;
 };

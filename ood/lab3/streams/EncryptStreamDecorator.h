@@ -6,7 +6,7 @@ public:
 	CEncryptStreamDecorator(IInputStreamPtr && inputStream);
 	~CEncryptStreamDecorator();
 
-	BYTE DecorateByte(BYTE byte) override;
-	void DecorateBlock(std::vector<BYTE>& dstData) override;
+	uint8_t DecorateByte(uint8_t byte) override;
+	void DecorateBlock(void * dstBuffer, std::streamsize size) override;
 };
 

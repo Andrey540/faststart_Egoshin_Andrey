@@ -7,7 +7,10 @@ public:
 	CMemoryOutputStream();
 	~CMemoryOutputStream();
 
-	void WriteByte(BYTE byte) override;
-	void WriteBlock(const std::vector<BYTE>& srcData, size_t dataSize) override;
+	void WriteByte(uint8_t byte) override;
+	void WriteBlock(const void * srcData, std::streamsize size) override;
+
+private:
+	std::vector<uint8_t> m_buffer;
 };
 

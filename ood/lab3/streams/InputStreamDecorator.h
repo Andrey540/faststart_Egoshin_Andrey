@@ -8,11 +8,11 @@ public:
 	~CInputStreamDecorator();
 
 	bool IsEOF() const override;
-	BYTE ReadByte() override;
-	void ReadBlock(std::vector<BYTE>& dstData, size_t dataSize) override;
+	uint8_t ReadByte() override;
+	std::streamsize ReadBlock(void * dstBuffer, std::streamsize size) override;
 
-	virtual BYTE DecorateByte(BYTE byte) = 0;
-	virtual void DecorateBlock(std::vector<BYTE>& dstData) = 0;
+	virtual uint8_t DecorateByte(uint8_t byte) = 0;
+	virtual void DecorateBlock(void * dstBuffer, std::streamsize size) = 0;
 private:
 	IInputStreamPtr m_inputStream;
 };

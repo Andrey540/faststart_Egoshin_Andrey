@@ -7,9 +7,7 @@ public:
 	CDecryptStreamDecorator(IOutputStreamPtr && outputStream);
 	~CDecryptStreamDecorator();
 
-	BYTE DecoratorByte(BYTE byte) override;
-	const std::vector<BYTE>& DecoratorBlock(const std::vector<BYTE>& srcData, size_t dataSize) override;
-private:
-	std::vector<BYTE> m_buffer;
+	uint8_t DecorateByte(uint8_t byte) override;
+	const std::vector<uint8_t>& DecorateBlock(const void * srcData, std::streamsize size) override;
 };
 

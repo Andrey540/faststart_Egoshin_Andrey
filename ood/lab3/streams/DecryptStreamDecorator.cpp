@@ -7,14 +7,13 @@ CDecryptStreamDecorator::CDecryptStreamDecorator(IOutputStreamPtr && outputStrea
 CDecryptStreamDecorator::~CDecryptStreamDecorator()
 {}
 
-BYTE CDecryptStreamDecorator::DecoratorByte(BYTE byte)
+uint8_t CDecryptStreamDecorator::DecorateByte(uint8_t byte)
 {
 	return byte;
 }
 
-const std::vector<BYTE>& CDecryptStreamDecorator::DecoratorBlock(const std::vector<BYTE>& srcData, size_t dataSize)
+const std::vector<uint8_t>& CDecryptStreamDecorator::DecorateBlock(const void * srcData, std::streamsize size)
 {
-	m_buffer.clear();
-	std::copy(srcData.begin(), srcData.end(), m_buffer.end());
-	return m_buffer;
+	std::vector<uint8_t> buffer;
+	return buffer;
 }

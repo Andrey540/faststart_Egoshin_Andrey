@@ -12,13 +12,14 @@ bool CInputStreamDecorator::IsEOF() const
 	return m_inputStream->IsEOF();
 }
 
-BYTE CInputStreamDecorator::ReadByte()
+uint8_t CInputStreamDecorator::ReadByte()
 {
 	return DecorateByte(m_inputStream->ReadByte());
 }
 
-void CInputStreamDecorator::ReadBlock(std::vector<BYTE>& dstData, size_t dataSize)
+std::streamsize CInputStreamDecorator::ReadBlock(void * dstBuffer, std::streamsize size)
 {
-	m_inputStream->ReadBlock(dstData, dataSize);
-	DecorateBlock(dstData);
+	std::streamsize readSize = m_inputStream->ReadBlock(dstBuffer, size);
+	DecorateBlock(dstBuffer, readSize);
+	return readSize;
 }

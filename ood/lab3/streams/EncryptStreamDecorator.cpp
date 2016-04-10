@@ -7,12 +7,12 @@ CEncryptStreamDecorator::CEncryptStreamDecorator(IInputStreamPtr && inputStream)
 CEncryptStreamDecorator::~CEncryptStreamDecorator()
 {}
 
-BYTE CEncryptStreamDecorator::DecorateByte(BYTE byte)
+uint8_t CEncryptStreamDecorator::DecorateByte(uint8_t byte)
 {
 	return byte;
 }
 
-void CEncryptStreamDecorator::DecorateBlock(std::vector<BYTE>& dstData)
+void CEncryptStreamDecorator::DecorateBlock(void * dstBuffer, std::streamsize size)
 {
 
 }

@@ -7,13 +7,13 @@ COutputStreamDecorator::COutputStreamDecorator(IOutputStreamPtr && outputStreame
 COutputStreamDecorator::~COutputStreamDecorator()
 {}
 
-void COutputStreamDecorator::WriteByte(BYTE byte)
+void COutputStreamDecorator::WriteByte(uint8_t byte)
 {
-	m_outputStream->WriteByte(DecoratorByte(byte));
+	m_outputStream->WriteByte(DecorateByte(byte));
 }
 
-void COutputStreamDecorator::WriteBlock(const std::vector<BYTE>& srcData, size_t dataSize)
+void COutputStreamDecorator::WriteBlock(const void * srcData, std::streamsize size)
 {
-	std::vector<BYTE> buffer = DecoratorBlock(srcData, dataSize);
-	m_outputStream->WriteBlock(buffer, buffer.size());
+	std::vector<uint8_t> buffer = DecorateBlock(srcData, size);
+	m_outputStream->WriteBlock(&buffer, buffer.size());
 }
