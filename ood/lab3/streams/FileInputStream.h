@@ -14,7 +14,5 @@ public:
 
 private:
 	std::ifstream m_file;
-
-	void CheckIsEOF();
 };
 
