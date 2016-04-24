@@ -17,6 +17,7 @@ import (
 	"token"
 	"ast"
 	"bytes"
+	"strconv"
 )
 
 var regs = make(map[string]ast.Expression)
@@ -36,18 +37,23 @@ var mainResult ast.BlockStmt
 	statement_block ast.BlockStmt
 	token token.Token
 	file ast.FileAst
+	field ast.Field
+	field_list []ast.Field
 }
 
 // any non-terminal which returns a value needs a type, which is
 // really a field name in the above union struct
+%type <token> enumerable
 %type <expression> expr number type
 %type <declaration> declaration
 //%type <file> file
 %type <statement> statement
 %type <statement_block> statement_list statement_block
+%type <field> field
+%type <field_list> field_list
 
 %token <token> EOF
-%token <token> LBRACE RBRACE IF FOR RETURN FUNC COMMENT
+%token <token> LBRACE RBRACE IF ELSE FOR RETURN FUNC COMMENT LBRACK RBRACK COMMA
 %token <token> INT_NUMBER FLOAT_NUMBER INT FLOAT STRING NEW_LINE VAR ASSIGNED IDENTIFIER
 %token <token> ADD SUB MUL QUO REM SIN COS SQRT LPAREN RPAREN
 
@@ -135,6 +141,16 @@ statement	: declaration
 			}
 			
 		}
+	|	IF expr statement_block ELSE statement_block
+		{
+			// conflict statement_block
+			fmt.Println("if stmt with else")
+			$$ = &ast.IfStmt {
+				Cond: $2,
+				Body: &$3,
+				Else: &$5,
+			}
+		}
 	|	IF expr statement_block
 		{
 			// conflict statement_block
@@ -186,6 +202,21 @@ declaration : VAR IDENTIFIER type NEW_LINE
 				Body: &$6,
 			}
 		}
+	|    FUNC IDENTIFIER LPAREN field_list RPAREN type statement_block
+		{
+			// conflict statement_block
+			fmt.Println("func")
+			ident := ast.Ident{
+					Name: $2.Value,
+					T: $2,
+				}
+			$$ = &ast.FuncDecl {
+				Name: &ident,
+				Params: $4,
+				RetType: $6,
+				Body: &$7,
+			}
+		}
 	|	declaration NEW_LINE
 		{
 			// conflict new line
@@ -193,6 +224,30 @@ declaration : VAR IDENTIFIER type NEW_LINE
 			$$ = $1
 		}
 	;	
+	
+field_list  : field
+		{
+			$$ = []ast.Field{$1}
+		}
+	|    field_list COMMA field
+		{
+			$$ = append($1, $3)
+		}
+	;
+	
+field   :  IDENTIFIER type
+		{
+			ident := ast.Ident{
+					Name: $1.Value,
+					T: $1,
+				}
+			fmt.Println("field")
+			$$ = ast.Field {
+				Name: &ident,
+				Type: $2,
+			}
+		}
+	;
 	
 expr	:    LPAREN expr RPAREN
 		{ 
@@ -306,9 +361,29 @@ type    : INT
 			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
+	|	 LBRACK RBRACK type
+		{
+			fmt.Println("array")
+			$$ = &ast.ArrayType {
+				Index: -1,
+				At: $3,
+			}
+		}
+	|	 LBRACK enumerable RBRACK type
+		{
+			value, err := strconv.Atoi($2.Value)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("array")
+			$$ = &ast.ArrayType {
+				Index: value,
+				At: $4,
+			}
+		}
 	;
 
-number	:   INT_NUMBER
+number	:   enumerable
 		{
 			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
@@ -317,6 +392,12 @@ number	:   INT_NUMBER
 		{
 			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
+		}
+	;
+	
+enumerable : INT_NUMBER
+		{
+			$$ = $1
 		}
 	;
 
@@ -372,10 +453,14 @@ func prepareTokenMap() map[int]int {
 	tokenMap[int(token.LBRACE)] = LBRACE
 	tokenMap[int(token.RBRACE)] = RBRACE
 	tokenMap[int(token.IF)] = IF
+	tokenMap[int(token.ELSE)] = ELSE
 	tokenMap[int(token.FOR)] = FOR
 	tokenMap[int(token.RETURN)] = RETURN
 	tokenMap[int(token.FUNC)] = FUNC
 	tokenMap[int(token.COMMENT)] = COMMENT
+	tokenMap[int(token.LBRACK)] = LBRACK
+	tokenMap[int(token.RBRACK)] = RBRACK
+	tokenMap[int(token.COMMA)] = COMMA
 	
 	return tokenMap
 }

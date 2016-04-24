@@ -9,15 +9,24 @@
 		z = 3
 	}
 	
+	if (2 - 4) {
+		z = 3
+	} else {
+		z = 5
+	}
+	
 	for (2 - 4) {
 		z = 3
 	}
 	
-	func main() int {
+	func main(g int, t string) int {
 		f = 5
+		return f
 	}
 	
 	/*f = 5*/
 	
+	var t []int
+	var e [10]int
 	return z
 }
