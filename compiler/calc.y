@@ -39,6 +39,7 @@ var mainResult ast.BlockStmt
 	file ast.FileAst
 	field ast.Field
 	field_list []ast.Field
+	identifier ast.Ident
 }
 
 // any non-terminal which returns a value needs a type, which is
@@ -46,6 +47,7 @@ var mainResult ast.BlockStmt
 %type <token> enumerable
 %type <expression> expr number type
 %type <declaration> declaration
+%type <identifier> identifier
 //%type <file> file
 %type <statement> statement
 %type <statement_block> statement_list statement_block
@@ -143,7 +145,6 @@ statement	: declaration
 		}
 	|	IF expr statement_block ELSE statement_block
 		{
-			// conflict statement_block
 			fmt.Println("if stmt with else")
 			$$ = &ast.IfStmt {
 				Cond: $2,
@@ -153,7 +154,6 @@ statement	: declaration
 		}
 	|	IF expr statement_block
 		{
-			// conflict statement_block
 			fmt.Println("if stmt")
 			$$ = &ast.IfStmt {
 				Cond: $2,
@@ -162,7 +162,6 @@ statement	: declaration
 		}
 	|	FOR expr statement_block
 		{
-			// conflict statement_block
 			fmt.Println("for stmt")
 			$$ = &ast.ForStmt {
 				X: $2,
@@ -176,42 +175,28 @@ statement	: declaration
 		}
 	;
 
-declaration : VAR IDENTIFIER type NEW_LINE
+declaration : VAR identifier type NEW_LINE
 		{
 			fmt.Println("var")
-			ident := ast.Ident{
-					Name: $1.Value,
-					T: $1,
-				}
 			$$ = &ast.VarDecl {
-				Name: &ident,
+				Name: &$2,
 				Type: $3,
 			}
 		}
-	|    FUNC IDENTIFIER LPAREN RPAREN type statement_block
+	|    FUNC identifier LPAREN RPAREN type statement_block
 		{
-			// conflict statement_block
 			fmt.Println("func")
-			ident := ast.Ident{
-					Name: $2.Value,
-					T: $2,
-				}
 			$$ = &ast.FuncDecl {
-				Name: &ident,
+				Name: &$2,
 				RetType: $5,
 				Body: &$6,
 			}
 		}
-	|    FUNC IDENTIFIER LPAREN field_list RPAREN type statement_block
+	|    FUNC identifier LPAREN field_list RPAREN type statement_block
 		{
-			// conflict statement_block
 			fmt.Println("func")
-			ident := ast.Ident{
-					Name: $2.Value,
-					T: $2,
-				}
 			$$ = &ast.FuncDecl {
-				Name: &ident,
+				Name: &$2,
 				Params: $4,
 				RetType: $6,
 				Body: &$7,
@@ -219,7 +204,6 @@ declaration : VAR IDENTIFIER type NEW_LINE
 		}
 	|	declaration NEW_LINE
 		{
-			// conflict new line
 			fmt.Println("decl new line")
 			$$ = $1
 		}
@@ -235,15 +219,11 @@ field_list  : field
 		}
 	;
 	
-field   :  IDENTIFIER type
+field   :  identifier type
 		{
-			ident := ast.Ident{
-					Name: $1.Value,
-					T: $1,
-				}
 			fmt.Println("field")
 			$$ = ast.Field {
-				Name: &ident,
+				Name: &$1,
 				Type: $2,
 			}
 		}
@@ -253,6 +233,14 @@ expr	:    LPAREN expr RPAREN
 		{ 
 			fmt.Printf("expr <- LPAREN expr RPAREN\n")
 			$$ = $2 
+		}
+	|    identifier LBRACK expr RBRACK
+		{ 
+			$$ = &ast.BinaryExpr {
+				X: &$1,
+				OpT: $2,
+				Y: $3,
+			}
 		}
 	|    expr ADD expr
 		{ 
@@ -343,6 +331,16 @@ expr	:    LPAREN expr RPAREN
 		{
 		    fmt.Printf("expr <- number\n")
 			$$ = $1
+		}
+	;
+	
+identifier : IDENTIFIER
+		{
+			fmt.Println("identifier")
+			$$ = ast.Ident{
+				Name: $1.Value,
+				T: $1,
+			}
 		}
 	;
 	

@@ -28,5 +28,5 @@
 	
 	var t []int
 	var e [10]int
-	return z
+	return z + t[5]
 }
