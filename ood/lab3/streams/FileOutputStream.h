@@ -2,8 +2,7 @@
 #include <fstream>
 #include "IOutputStream.h"
 
-class CFileOutputStream :
-	public IOutputStream
+class CFileOutputStream : public IOutputStream
 {
 public:
 	CFileOutputStream(const std::string& fileName);

@@ -42,6 +42,15 @@
     <ClCompile Include="DecryptStreamDecorator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CompressStreamDecorator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DecompressStreamDecorator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DecoratorCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IInputStream.h">
@@ -72,6 +81,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DecryptStreamDecorator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressStreamDecorator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DecompressStreamDecorator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DecoratorCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

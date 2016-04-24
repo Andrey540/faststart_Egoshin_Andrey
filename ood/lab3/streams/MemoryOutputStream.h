@@ -1,7 +1,6 @@
 #pragma once
 #include "IOutputStream.h"
-class CMemoryOutputStream :
-	public IOutputStream
+class CMemoryOutputStream : public IOutputStream
 {
 public:
 	CMemoryOutputStream();

@@ -146,6 +146,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompressStreamDecorator.cpp" />
+    <ClCompile Include="DecompressStreamDecorator.cpp" />
+    <ClCompile Include="DecoratorCreator.cpp" />
     <ClCompile Include="DecryptStreamDecorator.cpp" />
     <ClCompile Include="EncryptStreamDecorator.cpp" />
     <ClCompile Include="FileInputStream.cpp" />
@@ -157,6 +160,9 @@
     <ClCompile Include="OutputStreamDecorator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompressStreamDecorator.h" />
+    <ClInclude Include="DecompressStreamDecorator.h" />
+    <ClInclude Include="DecoratorCreator.h" />
     <ClInclude Include="DecryptStreamDecorator.h" />
     <ClInclude Include="EncryptStreamDecorator.h" />
     <ClInclude Include="FileInputStream.h" />
