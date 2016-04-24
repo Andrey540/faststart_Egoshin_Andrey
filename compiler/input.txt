@@ -1,11 +1,23 @@
 {
-x = 1 + 3
-y = 2 - 6
-y = 2 - 6
-y = 2 - 6
-y = 2 - 6
-y = 2 - 6
-y = 2 - 6
-
-
+	var x int
+	var y int
+	var z int
+	x = 1 + 3
+	y = x + 2 - 6
+	
+	if (2 - 4) {
+		z = 3
+	}
+	
+	for (2 - 4) {
+		z = 3
+	}
+	
+	func main() int {
+		f = 5
+	}
+	
+	/*f = 5*/
+	
+	return z
 }

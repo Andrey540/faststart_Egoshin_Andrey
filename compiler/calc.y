@@ -34,20 +34,20 @@ var mainResult ast.BlockStmt
 	declaration ast.Declaration
 	statement ast.Statement
 	statement_block ast.BlockStmt
-	identifier ast.Ident
 	token token.Token
+	file ast.FileAst
 }
 
 // any non-terminal which returns a value needs a type, which is
 // really a field name in the above union struct
-%type <expression> expr number
-%type <identifier> identifier
+%type <expression> expr number type
 %type <declaration> declaration
+//%type <file> file
 %type <statement> statement
 %type <statement_block> statement_list statement_block
 
 %token <token> EOF
-%token <token>  LBRACE RBRACE
+%token <token> LBRACE RBRACE IF FOR RETURN FUNC COMMENT
 %token <token> INT_NUMBER FLOAT_NUMBER INT FLOAT STRING NEW_LINE VAR ASSIGNED IDENTIFIER
 %token <token> ADD SUB MUL QUO REM SIN COS SQRT LPAREN RPAREN
 
@@ -59,15 +59,32 @@ var mainResult ast.BlockStmt
 
 %%
 
+/*file    : declaration
+		{
+			fmt.Println("file begin")
+			$$ = ast.FileAst{Decls: []ast.Declaration{$1}}
+		}
+	|	file declaration
+		{
+			fmt.Println("add decl to list")
+			$1.Decls = append($1.Decls, $2)
+			$$ = $1
+		}
+	|    file EOF
+		{
+			fmt.Println("EOF")
+			mainResult = $1
+		}
+	;*/
 statement_block	: LBRACE NEW_LINE statement_list RBRACE
 		{
 			fmt.Println("init stmt block")
 			$$ = $3
 		}
-	|    statement_block NEW_LINE
+	/*|    statement_block NEW_LINE
 		{
 			$$ = $1
-		}
+		}*/
 	|    statement_block EOF
 		{
 			fmt.Println("EOF")
@@ -87,31 +104,54 @@ statement_list : statement
 			$1.List = append($1.List, $2)
 			$$ = $1
 		}		
-	/*|	statement_list EOF
-		{
-			fmt.Println("EOF1")
-		}*/
 	;
-statement	: /*   expr
-		{
-			fmt.Println("expr --> stmt")
-			$$ = &ast.ExprStmt{X: $1}
-		}
-	| */	 declaration
+statement	: declaration
 		{
 			fmt.Println("decl --> stmt")
 			fmt.Println($1)
 			$$ = &ast.DeclStmt{Decl: $1}
 		}	
-	|    identifier ASSIGNED expr NEW_LINE
+	|    expr ASSIGNED expr NEW_LINE
 		{
 			fmt.Println("assigned --> stmt")			
 			$$ = &ast.AssignStmt {
-				Name: &$1,
+				Ident: $1,
 				Op: $2.TokenType,
 				X: $3,			
 			}
 			
+		}
+	|    COMMENT
+		{
+			fmt.Println("comment")			
+			$$ = &ast.EmptyStmt {}
+		}
+	|    RETURN expr
+		{
+			// conflict
+			fmt.Println("return stmt")			
+			$$ = &ast.ReturnStmt {
+				X: $2,			
+			}
+			
+		}
+	|	IF expr statement_block
+		{
+			// conflict statement_block
+			fmt.Println("if stmt")
+			$$ = &ast.IfStmt {
+				Cond: $2,
+				Body: &$3,
+			}
+		}
+	|	FOR expr statement_block
+		{
+			// conflict statement_block
+			fmt.Println("for stmt")
+			$$ = &ast.ForStmt {
+				X: $2,
+				Body: &$3,
+			}
 		}
 	|	statement NEW_LINE
 		{
@@ -120,24 +160,39 @@ statement	: /*   expr
 		}
 	;
 
-declaration : VAR identifier INT
+declaration : VAR IDENTIFIER type NEW_LINE
 		{
+			fmt.Println("var")
+			ident := ast.Ident{
+					Name: $1.Value,
+					T: $1,
+				}
 			$$ = &ast.VarDecl {
-				Name: &$2,
-				Type: &ast.BasicLit{T: $3},
+				Name: &ident,
+				Type: $3,
 			}
+		}
+	|    FUNC IDENTIFIER LPAREN RPAREN type statement_block
+		{
+			// conflict statement_block
+			fmt.Println("func")
+			ident := ast.Ident{
+					Name: $2.Value,
+					T: $2,
+				}
+			$$ = &ast.FuncDecl {
+				Name: &ident,
+				RetType: $5,
+				Body: &$6,
+			}
+		}
+	|	declaration NEW_LINE
+		{
+			// conflict new line
+			fmt.Println("decl new line")
+			$$ = $1
 		}
 	;	
-	
-identifier : IDENTIFIER
-		{
-			fmt.Println("identifier")
-			$$ = ast.Ident{
-				Name: $1.Value,
-				T: $1,
-			}
-		}
-	;
 	
 expr	:    LPAREN expr RPAREN
 		{ 
@@ -221,10 +276,35 @@ expr	:    LPAREN expr RPAREN
 				OpT: $1,
 			}
 		}
+	|    IDENTIFIER
+		{
+			fmt.Println("identifier")
+			$$ = &ast.Ident{
+				Name: $1.Value,
+				T: $1,
+			}
+		}
 	|    number
 		{
 		    fmt.Printf("expr <- number\n")
 			$$ = $1
+		}
+	;
+	
+type    : INT
+		{
+			fmt.Println($1.Value)
+			$$ = &ast.BasicLit{T: $1}
+		}
+	| 	 FLOAT
+		{
+			fmt.Println($1.Value)
+			$$ = &ast.BasicLit{T: $1}
+		}
+	|    STRING
+		{
+			fmt.Println($1.Value)
+			$$ = &ast.BasicLit{T: $1}
 		}
 	;
 
@@ -291,6 +371,11 @@ func prepareTokenMap() map[int]int {
 	tokenMap[int(token.NEW_LINE)] = NEW_LINE
 	tokenMap[int(token.LBRACE)] = LBRACE
 	tokenMap[int(token.RBRACE)] = RBRACE
+	tokenMap[int(token.IF)] = IF
+	tokenMap[int(token.FOR)] = FOR
+	tokenMap[int(token.RETURN)] = RETURN
+	tokenMap[int(token.FUNC)] = FUNC
+	tokenMap[int(token.COMMENT)] = COMMENT
 	
 	return tokenMap
 }

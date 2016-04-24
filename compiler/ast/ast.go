@@ -9,6 +9,11 @@ type NodeAst interface {
 	Accept(v Visitor)
 }
 
+type File interface {
+	astNode()
+	Accept(v Visitor)
+}
+
 type Declaration interface {
 	NodeAst
 	declNode()
@@ -113,7 +118,7 @@ type (
 	}
 
 	AssignStmt struct {
-		Name *Ident
+		Ident Expression
 		Op token.TokenType
 		X Expression
 	}
