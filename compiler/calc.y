@@ -23,7 +23,7 @@ import (
 var regs = make(map[string]ast.Expression)
 var base ast.Expression
 
-var mainResult ast.BlockStmt
+var mainResult ast.FileAst
 
 %}
 
@@ -48,7 +48,7 @@ var mainResult ast.BlockStmt
 %type <expression> expr number type
 %type <declaration> declaration
 %type <identifier> identifier
-//%type <file> file
+%type <file> file
 %type <statement> statement
 %type <statement_block> statement_list statement_block
 %type <field> field
@@ -67,7 +67,7 @@ var mainResult ast.BlockStmt
 
 %%
 
-/*file    : declaration
+file    : declaration
 		{
 			fmt.Println("file begin")
 			$$ = ast.FileAst{Decls: []ast.Declaration{$1}}
@@ -83,20 +83,11 @@ var mainResult ast.BlockStmt
 			fmt.Println("EOF")
 			mainResult = $1
 		}
-	;*/
+	;
 statement_block	: LBRACE NEW_LINE statement_list RBRACE
 		{
 			fmt.Println("init stmt block")
 			$$ = $3
-		}
-	/*|    statement_block NEW_LINE
-		{
-			$$ = $1
-		}*/
-	|    statement_block EOF
-		{
-			fmt.Println("EOF")
-			mainResult = $1
 		}
 	;	
 	
@@ -111,7 +102,7 @@ statement_list : statement
 			fmt.Println("add stmt to list")
 			$1.List = append($1.List, $2)
 			$$ = $1
-		}		
+		}	
 	;
 statement	: declaration
 		{
@@ -119,7 +110,7 @@ statement	: declaration
 			fmt.Println($1)
 			$$ = &ast.DeclStmt{Decl: $1}
 		}	
-	|    expr ASSIGNED expr NEW_LINE
+	|   expr ASSIGNED expr NEW_LINE
 		{
 			fmt.Println("assigned --> stmt")			
 			$$ = &ast.AssignStmt {
@@ -170,13 +161,12 @@ statement	: declaration
 		}
 	|	statement NEW_LINE
 		{
-			fmt.Println("stmt new line")
+			fmt.Println("stmt + new line")
 			$$ = $1
 		}
 	;
 
-declaration : VAR identifier type NEW_LINE
-		{
+declaration : VAR identifier type		{
 			fmt.Println("var")
 			$$ = &ast.VarDecl {
 				Name: &$2,
@@ -206,7 +196,7 @@ declaration : VAR identifier type NEW_LINE
 		{
 			fmt.Println("decl new line")
 			$$ = $1
-		}
+		}	
 	;	
 	
 field_list  : field

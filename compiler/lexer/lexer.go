@@ -96,7 +96,7 @@ func (self *Lexer) ParseTokens(expression string) ([]token.Token, []Error) {
 	self.columtIndex = 0
 
 	pattern := Pattern {
-		expr: regexp.MustCompile(`^((\/\*).*(\*\/))`),
+		expr: regexp.MustCompile(`^((\/\*)((.)|(\s))*(\*\/))`),
 		kind: token.COMMENT,
 	}
 	self.patterns = append(self.patterns, pattern)
@@ -347,8 +347,7 @@ func (self *Lexer) ParseTokens(expression string) ([]token.Token, []Error) {
 	}
 	self.patterns = append(self.patterns, pattern)	
 
-//self.whiteSpacesReg = regexp.MustCompile(`^(\t\f\r +)`)
-	//self.whiteSpacesReg = regexp.MustCompile(`^(\s[^\n]+)`)
+	self.whiteSpacesReg = regexp.MustCompile(`^([\t\f\r ]+)`)
 	self.absorbErrorReg = regexp.MustCompile(`^(.[^\s]+)`)
 
 	var t token.Token

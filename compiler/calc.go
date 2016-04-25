@@ -20,7 +20,7 @@ import (
 var regs = make(map[string]ast.Expression)
 var base ast.Expression
 
-var mainResult ast.BlockStmt
+var mainResult ast.FileAst
 
 //line calc.y:32
 type CalcSymType struct {
@@ -110,7 +110,7 @@ const CalcEofCode = 1
 const CalcErrCode = 2
 const CalcMaxDepth = 200
 
-//line calc.y:402
+//line calc.y:392
 
 /*  start  of  programs  */
 
@@ -216,101 +216,100 @@ var CalcExca = []int{
 	-1, 1,
 	1, -1,
 	-2, 0,
-	-1, 21,
-	13, 33,
-	-2, 31,
+	-1, 51,
+	13, 35,
+	-2, 33,
 }
 
-const CalcNprod = 42
+const CalcNprod = 44
 const CalcPrivate = 57344
 
 var CalcTokenNames []string
 var CalcStates []string
 
-const CalcLast = 195
+const CalcLast = 185
 
 var CalcAct = []int{
 
-	1, 16, 40, 56, 23, 73, 61, 46, 84, 8,
-	45, 40, 71, 44, 81, 39, 41, 28, 25, 24,
-	36, 37, 38, 43, 29, 42, 21, 83, 20, 4,
-	47, 6, 17, 18, 19, 15, 2, 27, 54, 55,
-	48, 49, 50, 51, 52, 53, 3, 72, 31, 32,
-	33, 34, 35, 63, 64, 65, 66, 78, 31, 32,
-	33, 34, 35, 74, 69, 70, 25, 77, 5, 79,
-	33, 34, 35, 80, 60, 82, 7, 22, 85, 57,
-	58, 59, 0, 87, 3, 86, 74, 88, 68, 90,
-	89, 26, 11, 0, 12, 10, 14, 9, 0, 0,
-	0, 25, 24, 0, 0, 0, 0, 13, 0, 21,
-	0, 20, 0, 0, 0, 17, 18, 19, 15, 11,
-	0, 12, 10, 14, 9, 0, 0, 0, 25, 24,
-	0, 0, 0, 0, 13, 0, 21, 0, 20, 0,
-	0, 0, 17, 18, 19, 15, 31, 32, 33, 34,
-	35, 0, 0, 0, 0, 76, 31, 32, 33, 34,
-	35, 75, 67, 2, 0, 62, 31, 32, 33, 34,
-	35, 0, 31, 32, 33, 34, 35, 31, 32, 33,
-	34, 35, 0, 31, 32, 33, 34, 35, 30, 0,
-	31, 32, 33, 34, 35,
+	31, 40, 55, 43, 38, 44, 42, 4, 41, 9,
+	71, 70, 19, 54, 69, 16, 28, 9, 3, 20,
+	51, 4, 50, 19, 54, 57, 47, 48, 49, 45,
+	22, 51, 3, 50, 36, 27, 7, 47, 48, 49,
+	45, 35, 56, 88, 64, 65, 66, 67, 61, 62,
+	63, 17, 72, 19, 59, 60, 61, 62, 63, 34,
+	73, 74, 75, 76, 77, 78, 79, 80, 6, 53,
+	82, 83, 84, 85, 43, 4, 44, 42, 4, 41,
+	25, 68, 87, 19, 54, 18, 3, 32, 92, 3,
+	46, 51, 21, 50, 8, 10, 37, 47, 48, 49,
+	45, 59, 60, 61, 62, 63, 1, 23, 52, 0,
+	91, 59, 60, 61, 62, 63, 39, 2, 5, 23,
+	90, 59, 60, 61, 62, 63, 32, 0, 0, 0,
+	89, 59, 60, 61, 62, 63, 0, 86, 0, 0,
+	81, 59, 60, 61, 62, 63, 59, 60, 61, 62,
+	63, 58, 11, 59, 60, 61, 62, 63, 59, 60,
+	61, 62, 63, 0, 0, 0, 0, 0, 0, 0,
+	24, 0, 0, 26, 0, 0, 29, 15, 30, 0,
+	33, 0, 12, 13, 14,
 }
 var CalcPact = []int{
 
-	31, 42, 8, -1000, 112, 85, -4, 3, 165, -1000,
-	2, 2, 2, -13, -13, 2, 10, -20, -23, -26,
-	2, -1000, -1000, -1000, -1000, -1000, -1000, -4, -1000, -1000,
-	2, 2, 2, 2, 2, 2, 152, 158, 158, 61,
-	-1000, -27, 131, 2, 2, 2, 2, -1000, 141, 43,
-	43, -1000, -1000, -1000, 80, 42, -1000, -1000, -1000, -1000,
-	50, -22, -1000, 147, 121, 33, 23, -1000, 31, 61,
-	0, 61, -7, -1000, 61, -1000, -1000, -1000, -1000, 42,
-	-1000, 61, 31, 61, -13, -1000, -1000, 42, 31, -1000,
-	42,
+	10, 64, 15, -7, -7, 15, -1000, -1000, 164, -1000,
+	-18, -1000, -1000, -1000, -1000, 37, -15, 164, 66, -1000,
+	164, 1, -1000, 164, -1000, 164, 82, 164, -7, -1000,
+	-1000, -1000, 20, 82, -1000, 67, -1000, -4, 4, 15,
+	128, -1000, 7, 7, 7, 7, 68, -19, -22, -23,
+	7, -1000, -1000, -1000, -1000, -1000, 4, -1000, 7, 7,
+	7, 7, 7, 7, 133, 121, 121, 106, 7, 7,
+	7, 7, -1000, 116, 21, 21, -1000, -1000, -1000, 74,
+	-1000, -1000, 29, 96, 86, 76, -1000, 82, -1000, -1000,
+	-1000, -1000, -1000,
 }
 var CalcPgo = []int{
 
-	0, 4, 9, 77, 3, 76, 1, 31, 68, 0,
-	5, 47,
+	0, 69, 1, 108, 152, 116, 90, 106, 4, 96,
+	0, 30, 92,
 }
 var CalcR1 = []int{
 
-	0, 9, 9, 8, 8, 7, 7, 7, 7, 7,
-	7, 7, 7, 5, 5, 5, 5, 11, 11, 10,
-	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	2, 2, 2, 6, 4, 4, 4, 4, 4, 3,
-	3, 1,
+	0, 7, 7, 7, 10, 9, 9, 8, 8, 8,
+	8, 8, 8, 8, 8, 5, 5, 5, 5, 12,
+	12, 11, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 6, 4, 4, 4, 4,
+	4, 3, 3, 1,
 }
 var CalcR2 = []int{
 
-	0, 4, 2, 1, 2, 1, 4, 1, 2, 5,
-	3, 3, 2, 3, 6, 7, 2, 1, 3, 2,
-	3, 4, 3, 3, 3, 3, 3, 4, 4, 4,
-	2, 1, 1, 1, 1, 1, 1, 3, 4, 1,
-	1, 1,
+	0, 1, 2, 2, 4, 1, 2, 1, 4, 1,
+	2, 5, 3, 3, 2, 3, 6, 7, 2, 1,
+	3, 2, 3, 4, 3, 3, 3, 3, 3, 4,
+	4, 4, 2, 1, 1, 1, 1, 1, 1, 3,
+	4, 1, 1, 1,
 }
 var CalcChk = []int{
 
-	-1000, -9, 5, 4, 21, -8, -7, -5, -2, 12,
-	10, 7, 9, 22, 11, 33, -6, 30, 31, 32,
-	26, 24, -3, -1, 17, 16, 6, -7, 21, 21,
-	23, 25, 26, 27, 28, 29, -2, -2, -2, -6,
-	24, -6, -2, 13, 33, 33, 33, -2, -2, -2,
-	-2, -2, -2, -2, -9, -9, -4, 18, 19, 20,
-	13, 33, 34, -2, -2, -2, -2, 21, 8, 14,
-	-1, 34, -11, -10, -6, 14, 34, 34, 34, -9,
-	-4, 14, -4, 34, 15, -4, -4, -9, -4, -10,
-	-9,
+	-1000, -7, -5, 22, 11, -5, 4, 21, -6, 24,
+	-6, -4, 18, 19, 20, 13, 33, 14, -1, 16,
+	34, -12, -11, -6, -4, 14, -4, 34, 15, -4,
+	-4, -10, 5, -4, -11, 21, -10, -9, -8, -5,
+	-2, 12, 10, 7, 9, 33, -6, 30, 31, 32,
+	26, 24, -3, -1, 17, 6, -8, 21, 23, 25,
+	26, 27, 28, 29, -2, -2, -2, -2, 13, 33,
+	33, 33, -2, -2, -2, -2, -2, -2, -2, -10,
+	-10, 34, -2, -2, -2, -2, 21, 8, 14, 34,
+	34, 34, -10,
 }
 var CalcDef = []int{
 
-	0, -2, 0, 2, 0, 0, 3, 5, 0, 7,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, -2, 32, 39, 40, 41, 1, 4, 12, 16,
-	0, 0, 0, 0, 0, 0, 8, 0, 0, 0,
-	33, 0, 0, 0, 0, 0, 0, 30, 0, 22,
-	23, 24, 25, 26, 10, 11, 13, 34, 35, 36,
-	0, 0, 20, 0, 0, 0, 0, 6, 0, 0,
-	0, 0, 0, 17, 0, 21, 27, 28, 29, 9,
-	37, 0, 0, 0, 0, 19, 38, 14, 0, 18,
-	15,
+	0, -2, 1, 0, 0, 2, 3, 18, 0, 35,
+	0, 15, 36, 37, 38, 0, 0, 0, 0, 43,
+	0, 0, 19, 0, 39, 0, 0, 0, 0, 21,
+	40, 16, 0, 0, 20, 0, 17, 0, 5, 7,
+	0, 9, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, -2, 34, 41, 42, 4, 6, 14, 0, 0,
+	0, 0, 0, 0, 10, 0, 0, 0, 0, 0,
+	0, 0, 32, 0, 24, 25, 26, 27, 28, 12,
+	13, 22, 0, 0, 0, 0, 8, 0, 23, 29,
+	30, 31, 11,
 }
 var CalcTok1 = []int{
 
@@ -553,40 +552,53 @@ Calcdefault:
 	switch Calcnt {
 
 	case 1:
+		//line calc.y:71
+		{
+			fmt.Println("file begin")
+			CalcVAL.file = ast.FileAst{Decls: []ast.Declaration{CalcS[Calcpt-0].declaration}}
+		}
+	case 2:
+		//line calc.y:76
+		{
+			fmt.Println("add decl to list")
+			CalcS[Calcpt-1].file.Decls = append(CalcS[Calcpt-1].file.Decls, CalcS[Calcpt-0].declaration)
+			CalcVAL.file = CalcS[Calcpt-1].file
+		}
+	case 3:
+		//line calc.y:82
+		{
+			fmt.Println("EOF")
+			mainResult = CalcS[Calcpt-1].file
+		}
+	case 4:
 		//line calc.y:88
 		{
 			fmt.Println("init stmt block")
 			CalcVAL.statement_block = CalcS[Calcpt-1].statement_block
 		}
-	case 2:
-		//line calc.y:97
-		{
-			fmt.Println("EOF")
-			mainResult = CalcS[Calcpt-1].statement_block
-		}
-	case 3:
-		//line calc.y:104
+	case 5:
+		//line calc.y:95
 		{
 			fmt.Println("list statement begin")
 			fmt.Println(CalcS[Calcpt-0].statement)
 			CalcVAL.statement_block = ast.BlockStmt{List: []ast.Statement{CalcS[Calcpt-0].statement}}
 		}
-	case 4:
-		//line calc.y:110
+	case 6:
+		//line calc.y:101
 		{
 			fmt.Println("add stmt to list")
 			CalcS[Calcpt-1].statement_block.List = append(CalcS[Calcpt-1].statement_block.List, CalcS[Calcpt-0].statement)
 			CalcVAL.statement_block = CalcS[Calcpt-1].statement_block
 		}
-	case 5:
-		//line calc.y:117
+	case 7:
+		//line calc.y:108
 		{
 			fmt.Println("decl --> stmt")
 			fmt.Println(CalcS[Calcpt-0].declaration)
 			CalcVAL.statement = &ast.DeclStmt{Decl: CalcS[Calcpt-0].declaration}
 		}
-	case 6:
-		//line calc.y:123
+	case 8:
+		//line calc.y:114
 		{
 			fmt.Println("assigned --> stmt")
 			CalcVAL.statement = &ast.AssignStmt{
@@ -596,14 +608,14 @@ Calcdefault:
 			}
 
 		}
-	case 7:
-		//line calc.y:133
+	case 9:
+		//line calc.y:124
 		{
 			fmt.Println("comment")
 			CalcVAL.statement = &ast.EmptyStmt{}
 		}
-	case 8:
-		//line calc.y:138
+	case 10:
+		//line calc.y:129
 		{
 			// conflict
 			fmt.Println("return stmt")
@@ -612,8 +624,8 @@ Calcdefault:
 			}
 
 		}
-	case 9:
-		//line calc.y:147
+	case 11:
+		//line calc.y:138
 		{
 			fmt.Println("if stmt with else")
 			CalcVAL.statement = &ast.IfStmt{
@@ -622,8 +634,8 @@ Calcdefault:
 				Else: &CalcS[Calcpt-0].statement_block,
 			}
 		}
-	case 10:
-		//line calc.y:156
+	case 12:
+		//line calc.y:147
 		{
 			fmt.Println("if stmt")
 			CalcVAL.statement = &ast.IfStmt{
@@ -631,8 +643,8 @@ Calcdefault:
 				Body: &CalcS[Calcpt-0].statement_block,
 			}
 		}
-	case 11:
-		//line calc.y:164
+	case 13:
+		//line calc.y:155
 		{
 			fmt.Println("for stmt")
 			CalcVAL.statement = &ast.ForStmt{
@@ -640,14 +652,14 @@ Calcdefault:
 				Body: &CalcS[Calcpt-0].statement_block,
 			}
 		}
-	case 12:
-		//line calc.y:172
+	case 14:
+		//line calc.y:163
 		{
-			fmt.Println("stmt new line")
+			fmt.Println("stmt + new line")
 			CalcVAL.statement = CalcS[Calcpt-1].statement
 		}
-	case 13:
-		//line calc.y:179
+	case 15:
+		//line calc.y:169
 		{
 			fmt.Println("var")
 			CalcVAL.declaration = &ast.VarDecl{
@@ -655,8 +667,8 @@ Calcdefault:
 				Type: CalcS[Calcpt-0].expression,
 			}
 		}
-	case 14:
-		//line calc.y:187
+	case 16:
+		//line calc.y:177
 		{
 			fmt.Println("func")
 			CalcVAL.declaration = &ast.FuncDecl{
@@ -665,8 +677,8 @@ Calcdefault:
 				Body:    &CalcS[Calcpt-0].statement_block,
 			}
 		}
-	case 15:
-		//line calc.y:196
+	case 17:
+		//line calc.y:186
 		{
 			fmt.Println("func")
 			CalcVAL.declaration = &ast.FuncDecl{
@@ -676,24 +688,24 @@ Calcdefault:
 				Body:    &CalcS[Calcpt-0].statement_block,
 			}
 		}
-	case 16:
-		//line calc.y:206
+	case 18:
+		//line calc.y:196
 		{
 			fmt.Println("decl new line")
 			CalcVAL.declaration = CalcS[Calcpt-1].declaration
 		}
-	case 17:
-		//line calc.y:213
+	case 19:
+		//line calc.y:203
 		{
 			CalcVAL.field_list = []ast.Field{CalcS[Calcpt-0].field}
 		}
-	case 18:
-		//line calc.y:217
+	case 20:
+		//line calc.y:207
 		{
 			CalcVAL.field_list = append(CalcS[Calcpt-2].field_list, CalcS[Calcpt-0].field)
 		}
-	case 19:
-		//line calc.y:223
+	case 21:
+		//line calc.y:213
 		{
 			fmt.Println("field")
 			CalcVAL.field = ast.Field{
@@ -701,14 +713,14 @@ Calcdefault:
 				Type: CalcS[Calcpt-0].expression,
 			}
 		}
-	case 20:
-		//line calc.y:233
+	case 22:
+		//line calc.y:223
 		{
 			fmt.Printf("expr <- LPAREN expr RPAREN\n")
 			CalcVAL.expression = CalcS[Calcpt-1].expression
 		}
-	case 21:
-		//line calc.y:238
+	case 23:
+		//line calc.y:228
 		{
 			CalcVAL.expression = &ast.BinaryExpr{
 				X:   &CalcS[Calcpt-3].identifier,
@@ -716,28 +728,8 @@ Calcdefault:
 				Y:   CalcS[Calcpt-1].expression,
 			}
 		}
-	case 22:
-		//line calc.y:246
-		{
-			fmt.Println(CalcS[Calcpt-1].token.Value)
-			CalcVAL.expression = &ast.BinaryExpr{
-				X:   CalcS[Calcpt-2].expression,
-				OpT: CalcS[Calcpt-1].token,
-				Y:   CalcS[Calcpt-0].expression,
-			}
-		}
-	case 23:
-		//line calc.y:255
-		{
-			fmt.Println(CalcS[Calcpt-1].token.Value)
-			CalcVAL.expression = &ast.BinaryExpr{
-				X:   CalcS[Calcpt-2].expression,
-				OpT: CalcS[Calcpt-1].token,
-				Y:   CalcS[Calcpt-0].expression,
-			}
-		}
 	case 24:
-		//line calc.y:264
+		//line calc.y:236
 		{
 			fmt.Println(CalcS[Calcpt-1].token.Value)
 			CalcVAL.expression = &ast.BinaryExpr{
@@ -747,7 +739,7 @@ Calcdefault:
 			}
 		}
 	case 25:
-		//line calc.y:273
+		//line calc.y:245
 		{
 			fmt.Println(CalcS[Calcpt-1].token.Value)
 			CalcVAL.expression = &ast.BinaryExpr{
@@ -757,7 +749,7 @@ Calcdefault:
 			}
 		}
 	case 26:
-		//line calc.y:282
+		//line calc.y:254
 		{
 			fmt.Println(CalcS[Calcpt-1].token.Value)
 			CalcVAL.expression = &ast.BinaryExpr{
@@ -767,25 +759,27 @@ Calcdefault:
 			}
 		}
 	case 27:
-		//line calc.y:291
+		//line calc.y:263
 		{
-			fmt.Println(CalcS[Calcpt-3].token.Value)
-			CalcVAL.expression = &ast.UnaryExpr{
-				X:   CalcS[Calcpt-1].expression,
-				OpT: CalcS[Calcpt-3].token,
+			fmt.Println(CalcS[Calcpt-1].token.Value)
+			CalcVAL.expression = &ast.BinaryExpr{
+				X:   CalcS[Calcpt-2].expression,
+				OpT: CalcS[Calcpt-1].token,
+				Y:   CalcS[Calcpt-0].expression,
 			}
 		}
 	case 28:
-		//line calc.y:299
+		//line calc.y:272
 		{
-			fmt.Println(CalcS[Calcpt-3].token.Value)
-			CalcVAL.expression = &ast.UnaryExpr{
-				X:   CalcS[Calcpt-1].expression,
-				OpT: CalcS[Calcpt-3].token,
+			fmt.Println(CalcS[Calcpt-1].token.Value)
+			CalcVAL.expression = &ast.BinaryExpr{
+				X:   CalcS[Calcpt-2].expression,
+				OpT: CalcS[Calcpt-1].token,
+				Y:   CalcS[Calcpt-0].expression,
 			}
 		}
 	case 29:
-		//line calc.y:307
+		//line calc.y:281
 		{
 			fmt.Println(CalcS[Calcpt-3].token.Value)
 			CalcVAL.expression = &ast.UnaryExpr{
@@ -794,7 +788,25 @@ Calcdefault:
 			}
 		}
 	case 30:
-		//line calc.y:315
+		//line calc.y:289
+		{
+			fmt.Println(CalcS[Calcpt-3].token.Value)
+			CalcVAL.expression = &ast.UnaryExpr{
+				X:   CalcS[Calcpt-1].expression,
+				OpT: CalcS[Calcpt-3].token,
+			}
+		}
+	case 31:
+		//line calc.y:297
+		{
+			fmt.Println(CalcS[Calcpt-3].token.Value)
+			CalcVAL.expression = &ast.UnaryExpr{
+				X:   CalcS[Calcpt-1].expression,
+				OpT: CalcS[Calcpt-3].token,
+			}
+		}
+	case 32:
+		//line calc.y:305
 		{
 			fmt.Println(CalcS[Calcpt-1].token.Value)
 			CalcVAL.expression = &ast.UnaryExpr{
@@ -802,8 +814,8 @@ Calcdefault:
 				OpT: CalcS[Calcpt-1].token,
 			}
 		}
-	case 31:
-		//line calc.y:323
+	case 33:
+		//line calc.y:313
 		{
 			fmt.Println("identifier")
 			CalcVAL.expression = &ast.Ident{
@@ -811,14 +823,14 @@ Calcdefault:
 				T:    CalcS[Calcpt-0].token,
 			}
 		}
-	case 32:
-		//line calc.y:331
+	case 34:
+		//line calc.y:321
 		{
 			fmt.Printf("expr <- number\n")
 			CalcVAL.expression = CalcS[Calcpt-0].expression
 		}
-	case 33:
-		//line calc.y:338
+	case 35:
+		//line calc.y:328
 		{
 			fmt.Println("identifier")
 			CalcVAL.identifier = ast.Ident{
@@ -826,26 +838,26 @@ Calcdefault:
 				T:    CalcS[Calcpt-0].token,
 			}
 		}
-	case 34:
-		//line calc.y:348
-		{
-			fmt.Println(CalcS[Calcpt-0].token.Value)
-			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
-		}
-	case 35:
-		//line calc.y:353
-		{
-			fmt.Println(CalcS[Calcpt-0].token.Value)
-			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
-		}
 	case 36:
-		//line calc.y:358
+		//line calc.y:338
 		{
 			fmt.Println(CalcS[Calcpt-0].token.Value)
 			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
 		}
 	case 37:
-		//line calc.y:363
+		//line calc.y:343
+		{
+			fmt.Println(CalcS[Calcpt-0].token.Value)
+			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
+		}
+	case 38:
+		//line calc.y:348
+		{
+			fmt.Println(CalcS[Calcpt-0].token.Value)
+			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
+		}
+	case 39:
+		//line calc.y:353
 		{
 			fmt.Println("array")
 			CalcVAL.expression = &ast.ArrayType{
@@ -853,8 +865,8 @@ Calcdefault:
 				At:    CalcS[Calcpt-0].expression,
 			}
 		}
-	case 38:
-		//line calc.y:371
+	case 40:
+		//line calc.y:361
 		{
 			value, err := strconv.Atoi(CalcS[Calcpt-2].token.Value)
 			if err != nil {
@@ -866,20 +878,20 @@ Calcdefault:
 				At:    CalcS[Calcpt-0].expression,
 			}
 		}
-	case 39:
-		//line calc.y:385
-		{
-			fmt.Println(CalcS[Calcpt-0].token.Value)
-			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
-		}
-	case 40:
-		//line calc.y:390
-		{
-			fmt.Println(CalcS[Calcpt-0].token.Value)
-			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
-		}
 	case 41:
-		//line calc.y:397
+		//line calc.y:375
+		{
+			fmt.Println(CalcS[Calcpt-0].token.Value)
+			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
+		}
+	case 42:
+		//line calc.y:380
+		{
+			fmt.Println(CalcS[Calcpt-0].token.Value)
+			CalcVAL.expression = &ast.BasicLit{T: CalcS[Calcpt-0].token}
+		}
+	case 43:
+		//line calc.y:387
 		{
 			CalcVAL.token = CalcS[Calcpt-0].token
 		}

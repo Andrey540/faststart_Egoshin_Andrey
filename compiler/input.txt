@@ -1,13 +1,21 @@
-{
-	var x int
-	var y int
-	var z int
-	x = 1 + 3
-	y = x + 2 - 6
+var x int
+
+func main(g int, t string) int {
+	f = 5
 	
 	if (2 - 4) {
 		z = 3
 	}
+	return f
+}
+
+func main() int {
+	var x int
+	var y int
+	var z int
+	x = 1 + 3
+	y = x + 2 - 6	
+	
 	
 	if (2 - 4) {
 		z = 3
@@ -19,12 +27,11 @@
 		z = 3
 	}
 	
-	func main(g int, t string) int {
-		f = 5
-		return f
-	}
+	/*
+	f = 5
+	g = 8 -6
 	
-	/*f = 5*/
+	*/
 	
 	var t []int
 	var e [10]int
