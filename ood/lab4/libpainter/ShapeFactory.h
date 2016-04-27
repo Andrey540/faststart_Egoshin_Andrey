@@ -4,7 +4,9 @@
 #include "Triangle.h"
 #include "Ellipse.h"
 #include "RegularPolygon.h"
-#include <vector>
+#include <map>
+#include <boost/function.hpp>
+#include <boost/bind/bind.hpp>
 
 class CShapeFactory :
 	public IShapeFactory
@@ -15,16 +17,13 @@ public:
 
 	~CShapeFactory();
 private:
-	void SeparateParameters(const std::string& descriprion);
-	void PrepareDoubleParameters();
-	bool IsValidColor(const std::string& color)const;
+	typedef boost::function< std::unique_ptr<CShape>(std::istream &) > CreateShapeFunc;
 	
-	std::unique_ptr<CShape> CreateRectangle();
-	std::unique_ptr<CShape> CreateTriangle();
-	std::unique_ptr<CShape> CreateEllipse();
-	std::unique_ptr<CShape> CreateRegularPolygon();
+	std::unique_ptr<CShape> CreateRectangle(std::istream & in);
+	std::unique_ptr<CShape> CreateTriangle(std::istream & in);
+	std::unique_ptr<CShape> CreateEllipse(std::istream & in);
+	std::unique_ptr<CShape> CreateRegularPolygon(std::istream & in);
 
-	std::vector<std::string> m_parameters;
-	std::vector<double> m_doubleParameters;
+	std::map<std::string, CreateShapeFunc> m_shapeTypeToCreator;
 };
 

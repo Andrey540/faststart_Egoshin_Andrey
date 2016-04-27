@@ -107,16 +107,97 @@ BOOST_FIXTURE_TEST_SUITE(RealDesigner, RealDesigner_)
 		};
 
 		BOOST_FIXTURE_TEST_SUITE(when_creating_draft_with_rectangle_only, when_creating_draft_with_rectangle_only_)
-		BOOST_AUTO_TEST_CASE(returns_draft_with_rectangle)
+			BOOST_AUTO_TEST_CASE(returns_draft_with_rectangle)
+			{
+				auto shapesIter = returnedDraft.begin();
+				auto shapeAsRectangle = dynamic_cast<const CRectangle*>(&(*shapesIter++));
+				BOOST_REQUIRE(shapeAsRectangle);
+			}
+			BOOST_AUTO_TEST_CASE(returned_draft_has_only_one_element)
+			{
+				BOOST_CHECK(returnedDraft.size() == 1);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		struct when_creating_draft_with_triangle_only_ : RealDesigner_
 		{
-			auto shapesIter = returnedDraft.begin();
-			auto shapeAsRectangle = dynamic_cast<const CRectangle*>(&(*shapesIter++));
-			BOOST_REQUIRE(shapeAsRectangle);
-		}
-		BOOST_AUTO_TEST_CASE(returned_draft_has_only_one_element)
+			vector<string> expectedShapeDescriptions = {
+				"triangle red 1 1 2 2 3 3"
+			};
+			stringstream strm;
+			CPictureDraft returnedDraft;
+			when_creating_draft_with_triangle_only_()
+			{
+				copy(expectedShapeDescriptions, ostream_iterator<string>(strm, "\n"));
+				returnedDraft = designer.CreateDraft(strm);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_creating_draft_with_triangle_only, when_creating_draft_with_triangle_only_)
+			BOOST_AUTO_TEST_CASE(returns_draft_with_triangle)
+			{
+				auto shapesIter = returnedDraft.begin();
+				auto shapeAsTriangle = dynamic_cast<const CTriangle*>(&(*shapesIter++));
+				BOOST_REQUIRE(shapeAsTriangle);
+			}
+			BOOST_AUTO_TEST_CASE(returned_draft_has_only_one_element)
+			{
+				BOOST_CHECK(returnedDraft.size() == 1);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		struct when_creating_draft_with_ellipse_only_ : RealDesigner_
 		{
-			BOOST_CHECK(returnedDraft.size() == 1);
-		}
+			vector<string> expectedShapeDescriptions = {
+				"ellipse yellow 1 1 2 3"
+			};
+			stringstream strm;
+			CPictureDraft returnedDraft;
+			when_creating_draft_with_ellipse_only_()
+			{
+				copy(expectedShapeDescriptions, ostream_iterator<string>(strm, "\n"));
+				returnedDraft = designer.CreateDraft(strm);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_creating_draft_with_ellipse_only, when_creating_draft_with_ellipse_only_)
+			BOOST_AUTO_TEST_CASE(returns_draft_with_ellipse)
+			{
+				auto shapesIter = returnedDraft.begin();
+				auto shapeAsEllipse = dynamic_cast<const CEllipse*>(&(*shapesIter++));
+				BOOST_REQUIRE(shapeAsEllipse);
+			}
+			BOOST_AUTO_TEST_CASE(returned_draft_has_only_one_element)
+			{
+				BOOST_CHECK(returnedDraft.size() == 1);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+
+		struct when_creating_draft_with_regularpolygon_only_ : RealDesigner_
+		{
+			vector<string> expectedShapeDescriptions = {
+				"regularpolygon yellow 1 1 2 3"
+			};
+			stringstream strm;
+			CPictureDraft returnedDraft;
+			when_creating_draft_with_regularpolygon_only_()
+			{
+				copy(expectedShapeDescriptions, ostream_iterator<string>(strm, "\n"));
+				returnedDraft = designer.CreateDraft(strm);
+			}
+		};
+
+		BOOST_FIXTURE_TEST_SUITE(when_creating_draft_with_regularpolygon_only, when_creating_draft_with_regularpolygon_only_)
+			BOOST_AUTO_TEST_CASE(returns_draft_with_regularpolygon)
+			{
+				auto shapesIter = returnedDraft.begin();
+				auto shapeAsRegularpolygon = dynamic_cast<const CRegularPolygon*>(&(*shapesIter++));
+				BOOST_REQUIRE(shapeAsRegularpolygon);
+			}
+			BOOST_AUTO_TEST_CASE(returned_draft_has_only_one_element)
+			{
+				BOOST_CHECK(returnedDraft.size() == 1);
+			}
 		BOOST_AUTO_TEST_SUITE_END()
 
 		struct when_creating_draft_with_real_shapes_ : RealDesigner_
@@ -135,6 +216,7 @@ BOOST_FIXTURE_TEST_SUITE(RealDesigner, RealDesigner_)
 				returnedDraft = designer.CreateDraft(strm);
 			}
 		};
+
 		BOOST_FIXTURE_TEST_SUITE(when_creating_draft_with_real_shapes, when_creating_draft_with_real_shapes_)
 			BOOST_AUTO_TEST_CASE(returns_draft_with_real_shapes)
 			{
