@@ -25,6 +25,9 @@ var base ast.Expression
 
 var mainResult ast.FileAst
 
+var identifiers []ast.Ident
+var blockstmts []ast.BlockStmt
+
 %}
 
 // fields inside this union end up as the fields in a structure known
@@ -32,25 +35,29 @@ var mainResult ast.FileAst
 %union{
 	val int
 	expression ast.Expression
+	expression_list []ast.Expression
 	declaration ast.Declaration
 	statement ast.Statement
-	statement_block ast.BlockStmt
+	statement_list ast.BlockStmt
+	statement_block int
 	token token.Token
 	file ast.FileAst
 	field ast.Field
-	field_list []ast.Field
-	identifier ast.Ident
+	field_list []ast.Field	
+	identifier int
 }
 
 // any non-terminal which returns a value needs a type, which is
 // really a field name in the above union struct
 %type <token> enumerable
 %type <expression> expr number type
+%type <expression_list> expr_list
 %type <declaration> declaration
 %type <identifier> identifier
 %type <file> file
 %type <statement> statement
-%type <statement_block> statement_list statement_block
+%type <statement_list> statement_list
+%type <statement_block> statement_block
 %type <field> field
 %type <field_list> field_list
 
@@ -87,7 +94,8 @@ file    : declaration
 statement_block	: LBRACE NEW_LINE statement_list RBRACE
 		{
 			fmt.Println("init stmt block")
-			$$ = $3
+			blockstmts = append(blockstmts, $3)
+			$$ = len(blockstmts) - 1
 		}
 	;	
 	
@@ -139,8 +147,8 @@ statement	: declaration
 			fmt.Println("if stmt with else")
 			$$ = &ast.IfStmt {
 				Cond: $2,
-				Body: &$3,
-				Else: &$5,
+				Body: &blockstmts[$3],
+				Else: &blockstmts[$5],
 			}
 		}
 	|	IF expr statement_block
@@ -148,7 +156,7 @@ statement	: declaration
 			fmt.Println("if stmt")
 			$$ = &ast.IfStmt {
 				Cond: $2,
-				Body: &$3,
+				Body: &blockstmts[$3],
 			}
 		}
 	|	FOR expr statement_block
@@ -156,7 +164,7 @@ statement	: declaration
 			fmt.Println("for stmt")
 			$$ = &ast.ForStmt {
 				X: $2,
-				Body: &$3,
+				Body: &blockstmts[$3],
 			}
 		}
 	|	statement NEW_LINE
@@ -169,7 +177,7 @@ statement	: declaration
 declaration : VAR identifier type		{
 			fmt.Println("var")
 			$$ = &ast.VarDecl {
-				Name: &$2,
+				Name: &identifiers[$2],
 				Type: $3,
 			}
 		}
@@ -177,19 +185,19 @@ declaration : VAR identifier type		{
 		{
 			fmt.Println("func")
 			$$ = &ast.FuncDecl {
-				Name: &$2,
+				Name: &identifiers[$2],
 				RetType: $5,
-				Body: &$6,
+				Body: &blockstmts[$6],
 			}
 		}
 	|    FUNC identifier LPAREN field_list RPAREN type statement_block
 		{
 			fmt.Println("func")
 			$$ = &ast.FuncDecl {
-				Name: &$2,
+				Name: &identifiers[$2],
 				Params: $4,
 				RetType: $6,
-				Body: &$7,
+				Body: &blockstmts[$7],
 			}
 		}
 	|	declaration NEW_LINE
@@ -213,9 +221,19 @@ field   :  identifier type
 		{
 			fmt.Println("field")
 			$$ = ast.Field {
-				Name: &$1,
+				Name: &identifiers[$1],
 				Type: $2,
 			}
+		}
+	;
+	
+expr_list  :    expr
+		{
+			$$ = []ast.Expression{$1}
+		}
+	|    expr_list COMMA expr
+		{
+			$$ = append($1, $3)
 		}
 	;
 	
@@ -227,9 +245,23 @@ expr	:    LPAREN expr RPAREN
 	|    identifier LBRACK expr RBRACK
 		{ 
 			$$ = &ast.BinaryExpr {
-				X: &$1,
+				X: &identifiers[$1],
 				OpT: $2,
 				Y: $3,
+			}
+		}
+	|    identifier LPAREN expr_list RPAREN
+		{ 
+		// conflict
+			$$ = &ast.CallExpr {
+				Fun: &identifiers[$1],
+				Args: $3,
+			}
+		}
+	|    identifier LPAREN RPAREN
+		{ 
+			$$ = &ast.CallExpr {
+				Fun: &identifiers[$1],
 			}
 		}
 	|    expr ADD expr
@@ -309,28 +341,27 @@ expr	:    LPAREN expr RPAREN
 				OpT: $1,
 			}
 		}
-	|    IDENTIFIER
+	|    identifier
 		{
-			fmt.Println("identifier")
-			$$ = &ast.Ident{
-				Name: $1.Value,
-				T: $1,
-			}
+			fmt.Println("identifier -> expr")
+			$$ = &identifiers[$1]
 		}
 	|    number
 		{
-		    fmt.Printf("expr <- number\n")
+		    fmt.Println("expr <- number")
 			$$ = $1
 		}
 	;
 	
 identifier : IDENTIFIER
 		{
-			fmt.Println("identifier")
-			$$ = ast.Ident{
+			fmt.Println("identifier")			
+			ident := ast.Ident{
 				Name: $1.Value,
 				T: $1,
 			}
+			identifiers = append(identifiers, ident)
+			$$ = len(identifiers) - 1
 		}
 	;
 	
@@ -465,6 +496,9 @@ func main() {
 		tokenMapPrepared := prepareTokenMap()
 		CalcParse(&CalcLex{tokens: tokensParsed, tokenMap: tokenMapPrepared})
 		fmt.Println(mainResult)
+		fmt.Println(identifiers)
+		visitor := new(ast.ScopeCreatorVisitor)
+		mainResult.Accept(visitor)
 	} else {
 		fmt.Printf("Error reading file")
 	}

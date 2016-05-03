@@ -10,8 +10,7 @@ type NodeAst interface {
 }
 
 type File interface {
-	astNode()
-	Accept(v Visitor)
+	NodeAst
 }
 
 type Declaration interface {
@@ -62,6 +61,11 @@ type (
 		Index int
 		At Expression  // base_type
 	}
+	
+	CallExpr struct {
+        Fun Expression
+        Args []Expression
+	}
 )
 
 func (p *BadExpr) astNode() {}
@@ -70,6 +74,7 @@ func (p *Ident) astNode() {}
 func (p *UnaryExpr) astNode() {}
 func (p *BinaryExpr) astNode() {}
 func (p *ArrayType) astNode() {}
+func (p *CallExpr) astNode() {}
 
 func (p *BadExpr) exprNode() {}
 func (p *BasicLit) exprNode() {}
@@ -77,6 +82,7 @@ func (p *Ident) exprNode() {}
 func (p *UnaryExpr) exprNode() {}
 func (p *BinaryExpr) exprNode() {}
 func (p *ArrayType) exprNode() {}
+func (p *CallExpr) exprNode() {}
 
 // Declarations
 type (
@@ -192,6 +198,9 @@ func (p *BinaryExpr) Accept(v Visitor) {
 }
 func (p *ArrayType) Accept(v Visitor) {
 	v.VisitArrayType(p)
+}
+func (p *CallExpr) Accept(v Visitor) {
+	v.VisitCallExpr(p)
 }
 
 func (p *VarDecl) Accept(v Visitor) {
