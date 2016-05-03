@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 	"strconv"
+	"token"
 )
 
 type Visitor interface {
@@ -164,7 +165,7 @@ func (self *ScopeCreatorVisitor) VisitBadExpr(node *BadExpr) {
 func (self *ScopeCreatorVisitor) VisitBasicLit(node *BasicLit) {
 }
 func (self *ScopeCreatorVisitor) VisitIdent(node *Ident) {
-	node.Obj = self.currentScope.LookupAll(node.Name)
+	node.Obj = self.currentScope.LookupDeep(node.Name)
 }
 func (self *ScopeCreatorVisitor) VisitUnaryExpr(node *UnaryExpr) {
 	node.X.Accept(self)
@@ -177,17 +178,7 @@ func (self *ScopeCreatorVisitor) VisitArrayType(node *ArrayType) {
 	node.At.Accept(self)
 }
 func (self *ScopeCreatorVisitor) VisitCallExpr(node *CallExpr) {
-	node.Fun.Accept(self)
-	switch ident := node.Fun.(type) {
-		case *Ident:
-			decleredFunc := self.currentScope.LookupAll(ident.Name)
-			
-			if (len(node.Args) != len(decleredFunc.GetFuncDecl())) {
-				panic(fmt.Sprintf("Incorrect number of parameters in call func " + ident.Name))
-			}
-		default:
-			panic(fmt.Sprintf("node.Fun is not indentifier"))
-	}
+	node.Fun.Accept(self)	
 	
 	for i := 0; i < len(node.Args); i++ {
 		node.Args[i].Accept(self)
@@ -203,12 +194,6 @@ func (self *ScopeCreatorVisitor) VisitExprStmt(node *ExprStmt) {
 	node.X.Accept(self)
 }
 func (self *ScopeCreatorVisitor) VisitAssignStmt(node *AssignStmt) {
-	switch node.Ident.(type) {
-		case *Ident:
-			// do nothing
-		default:
-			panic(fmt.Sprintf("node.Ident is not indentifier"))
-	}
 	node.Ident.Accept(self)
 	node.X.Accept(self)	
 }
@@ -276,16 +261,117 @@ func (self *ScopeCreatorVisitor) createFunc(scope *Scope, name string, objType E
 	return &function
 }
 
+// ------------------------------------------------------------------------------------
 
-type TypeCheckerVisitor struct {
-	Type TypeCheckType
+type AstCheckerVisitor struct {
 }
 
-type TypeCheckType int
+func (self *AstCheckerVisitor) VisitVarDecl(node *VarDecl) {
+}
+func (self *AstCheckerVisitor) VisitFunc(node *FuncDecl) {
+	for i := 0; i < len(node.Params); i++ {	
+		node.Params[i].Name.Accept(self)
+	}
+	node.Body.Accept(self)
+	switch node.Body.List[len(node.Body.List) - 1].(type) {
+		case *ReturnStmt:
+			// do nothing
+		default:
+			panic(fmt.Sprintf("Function " + node.Name.Name + " has not return"))
+	}
+}
+func (self *AstCheckerVisitor) VisitBadExpr(node *BadExpr) {
+}
+func (self *AstCheckerVisitor) VisitBasicLit(node *BasicLit) {
+}
+func (self *AstCheckerVisitor) VisitIdent(node *Ident) {	
+}
+func (self *AstCheckerVisitor) VisitUnaryExpr(node *UnaryExpr) {
+	node.X.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitBinaryExpr(node *BinaryExpr) {
+	node.X.Accept(self)
+	node.Y.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitArrayType(node *ArrayType) {
+	node.At.Accept(self)
+}
+
+func (self *AstCheckerVisitor) VisitCallExpr(node *CallExpr) {
+	node.Fun.Accept(self)
+	switch ident := node.Fun.(type) {
+		case *Ident:
+			decleredFunc := ident.Obj			
+			if (len(node.Args) != len(decleredFunc.GetFuncDecl())) {
+				panic(fmt.Sprintf("Incorrect number of parameters in call func " + ident.Name))
+			}
+		default:
+			panic(fmt.Sprintf("node.Fun is not indentifier"))
+	}
+	for i := 0; i < len(node.Args); i++ {
+		node.Args[i].Accept(self)
+	}
+}
+func (self *AstCheckerVisitor) VisitDeclStmt(node *DeclStmt) {
+	node.Decl.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitEmptyStmt(node *EmptyStmt) {
+}
+func (self *AstCheckerVisitor) VisitExprStmt(node *ExprStmt) {
+	node.X.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitAssignStmt(node *AssignStmt) {
+	switch node.Ident.(type) {
+		case *Ident:
+			// do nothing
+		default:
+			panic(fmt.Sprintf("node.Ident is not indentifier"))
+	}
+	node.Ident.Accept(self)
+	node.X.Accept(self)	
+}
+func (self *AstCheckerVisitor) VisitReturnStmt(node *ReturnStmt) {
+	node.X.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitBlockStmt(node *BlockStmt) {
+	for i := 0; i < len(node.List); i++ {
+		node.List[i].Accept(self)
+	}
+}
+func (self *AstCheckerVisitor) VisitIfStmt(node *IfStmt) {
+	typeChecker := new(TypeCheckerVisitor)
+	typeChecker.Type = BOOLEAN
+	node.Cond.Accept(typeChecker)
+	node.Body.Accept(self)
+	if node.Else != nil {
+		node.Else.Accept(self)
+	}
+}
+func (self *AstCheckerVisitor) VisitForStmt(node *ForStmt) {
+	typeChecker := new(TypeCheckerVisitor)
+	typeChecker.Type = BOOLEAN
+	node.X.Accept(typeChecker)
+	node.X.Accept(self)
+	node.Body.Accept(self)
+}
+func (self *AstCheckerVisitor) VisitFileAst(node *FileAst) {
+	for i := 0; i < len(node.Decls); i++ {
+		node.Decls[i].Accept(self)
+	}
+}
+
+// ------------------------------------------------------------------------------------
+
+type TypeCheckerVisitor struct {
+	Type CheckType
+}
+
+type CheckType int
 const (
-	INT TypeCheckType = iota
+	INT CheckType = iota
 	FLOAT
 	STRING
+	BOOLEAN
 	ARRAY
 )
 
@@ -296,7 +382,6 @@ func (self *TypeCheckerVisitor) VisitFunc(node *FuncDecl) {
 func (self *TypeCheckerVisitor) VisitBadExpr(node *BadExpr) {
 }
 func (self *TypeCheckerVisitor) VisitBasicLit(node *BasicLit) {
-	fmt.Printf(string(node.T.Value))
 }
 func (self *TypeCheckerVisitor) VisitIdent(node *Ident) {
 	fmt.Printf("Identifier: " + node.Name + " ")
@@ -306,13 +391,33 @@ func (self *TypeCheckerVisitor) VisitUnaryExpr(node *UnaryExpr) {
 	node.X.Accept(self)
 }
 func (self *TypeCheckerVisitor) VisitBinaryExpr(node *BinaryExpr) {
-	fmt.Printf(" Visit Binary Expr ")
+	isBooleanOperation := self.isBooleanToken(node.OpT)
+	if self.Type == BOOLEAN && !isBooleanOperation {
+		panic(fmt.Sprintf("Incorrect expr type, boolean operation expected"))
+	} else if self.Type != BOOLEAN && isBooleanOperation {
+		panic(fmt.Sprintf("Incorrect expr type, unexpected boolean operation"))
+	}
+	
+	firstExpressionType  := self.getExpressionType(node.X)
+	secondExpressionType := self.getExpressionType(node.Y)
+	if firstExpressionType != secondExpressionType {
+		panic(fmt.Sprintf("Not equal expression types"))
+	}
+	if self.Type != BOOLEAN && self.Type != firstExpressionType {
+		panic(fmt.Sprintf("Incorrect expression types"))
+	}
+	var expectedType CheckType
+	if node.OpT.TokenType == token.AND || node.OpT.TokenType == token.OR {
+		expectedType = BOOLEAN
+	} else {
+		expectedType = firstExpressionType
+	}
+	self.Type = expectedType
 	node.X.Accept(self)
-	fmt.Printf(node.OpT.Value)
+	self.Type = expectedType
 	node.Y.Accept(self)
 }
 func (self *TypeCheckerVisitor) VisitArrayType(node *ArrayType) {
-	fmt.Printf("Visit Array Type with index : " + strconv.Itoa(node.Index))
 	node.At.Accept(self)
 }
 
@@ -356,4 +461,44 @@ func (self *TypeCheckerVisitor) VisitFileAst(node *FileAst) {
 	for i := 0; i < len(node.Decls); i++ {
 		node.Decls[i].Accept(self)
 	}
+}
+	
+func (self *TypeCheckerVisitor) getExpressionType(expr NodeAst) (CheckType) {
+	switch x := expr.(type) {
+		case *BadExpr:
+			// do nothing
+		case *BasicLit:
+		fmt.Println(x)
+			if x.T.TokenType == token.INT_NUMBER || x.T.TokenType == token.INT {
+				return INT
+			} else if x.T.TokenType == token.FLOAT_NUMBER || x.T.TokenType == token.FLOAT {
+				return FLOAT
+			} else if x.T.TokenType == token.STRING_VALUE || x.T.TokenType == token.STRING {
+				return STRING
+			} else {
+				panic(fmt.Sprintf("undefined expression type from BasicLit"))
+			}
+		case *Ident:
+			return self.getExpressionType(x.Obj.GetType())
+		case *UnaryExpr:
+			return self.getExpressionType(x.X)
+		case *BinaryExpr:								
+			if self.isBooleanToken(x.OpT) {
+				return BOOLEAN
+			} else {
+				return self.getExpressionType(x.X)
+			}
+		case *ArrayType:
+			return self.getExpressionType(x.At)
+		default:
+			panic(fmt.Sprintf("undefined expression type"))
+	}
+	
+	return BOOLEAN
+}
+
+func (self *TypeCheckerVisitor) isBooleanToken(t token.Token) bool {
+	return t.TokenType == token.EQUAL || t.TokenType == token.NOT_EQUAL ||
+		   t.TokenType == token.GREATE || t.TokenType == token.AND ||
+		   t.TokenType == token.OR
 }

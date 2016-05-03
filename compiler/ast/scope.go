@@ -18,13 +18,13 @@ func (s *Scope) Lookup(name string) *Object {
 	return s.Objects[name]
 }
 
-func (s *Scope) LookupAll(name string) *Object {
+func (s *Scope) LookupDeep(name string) *Object {
 	obj :=  s.Objects[name]
 	if obj == nil {
 		if s.Outer == nil {
 			panic(fmt.Sprintf("Can not find parameter with name " + name))
 		} else {
-			return s.Outer.LookupAll(name)
+			return s.Outer.LookupDeep(name)
 		}		
 	} else {
 		return obj
@@ -52,6 +52,15 @@ func (p *Object) GetFuncDecl() []Field {
 			return decl
 		default:
 			panic(fmt.Sprintf("Object has not func delc"))
+	}
+}
+
+func (p *Object) GetType() Expression {
+	switch expr := p.Type.(type) {
+		case Expression:
+			return expr
+		default:
+			panic(fmt.Sprintf("Object has not type"))
 	}
 }
 

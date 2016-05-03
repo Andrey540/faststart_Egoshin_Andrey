@@ -60,13 +60,14 @@ var blockstmts []ast.BlockStmt
 %type <statement_block> statement_block
 %type <field> field
 %type <field_list> field_list
-
+	
 %token <token> EOF
 %token <token> LBRACE RBRACE IF ELSE FOR RETURN FUNC COMMENT LBRACK RBRACK COMMA
-%token <token> INT_NUMBER FLOAT_NUMBER INT FLOAT STRING NEW_LINE VAR ASSIGNED IDENTIFIER
+%token <token> INT_NUMBER FLOAT_NUMBER STRING_VALUE INT FLOAT STRING NEW_LINE VAR ASSIGNED IDENTIFIER
 %token <token> ADD SUB MUL QUO REM SIN COS SQRT LPAREN RPAREN
+%token <token> EQUAL NOT_EQUAL GREATE AND OR
 
-%left ASSIGNED
+%left ASSIGNED EQUAL NOT_EQUAL GREATE AND OR
 %left ADD  SUB
 %left MUL  QUO  REM
 %left UMINUS      /*  supplies  precedence  for  unary  minus  */
@@ -300,6 +301,51 @@ expr	:    LPAREN expr RPAREN
 				Y: $3,
 			}
 		}
+	|    expr EQUAL expr
+		{ 
+			fmt.Println($2.Value)
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}
+	|    expr NOT_EQUAL expr
+		{ 
+			fmt.Println($2.Value)
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}
+	|    expr GREATE expr
+		{ 
+			fmt.Println($2.Value)
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}	
+	|    expr AND expr
+		{ 
+			fmt.Println($2.Value)
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}
+	|    expr OR expr
+		{ 
+			fmt.Println($2.Value)
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}
 	|    expr REM expr
 		{ 
 			fmt.Println($2.Value)
@@ -412,6 +458,11 @@ number	:   enumerable
 			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
+	| 		STRING_VALUE
+		{
+			fmt.Println($1.Value)
+			$$ = &ast.BasicLit{T: $1}
+		}
 	;
 	
 enumerable : INT_NUMBER
@@ -480,6 +531,12 @@ func prepareTokenMap() map[int]int {
 	tokenMap[int(token.LBRACK)] = LBRACK
 	tokenMap[int(token.RBRACK)] = RBRACK
 	tokenMap[int(token.COMMA)] = COMMA
+	tokenMap[int(token.EQUAL)] = EQUAL
+	tokenMap[int(token.NOT_EQUAL)] = NOT_EQUAL
+	tokenMap[int(token.GREATE)] = GREATE
+	tokenMap[int(token.STRING_VALUE)] = STRING_VALUE
+	tokenMap[int(token.AND)] = AND
+	tokenMap[int(token.OR)] = OR
 	
 	return tokenMap
 }
@@ -495,10 +552,10 @@ func main() {
 		}
 		tokenMapPrepared := prepareTokenMap()
 		CalcParse(&CalcLex{tokens: tokensParsed, tokenMap: tokenMapPrepared})
-		fmt.Println(mainResult)
-		fmt.Println(identifiers)
-		visitor := new(ast.ScopeCreatorVisitor)
-		mainResult.Accept(visitor)
+		scopeCreator := new(ast.ScopeCreatorVisitor)
+		mainResult.Accept(scopeCreator)
+		astChecker := new(ast.AstCheckerVisitor)
+		mainResult.Accept(astChecker)
 	} else {
 		fmt.Printf("Error reading file")
 	}
