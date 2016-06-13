@@ -34,7 +34,7 @@ func main() int {
 	
 	*/
 	
-	x = calc(3)
+	x = calc(5)
 	
 	var h string
 	h = "hello"

@@ -213,6 +213,8 @@ func main() {
 		mainResult.Accept(scopeCreator)
 		astChecker := new(ast.AstCheckerVisitor)
 		mainResult.Accept(astChecker)
+		llvmBuilder := new(ast.LlvmBuilderVisitor)
+		mainResult.Accept(llvmBuilder)
 	} else {
 		fmt.Printf("Error reading file")
 	}

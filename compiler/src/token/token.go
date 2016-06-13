@@ -81,7 +81,7 @@ var tokens = [...]string{
 	INT:    "INT",
 	FLOAT:  "FLOAT",
 	STRING: "STRING",
-	NEW_LINE: "NEW_LINE"
+	NEW_LINE: "NEW_LINE",
 
 	ADD: "+",
 	SUB: "-",

@@ -76,7 +76,7 @@ func (self *Lexer) parseToken(expressionSrc string) (expression string, tokenEle
 	for _, value := range self.patterns {
 		expression, tokenElem = self.parseTokenByExp(expression, *value.expr, value.kind)
 		if tokenElem.TokenType == token.NEW_LINE {
-			++self.rowIndex
+			self.rowIndex += 1
 			self.columtIndex = 0
 		}
 		if tokenElem.TokenType != token.ILLEGAL {

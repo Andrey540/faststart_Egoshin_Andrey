@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"fmt"
+	"errors"
 )
 
 type Scope struct {
@@ -22,7 +22,7 @@ func (s *Scope) LookupDeep(name string) *Object {
 	obj :=  s.Objects[name]
 	if obj == nil {
 		if s.Outer == nil {
-			panic(fmt.Sprintf("Can not find parameter with name " + name))
+			panic(errors.New("Can not find parameter with name " + name))
 		} else {
 			return s.Outer.LookupDeep(name)
 		}		
@@ -51,7 +51,7 @@ func (p *Object) GetFuncDecl() []Field {
 		case []Field:
 			return decl
 		default:
-			panic(fmt.Sprintf("Object has not func delc"))
+			panic(errors.New("Object has not func delc"))
 	}
 }
 
@@ -60,7 +60,7 @@ func (p *Object) GetType() Expression {
 		case Expression:
 			return expr
 		default:
-			panic(fmt.Sprintf("Object has not type"))
+			panic(errors.New("Object has not type"))
 	}
 }
 
