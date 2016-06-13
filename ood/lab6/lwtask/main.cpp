@@ -179,10 +179,8 @@ public:
 		{
 			throw logic_error("DrawLine is allowed between BeginDraw()/EndDraw() only");
 		}
-		m_out << "<line fromX=\"" << start.x << "\" fromY=\"" << start.y <<
-			" toX=\"" << end.x << "\" toY=\"" << end.y << "\">" << endl;
-		m_out << "  <color r=\"" << color.r << "\" g=\"" << color.g <<
-			" b=\"" << color.b << " a=\"" << color.a << "\">" << endl;
+		m_out << boost::format(R"(<line fromX="%1%" fromY="%2%" toX="%3%" toY="%4%"/>)") %start.x %start.y %end.x %end.y << endl;
+		m_out << boost::format(R"(  <color r="%1%" g="%2%" b="%3%" a="%4%"/>)") %color.r %color.g %color.b %color.a << endl;
 		m_out << "</line>" << endl;
 	}
 
@@ -257,6 +255,7 @@ public:
 	void LineTo(int x, int y) override
 	{
 		m_renderer.DrawLine(m_startPosition, {x, y}, m_color);
+		m_startPosition = { x, y };
 	}
 private:
 	modern_graphics_lib::CModernGraphicsRenderer& m_renderer;
@@ -296,6 +295,7 @@ public:
 	void LineTo(int x, int y) override
 	{
 		DrawLine(m_startPosition, { x, y }, m_color);
+		m_startPosition = { x, y };
 	}
 private:
 	modern_graphics_lib::CPoint m_startPosition;
