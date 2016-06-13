@@ -21,7 +21,7 @@ void CHtmlDocumentBuilder::AddParagraph(const std::string & text)
 void CHtmlDocumentBuilder::AddImage(size_t width, size_t height, const std::string & path)
 {
 	m_documentBody += "    <img style='width: " + std::to_string(width) + "px; height: " +
-				   std::to_string(height) + "px;' src='" + path + "'" + "/ >\n";
+				   std::to_string(height) + "px;' src='" + path + "'" + " / >\n";
 }
 
 void CHtmlDocumentBuilder::Save(const std::string & path)

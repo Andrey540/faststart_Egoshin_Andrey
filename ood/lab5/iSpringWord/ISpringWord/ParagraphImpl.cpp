@@ -2,21 +2,21 @@
 #include "ParagraphImpl.h"
 
 CParagraphImpl::CParagraphImpl(std::string text)
-	: m_parahraph(text)
+	: m_paragraph(text)
 {}
 
 std::string& CParagraphImpl::GetText()
 {
-	return m_parahraph.GetText();
+	return m_paragraph.GetText();
 }
 
 void CParagraphImpl::SetText(const std::string& text)
 {
-	m_parahraph.SetText(text);
+	m_paragraph.SetText(text);
 }
 
 std::string CParagraphImpl::GetDescription()
 {
-	return "Paragraph: " + m_parahraph.GetText();
+	return "Paragraph: " + m_paragraph.GetText();
 }
 

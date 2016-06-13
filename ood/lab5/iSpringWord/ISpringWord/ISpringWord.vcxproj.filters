@@ -84,6 +84,9 @@
     <ClInclude Include="HtmlDocumentBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TmpFolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

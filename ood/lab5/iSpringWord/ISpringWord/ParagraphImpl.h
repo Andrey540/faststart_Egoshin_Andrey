@@ -13,6 +13,6 @@ public:
 	std::string GetDescription() override;
 
 private:
-	CParagraph m_parahraph;
+	CParagraph m_paragraph;
 };
 

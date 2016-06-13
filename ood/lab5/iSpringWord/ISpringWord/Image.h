@@ -10,7 +10,7 @@ public:
 	std::string GetPath()const override;
 	size_t GetWidth()const override;
 	size_t GetHeight()const override;
-	void Resize(size_t width, size_t height) override;
+	void Resize(size_t width, size_t height) override;	
 
 private:
 	std::string m_path;

@@ -14,6 +14,7 @@ public:
 	void Resize(size_t width, size_t height) override;
 
 	std::string GetDescription() override;
+	std::string GetName() const;
 
 private:
 	CImage m_image;

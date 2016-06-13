@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Menu.h"
 #include "Document.h"
+#include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
 using namespace std::placeholders;
@@ -49,13 +50,15 @@ private:
 	void SetTitle(istream & in)
 	{
 		string title = GetTextFromStream(in);
+		EscapeText(title);
 		m_document->SetTitle(title);
 	}
 
 	void InsertParagraph(istream & in)
 	{
 		boost::optional<size_t> position = GetPositionFromStream(in);
-		string text = GetTextFromStream(in);		
+		string text = GetTextFromStream(in);
+		EscapeText(text);
 		m_document->InsertParagraph(text, position);
 	}
 
@@ -154,7 +157,8 @@ private:
 		boost::optional<size_t> position;		
 		if (in >> positionStr && positionStr != "end")
 		{
-			position = GetNumberFromStream(in);
+			stringstream ss(positionStr);
+			position = GetNumberFromStream(ss);
 		}		
 		return position;
 	}
@@ -177,6 +181,16 @@ private:
 			throw invalid_argument("Invalid string format");
 		}
 		return result;
+	}
+
+
+	void EscapeText(std::string& text) const
+	{
+		boost::replace_all(text, "&", "&amp;");
+		boost::replace_all(text, "\"", "&quot;");
+		boost::replace_all(text, "\'", "&apos;");
+		boost::replace_all(text, "<", "&lt;");
+		boost::replace_all(text, ">", "&gt;");
 	}
 
 	CMenu m_menu;

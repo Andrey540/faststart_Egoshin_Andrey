@@ -2,6 +2,7 @@
 #include "IDocument.h"
 #include "History.h"
 #include "DocumentItem.h"
+#include "TmpFolder.h"
 
 class CDocument:public IDocument
 {
@@ -36,8 +37,9 @@ private:
 	CHistory m_history;
 	std::deque<std::shared_ptr<CDocumentItem>> m_items;
 	size_t imagesCount = 0;
+	CTmpFolder m_tmpFolder;
 
 	void CheckPosition(size_t position) const;
-	void SaveDocument(const std::string& path) const;
-	void RemoveTmpFolder() const;
+	void SaveDocument(const std::string& folder, const std::string& path) const;
+    std::string ExtractPath(const std::string& path) const;
 };

@@ -8,23 +8,20 @@
 #include "HtmlDocumentBuilder.h"
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
 #include <experimental/filesystem>
 
 using namespace std;
 namespace fs = experimental::filesystem;
 
-static const string TMP_PATH = "tmp";
+static string TMP_FOLDER_NAME = "ispring_word";
 
 CDocument::CDocument()
-{
-	RemoveTmpFolder();
-	fs::create_directories(TMP_PATH);
-}
+	: m_tmpFolder(TMP_FOLDER_NAME)
+{}
 
 CDocument::~CDocument()
-{
-	RemoveTmpFolder();
-}
+{}
 
 void CDocument::SetTitle(const std::string & title)
 {
@@ -54,7 +51,7 @@ void CDocument::InsertImage(const std::string & path, size_t width, size_t heigh
 		CheckPosition(*position);
 	}
 	++imagesCount;
-	string preparedPath = TMP_PATH + "/" + to_string(imagesCount);
+	string preparedPath = m_tmpFolder.GetImagesPath() + "/" + to_string(imagesCount);
 	size_t index = path.rfind('.');
 	if (index != string::npos)
 	{
@@ -132,27 +129,28 @@ void CDocument::Redo()
 
 void CDocument::Save(const std::string& path) const
 {
-	fs::create_directories(path);
-	string imagesPath = path + "/images";
+	std::string folder = ExtractPath(path);
+	if (fs::exists(folder) && fs::is_directory(folder))
+	{
+		fs::remove_all(folder);
+	}
+	fs::create_directories(folder);
+	string imagesPath = folder + "/images";
 	fs::create_directories(imagesPath);
-	SaveDocument(path + "/index.html");
+	SaveDocument(folder, path);
 	for (auto item : m_items)
 	{
 		auto image = item->GetImage();
 		if (image != nullptr)
 		{
-			string path = image->GetPath();
-			size_t index = path.rfind('/');
-			if (index != string::npos)
-			{
-				string fileName = path.substr(index + 1);
-				fs::copy_file(path, imagesPath + "/" + fileName);
-			}
+			string fileName = image->GetName();
+			string imagePath = imagesPath + "/" + fileName;
+			fs::copy_file(image->GetPath(), imagePath);
 		}
 	}
 }
 
-void CDocument::SaveDocument(const std::string& path) const
+void CDocument::SaveDocument(const std::string& folder, const std::string& path) const
 {
 	CHtmlDocumentBuilder htmlBuilder;
 	htmlBuilder.AddTitle(m_title);
@@ -161,7 +159,7 @@ void CDocument::SaveDocument(const std::string& path) const
 		auto image = item->GetImage();
 		if (image != nullptr)
 		{
-			htmlBuilder.AddImage(image->GetWidth(), image->GetHeight(), image->GetPath());
+			htmlBuilder.AddImage(image->GetWidth(), image->GetHeight(), folder + "/images/" + image->GetName());
 		}
 		auto paragraph = item->GetParagraph();
 		if (paragraph != nullptr)
@@ -174,16 +172,18 @@ void CDocument::SaveDocument(const std::string& path) const
 
 void CDocument::CheckPosition(size_t position) const
 {
-	if (position >= GetItemsCount())
+	if (position >= GetItemsCount() && position != 0)
 	{
 		throw invalid_argument("Incorrect position");
 	}
 }
 
-void CDocument::RemoveTmpFolder() const
+std::string CDocument::ExtractPath(const std::string& path) const
 {
-	if (fs::exists(TMP_PATH) && fs::is_directory(TMP_PATH))
+	size_t index = path.rfind('/');
+	if (index != std::string::npos)
 	{
-		fs::remove_all(TMP_PATH);
+		return path.substr(0, index);
 	}
+	throw invalid_argument("Incorrect path");
 }

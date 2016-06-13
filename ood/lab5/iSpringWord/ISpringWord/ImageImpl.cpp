@@ -46,3 +46,14 @@ std::string CImageImpl::GetDescription()
 {
 	return "Image: " + std::to_string(m_image.GetWidth()) + " " + std::to_string(m_image.GetHeight()) + " " + m_image.GetPath();
 }
+
+std::string CImageImpl::GetName() const
+{
+	std::string path = GetPath();
+	size_t index = path.rfind('/');
+	if (index != std::string::npos)
+	{
+		return path.substr(index + 1);
+	}
+	return path;
+}
