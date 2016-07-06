@@ -40,49 +40,49 @@ type (
 
 	Ident struct {
 		Name string
-		T token.Token
-		Obj *Object
+		T    token.Token
+		Obj  *Object
 	}
 
 	UnaryExpr struct {
-		X Expression
-		Op token.TokenType
+		X   Expression
+		Op  token.TokenType
 		OpT token.Token
 	}
 
 	BinaryExpr struct {
-		X Expression
-		Op token.TokenType
+		X   Expression
+		Op  token.TokenType
 		OpT token.Token
-		Y Expression
+		Y   Expression
 	}
 
 	ArrayType struct {
-		Index int
-		At Expression  // base_type
+		Index uint64
+		At    Expression // base_type
 	}
-	
+
 	CallExpr struct {
-        Fun Expression
-        Args []Expression
+		Fun  Expression
+		Args []Expression
 	}
 )
 
-func (p *BadExpr) astNode() {}
-func (p *BasicLit) astNode() {}
-func (p *Ident) astNode() {}
-func (p *UnaryExpr) astNode() {}
+func (p *BadExpr) astNode()    {}
+func (p *BasicLit) astNode()   {}
+func (p *Ident) astNode()      {}
+func (p *UnaryExpr) astNode()  {}
 func (p *BinaryExpr) astNode() {}
-func (p *ArrayType) astNode() {}
-func (p *CallExpr) astNode() {}
+func (p *ArrayType) astNode()  {}
+func (p *CallExpr) astNode()   {}
 
-func (p *BadExpr) exprNode() {}
-func (p *BasicLit) exprNode() {}
-func (p *Ident) exprNode() {}
-func (p *UnaryExpr) exprNode() {}
+func (p *BadExpr) exprNode()    {}
+func (p *BasicLit) exprNode()   {}
+func (p *Ident) exprNode()      {}
+func (p *UnaryExpr) exprNode()  {}
 func (p *BinaryExpr) exprNode() {}
-func (p *ArrayType) exprNode() {}
-func (p *CallExpr) exprNode() {}
+func (p *ArrayType) exprNode()  {}
+func (p *CallExpr) exprNode()   {}
 
 // Declarations
 type (
@@ -92,10 +92,10 @@ type (
 	}
 
 	FuncDecl struct {
-		Name *Ident
-		Params []Field
+		Name    *Ident
+		Params  []Field
 		RetType Expression
-		Body *BlockStmt
+		Body    *BlockStmt
 	}
 )
 
@@ -104,12 +104,11 @@ type Field struct {
 	Type Expression
 }
 
-func (p *VarDecl) astNode() {}
+func (p *VarDecl) astNode()  {}
 func (p *FuncDecl) astNode() {}
 
-func (p *VarDecl) declNode() {}
+func (p *VarDecl) declNode()  {}
 func (p *FuncDecl) declNode() {}
-
 
 // Statements
 type (
@@ -117,7 +116,7 @@ type (
 		Decl Declaration
 	}
 
-	EmptyStmt struct {}
+	EmptyStmt struct{}
 
 	ExprStmt struct {
 		X Expression
@@ -125,11 +124,15 @@ type (
 
 	AssignStmt struct {
 		Ident Expression
-		Op token.TokenType
-		X Expression
+		Op    token.TokenType
+		X     Expression
 	}
 
 	ReturnStmt struct {
+		X Expression
+	}
+
+	PrintStmt struct {
 		X Expression
 	}
 
@@ -144,33 +147,35 @@ type (
 	}
 
 	ForStmt struct {
-		X Expression
+		X    Expression
 		Body *BlockStmt
 	}
 )
 
-func (p *DeclStmt) astNode() {}
-func (p *EmptyStmt) astNode() {}
-func (p *ExprStmt) astNode() {}
+func (p *DeclStmt) astNode()   {}
+func (p *EmptyStmt) astNode()  {}
+func (p *ExprStmt) astNode()   {}
 func (p *AssignStmt) astNode() {}
+func (p *PrintStmt) astNode()  {}
 func (p *ReturnStmt) astNode() {}
-func (p *BlockStmt) astNode() {}
-func (p *IfStmt) astNode() {}
-func (p *ForStmt) astNode() {}
+func (p *BlockStmt) astNode()  {}
+func (p *IfStmt) astNode()     {}
+func (p *ForStmt) astNode()    {}
 
-func (p *DeclStmt) stmtNode() {}
-func (p *EmptyStmt) stmtNode() {}
-func (p *ExprStmt) stmtNode() {}
+func (p *DeclStmt) stmtNode()   {}
+func (p *EmptyStmt) stmtNode()  {}
+func (p *ExprStmt) stmtNode()   {}
 func (p *AssignStmt) stmtNode() {}
+func (p *PrintStmt) stmtNode()  {}
 func (p *ReturnStmt) stmtNode() {}
-func (p *BlockStmt) stmtNode() {}
-func (p *IfStmt) stmtNode() {}
-func (p *ForStmt) stmtNode() {}
+func (p *BlockStmt) stmtNode()  {}
+func (p *IfStmt) stmtNode()     {}
+func (p *ForStmt) stmtNode()    {}
 
 // File
 type FileAst struct {
 	Decls []Declaration
-	Name string
+	Name  string
 }
 
 func (p *FileAst) astNode() {}
@@ -221,6 +226,9 @@ func (p *ExprStmt) Accept(v Visitor) {
 }
 func (p *AssignStmt) Accept(v Visitor) {
 	v.VisitAssignStmt(p)
+}
+func (p *PrintStmt) Accept(v Visitor) {
+	v.VisitPrintStmt(p)
 }
 func (p *ReturnStmt) Accept(v Visitor) {
 	v.VisitReturnStmt(p)

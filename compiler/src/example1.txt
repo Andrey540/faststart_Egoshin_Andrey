@@ -1,0 +1,115 @@
+func calc(f int) int {
+	var d int
+	d = 3 + f
+	
+	return d
+}
+
+func calcF(g int) int {
+	var d int
+	d = 6
+	return d + g
+}
+
+func sqrn(x float) float {
+	var delta float
+	var a1 float
+	var a2 float
+	
+	delta = 0.0001f
+	a1 = x / 2.0f
+	a2 = (a1 + (x / a1)) / 2.0f
+	
+	for a1 - a2 > delta {
+		a1 = a2
+		a2 = (a1 + (x / a1)) / 2.0f
+	}
+	
+	return a2
+}
+
+func main() int {	
+	var x int
+	var y int
+	x = 14
+	y = x - 6 + 5 - 3	
+	
+	var min int
+	min = 9999
+	var result int
+	var counter int
+	var e [10]int
+	
+	var e1[10]int
+	
+	e[0] = 6
+	e[1] = 101
+	e[2] = 102
+	e[3] = 103
+	e[4] = 104
+	e[5] = 5
+	e[6] = 106
+	e[7] = 10
+	e[8] = 100
+	e[9] = 100
+	
+	e[12] = 3
+	
+	e1 = e
+	
+	for (counter < 10) {		
+		if (min > e[counter]) {
+			min = e[counter]
+		}
+		counter = counter + 1
+	}
+	
+	if y > 6 {
+		y = y - 1
+	} else {
+		y = y + 5
+	}
+	
+	var k float
+	k = 4.0f - 3.0f	
+	
+	y = 6
+	for (y > 3) {
+		y = y - 1
+	}
+	
+	if (x == 2) || (y == 3) {
+		y = 7
+	}
+	
+	var arrF [20]float	
+	
+	e[4] = 5
+	y = e[4]
+	y = min
+	
+	var f float
+	f = -4.0f
+	
+	if (f == -4.0f) {
+		y = 2
+	} else {
+		y = 1
+	}
+
+	y = calc(2)
+	
+	/*print y*/
+	
+	y = calcF(5)
+	k = sqrn(9.0f)
+		
+	if (k > 2.9f) && (k < 3.1f) {
+		y = 1
+	} else {
+		y = 2
+	}
+	
+	
+	return y
+}

@@ -3,10 +3,10 @@ package token
 import "strconv"
 
 type Token struct {
-	RowIndex int
+	RowIndex    int
 	ColumnIndex int
-	TokenType TokenType
-	Value string
+	TokenType   TokenType
+	Value       string
 }
 
 type Tokens []Token
@@ -23,6 +23,7 @@ const (
 	VAR
 	TYPE
 	FUNC
+	PRINT
 
 	IDENTIFIER
 	INT
@@ -53,7 +54,7 @@ const (
 	COLON
 
 	COMMA // ,
-	
+
 	INT_NUMBER
 	FLOAT_NUMBER
 	LITERAL
@@ -62,12 +63,13 @@ const (
 	NOT_EQUAL
 	NOT
 	GREATE
+	LESS
 
 	STRING_VALUE
 
 	AND
 	OR
-	
+
 	SIN
 	COS
 	SQRT
@@ -76,11 +78,11 @@ const (
 var tokens = [...]string{
 	ILLEGAL: "ILLEGAL",
 
-	EOF:     "EOF",
-	COMMENT: "COMMENT",
-	INT:    "INT",
-	FLOAT:  "FLOAT",
-	STRING: "STRING",
+	EOF:      "EOF",
+	COMMENT:  "COMMENT",
+	INT:      "INT",
+	FLOAT:    "FLOAT",
+	STRING:   "STRING",
 	NEW_LINE: "NEW_LINE",
 
 	ADD: "+",
@@ -99,38 +101,40 @@ var tokens = [...]string{
 	SEMICOLON: ";",
 	COLON:     ":",
 	COMMA:     ",",
-	
+
 	INT_NUMBER:   "INT NUMBER",
 	FLOAT_NUMBER: "FLOAT NUMBER",
 
 	BREAK:    "BREAK",
 	CONTINUE: "CONTINUE",
 
-	IF:			 "IF",
-	ELSE:        "ELSE",
-	FOR:         "FOR",
+	IF:   "IF",
+	ELSE: "ELSE",
+	FOR:  "FOR",
 
-	FUNC:   "FUNC",
+	FUNC: "FUNC",
 
-	RETURN:    "RETURN",
+	RETURN: "RETURN",
 
-	TYPE:   "TYPE",
-	VAR:    "VAR",
-	
+	TYPE:  "TYPE",
+	VAR:   "VAR",
+	PRINT: "PRINT",
+
 	IDENTIFIER: "IDENTIFIER",
-	ASSIGNED: "=",
-	EQUAL: "==",
-	NOT_EQUAL: "!=",
-	NOT: "!",
-	GREATE: ">",
+	ASSIGNED:   "=",
+	EQUAL:      "==",
+	NOT_EQUAL:  "!=",
+	NOT:        "!",
+	GREATE:     ">",
+	LESS:       "<",
 
 	STRING_VALUE: "STRING VALUE",
 
 	AND: "&&",
-	OR: "||",
-	
-	SIN: "SIN",
-	COS: "COS",
+	OR:  "||",
+
+	SIN:  "SIN",
+	COS:  "COS",
 	SQRT: "SQRT",
 }
 

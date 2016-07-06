@@ -52,19 +52,19 @@ state 5
 	declaration:  declaration.NEW_LINE 
 
 	NEW_LINE  shift 7
-	.  reduce 2 (src line 83)
+	.  reduce 2 (src line 82)
 
 
 state 6
 	file:  file EOF.    (3)
 
-	.  reduce 3 (src line 89)
+	.  reduce 3 (src line 87)
 
 
 state 7
-	declaration:  declaration NEW_LINE.    (18)
+	declaration:  declaration NEW_LINE.    (19)
 
-	.  reduce 18 (src line 204)
+	.  reduce 19 (src line 194)
 
 
 state 8
@@ -79,9 +79,9 @@ state 8
 	type  goto 11
 
 state 9
-	identifier:  IDENTIFIER.    (44)
+	identifier:  IDENTIFIER.    (46)
 
-	.  reduce 44 (src line 402)
+	.  reduce 46 (src line 381)
 
 
 state 10
@@ -93,27 +93,27 @@ state 10
 
 
 state 11
-	declaration:  VAR identifier type.    (15)
+	declaration:  VAR identifier type.    (16)
 
-	.  reduce 15 (src line 178)
+	.  reduce 16 (src line 170)
 
 
 state 12
-	type:  INT.    (45)
+	type:  INT.    (47)
 
-	.  reduce 45 (src line 414)
+	.  reduce 47 (src line 392)
 
 
 state 13
-	type:  FLOAT.    (46)
+	type:  FLOAT.    (48)
 
-	.  reduce 46 (src line 419)
+	.  reduce 48 (src line 396)
 
 
 state 14
-	type:  STRING.    (47)
+	type:  STRING.    (49)
 
-	.  reduce 47 (src line 424)
+	.  reduce 49 (src line 400)
 
 
 state 15
@@ -157,9 +157,9 @@ state 18
 
 
 state 19
-	enumerable:  INT_NUMBER.    (53)
+	enumerable:  INT_NUMBER.    (55)
 
-	.  reduce 53 (src line 468)
+	.  reduce 55 (src line 438)
 
 
 state 20
@@ -183,9 +183,9 @@ state 21
 
 
 state 22
-	field_list:  field.    (19)
+	field_list:  field.    (20)
 
-	.  reduce 19 (src line 211)
+	.  reduce 20 (src line 200)
 
 
 state 23
@@ -200,9 +200,9 @@ state 23
 	type  goto 29
 
 state 24
-	type:  LBRACK RBRACK type.    (48)
+	type:  LBRACK RBRACK type.    (50)
 
-	.  reduce 48 (src line 429)
+	.  reduce 50 (src line 404)
 
 
 state 25
@@ -245,21 +245,21 @@ state 28
 	field  goto 34
 
 state 29
-	field:  identifier type.    (21)
+	field:  identifier type.    (22)
 
-	.  reduce 21 (src line 221)
+	.  reduce 22 (src line 210)
 
 
 state 30
-	type:  LBRACK enumerable RBRACK type.    (49)
+	type:  LBRACK enumerable RBRACK type.    (51)
 
-	.  reduce 49 (src line 437)
+	.  reduce 51 (src line 411)
 
 
 state 31
-	declaration:  FUNC identifier LPAREN RPAREN type statement_block.    (16)
+	declaration:  FUNC identifier LPAREN RPAREN type statement_block.    (17)
 
-	.  reduce 16 (src line 185)
+	.  reduce 17 (src line 177)
 
 
 state 32
@@ -278,80 +278,82 @@ state 33
 	statement_block  goto 36
 
 state 34
-	field_list:  field_list COMMA field.    (20)
+	field_list:  field_list COMMA field.    (21)
 
-	.  reduce 20 (src line 215)
+	.  reduce 21 (src line 204)
 
 
 state 35
 	statement_block:  LBRACE NEW_LINE.statement_list RBRACE 
 
-	IF  shift 43
-	FOR  shift 44
+	IF  shift 44
+	FOR  shift 45
 	RETURN  shift 42
+	PRINT  shift 43
 	FUNC  shift 4
 	COMMENT  shift 41
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	VAR  shift 3
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
+	enumerable  goto 53
 	expr  goto 40
-	number  goto 51
+	number  goto 52
 	declaration  goto 39
-	identifier  goto 46
+	identifier  goto 47
 	statement  goto 38
 	statement_list  goto 37
 
 state 36
-	declaration:  FUNC identifier LPAREN field_list RPAREN type statement_block.    (17)
+	declaration:  FUNC identifier LPAREN field_list RPAREN type statement_block.    (18)
 
-	.  reduce 17 (src line 194)
+	.  reduce 18 (src line 185)
 
 
 state 37
 	statement_block:  LBRACE NEW_LINE statement_list.RBRACE 
 	statement_list:  statement_list.statement 
 
-	RBRACE  shift 55
-	IF  shift 43
-	FOR  shift 44
+	RBRACE  shift 56
+	IF  shift 44
+	FOR  shift 45
 	RETURN  shift 42
+	PRINT  shift 43
 	FUNC  shift 4
 	COMMENT  shift 41
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	VAR  shift 3
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
+	enumerable  goto 53
 	expr  goto 40
-	number  goto 51
+	number  goto 52
 	declaration  goto 39
-	identifier  goto 46
-	statement  goto 56
+	identifier  goto 47
+	statement  goto 57
 
 state 38
 	statement_list:  statement.    (5)
 	statement:  statement.NEW_LINE 
 
-	NEW_LINE  shift 57
-	.  reduce 5 (src line 103)
+	NEW_LINE  shift 58
+	.  reduce 5 (src line 99)
 
 
 39: shift/reduce conflict (shift 7(0), red'n 7(0)) on NEW_LINE
@@ -360,7 +362,7 @@ state 39
 	declaration:  declaration.NEW_LINE 
 
 	NEW_LINE  shift 7
-	.  reduce 7 (src line 116)
+	.  reduce 7 (src line 109)
 
 
 state 40
@@ -372,414 +374,454 @@ state 40
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ASSIGNED  shift 58
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ASSIGNED  shift 59
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
 state 41
 	statement:  COMMENT.    (9)
 
-	.  reduce 9 (src line 132)
+	.  reduce 9 (src line 122)
 
 
 state 42
 	statement:  RETURN.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 69
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 71
+	number  goto 52
+	identifier  goto 47
 
 state 43
+	statement:  PRINT.expr 
+
+	INT_NUMBER  shift 19
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
+	IDENTIFIER  shift 9
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
+	.  error
+
+	enumerable  goto 53
+	expr  goto 72
+	number  goto 52
+	identifier  goto 47
+
+state 44
 	statement:  IF.expr statement_block ELSE statement_block 
 	statement:  IF.expr statement_block 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 70
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 73
+	number  goto 52
+	identifier  goto 47
 
-state 44
+state 45
 	statement:  FOR.expr statement_block 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 71
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 74
+	number  goto 52
+	identifier  goto 47
 
-state 45
+state 46
 	expr:  LPAREN.expr RPAREN 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 72
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 75
+	number  goto 52
+	identifier  goto 47
 
-46: shift/reduce conflict (shift 74(0), red'n 42(0)) on LPAREN
-state 46
+47: shift/reduce conflict (shift 77(0), red'n 44(0)) on LPAREN
+state 47
 	expr:  identifier.LBRACK expr RBRACK 
 	expr:  identifier.LPAREN expr_list RPAREN 
 	expr:  identifier.LPAREN RPAREN 
-	expr:  identifier.    (42)
+	expr:  identifier.    (44)
 
-	LBRACK  shift 73
-	LPAREN  shift 74
-	.  reduce 42 (src line 390)
-
-
-state 47
-	expr:  SIN.LPAREN expr RPAREN 
-
-	LPAREN  shift 75
-	.  error
+	LBRACK  shift 76
+	LPAREN  shift 77
+	.  reduce 44 (src line 371)
 
 
 state 48
-	expr:  COS.LPAREN expr RPAREN 
+	expr:  SIN.LPAREN expr RPAREN 
 
-	LPAREN  shift 76
+	LPAREN  shift 78
 	.  error
 
 
 state 49
-	expr:  SQRT.LPAREN expr RPAREN 
+	expr:  COS.LPAREN expr RPAREN 
 
-	LPAREN  shift 77
+	LPAREN  shift 79
 	.  error
 
 
 state 50
+	expr:  SQRT.LPAREN expr RPAREN 
+
+	LPAREN  shift 80
+	.  error
+
+
+state 51
 	expr:  SUB.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 78
-	number  goto 51
-	identifier  goto 46
-
-state 51
-	expr:  number.    (43)
-
-	.  reduce 43 (src line 395)
-
+	enumerable  goto 53
+	expr  goto 81
+	number  goto 52
+	identifier  goto 47
 
 state 52
-	number:  enumerable.    (50)
+	expr:  number.    (45)
 
-	.  reduce 50 (src line 451)
+	.  reduce 45 (src line 375)
 
 
 state 53
-	number:  FLOAT_NUMBER.    (51)
+	number:  enumerable.    (52)
 
-	.  reduce 51 (src line 456)
+	.  reduce 52 (src line 424)
 
 
 state 54
-	number:  STRING_VALUE.    (52)
+	number:  FLOAT_NUMBER.    (53)
 
-	.  reduce 52 (src line 461)
+	.  reduce 53 (src line 428)
 
 
 state 55
-	statement_block:  LBRACE NEW_LINE statement_list RBRACE.    (4)
+	number:  STRING_VALUE.    (54)
 
-	.  reduce 4 (src line 95)
+	.  reduce 54 (src line 432)
 
 
 state 56
-	statement_list:  statement_list statement.    (6)
-	statement:  statement.NEW_LINE 
+	statement_block:  LBRACE NEW_LINE statement_list RBRACE.    (4)
 
-	NEW_LINE  shift 57
-	.  reduce 6 (src line 109)
+	.  reduce 4 (src line 92)
 
 
 state 57
-	statement:  statement NEW_LINE.    (14)
+	statement_list:  statement_list statement.    (6)
+	statement:  statement.NEW_LINE 
 
-	.  reduce 14 (src line 171)
+	NEW_LINE  shift 58
+	.  reduce 6 (src line 103)
 
 
 state 58
+	statement:  statement NEW_LINE.    (15)
+
+	.  reduce 15 (src line 164)
+
+
+state 59
 	statement:  expr ASSIGNED.expr NEW_LINE 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 79
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 82
+	number  goto 52
+	identifier  goto 47
 
-state 59
+state 60
 	expr:  expr ADD.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 80
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 83
+	number  goto 52
+	identifier  goto 47
 
-state 60
+state 61
 	expr:  expr SUB.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 81
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 84
+	number  goto 52
+	identifier  goto 47
 
-state 61
+state 62
 	expr:  expr MUL.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 82
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 85
+	number  goto 52
+	identifier  goto 47
 
-state 62
+state 63
 	expr:  expr QUO.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 83
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 86
+	number  goto 52
+	identifier  goto 47
 
-state 63
+state 64
 	expr:  expr EQUAL.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 84
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 87
+	number  goto 52
+	identifier  goto 47
 
-state 64
+state 65
 	expr:  expr NOT_EQUAL.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 85
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 88
+	number  goto 52
+	identifier  goto 47
 
-state 65
+state 66
 	expr:  expr GREATE.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 86
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 89
+	number  goto 52
+	identifier  goto 47
 
-state 66
+state 67
+	expr:  expr LESS.expr 
+
+	INT_NUMBER  shift 19
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
+	IDENTIFIER  shift 9
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
+	.  error
+
+	enumerable  goto 53
+	expr  goto 90
+	number  goto 52
+	identifier  goto 47
+
+state 68
 	expr:  expr AND.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 87
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 91
+	number  goto 52
+	identifier  goto 47
 
-state 67
+state 69
 	expr:  expr OR.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 88
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 92
+	number  goto 52
+	identifier  goto 47
 
-state 68
+state 70
 	expr:  expr REM.expr 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 89
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 93
+	number  goto 52
+	identifier  goto 47
 
-69: shift/reduce conflict (shift 60(2), red'n 10(0)) on SUB
-state 69
+71: shift/reduce conflict (shift 61(2), red'n 10(0)) on SUB
+state 71
 	statement:  RETURN expr.    (10)
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
@@ -788,24 +830,55 @@ state 69
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
-	.  reduce 10 (src line 137)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
+	.  reduce 10 (src line 126)
 
 
-state 70
+72: shift/reduce conflict (shift 61(2), red'n 11(0)) on SUB
+state 72
+	statement:  PRINT expr.    (11)
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.EQUAL expr 
+	expr:  expr.NOT_EQUAL expr 
+	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
+	expr:  expr.AND expr 
+	expr:  expr.OR expr 
+	expr:  expr.REM expr 
+
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
+	.  reduce 11 (src line 134)
+
+
+state 73
 	statement:  IF expr.statement_block ELSE statement_block 
 	statement:  IF expr.statement_block 
 	expr:  expr.ADD expr 
@@ -815,26 +888,28 @@ state 70
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
 	LBRACE  shift 32
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
-	statement_block  goto 90
+	statement_block  goto 94
 
-state 71
+state 74
 	statement:  FOR expr.statement_block 
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
@@ -843,26 +918,28 @@ state 71
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
 	LBRACE  shift 32
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
-	statement_block  goto 91
+	statement_block  goto 95
 
-state 72
+state 75
 	expr:  LPAREN expr.RPAREN 
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
@@ -871,123 +948,125 @@ state 72
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	RPAREN  shift 92
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	RPAREN  shift 96
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
-state 73
+state 76
 	expr:  identifier LBRACK.expr RBRACK 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 93
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 97
+	number  goto 52
+	identifier  goto 47
 
-state 74
+state 77
 	expr:  identifier LPAREN.expr_list RPAREN 
 	expr:  identifier LPAREN.RPAREN 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
-	RPAREN  shift 95
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
+	RPAREN  shift 99
 	.  error
 
-	enumerable  goto 52
-	expr  goto 96
-	number  goto 51
-	expr_list  goto 94
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 100
+	number  goto 52
+	expr_list  goto 98
+	identifier  goto 47
 
-state 75
+state 78
 	expr:  SIN LPAREN.expr RPAREN 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 97
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 101
+	number  goto 52
+	identifier  goto 47
 
-state 76
+state 79
 	expr:  COS LPAREN.expr RPAREN 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 98
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 102
+	number  goto 52
+	identifier  goto 47
 
-state 77
+state 80
 	expr:  SQRT LPAREN.expr RPAREN 
 
 	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
 	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
 	.  error
 
-	enumerable  goto 52
-	expr  goto 99
-	number  goto 51
-	identifier  goto 46
+	enumerable  goto 53
+	expr  goto 103
+	number  goto 52
+	identifier  goto 47
 
-state 78
+state 81
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -995,15 +1074,16 @@ state 78
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
-	expr:  SUB expr.    (41)
+	expr:  SUB expr.    (43)
 
-	.  reduce 41 (src line 382)
+	.  reduce 43 (src line 364)
 
 
-state 79
+state 82
 	statement:  expr ASSIGNED expr.NEW_LINE 
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
@@ -1012,134 +1092,81 @@ state 79
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	NEW_LINE  shift 100
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	NEW_LINE  shift 104
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
-
-
-state 80
-	expr:  expr.ADD expr 
-	expr:  expr ADD expr.    (28)
-	expr:  expr.SUB expr 
-	expr:  expr.MUL expr 
-	expr:  expr.QUO expr 
-	expr:  expr.EQUAL expr 
-	expr:  expr.NOT_EQUAL expr 
-	expr:  expr.GREATE expr 
-	expr:  expr.AND expr 
-	expr:  expr.OR expr 
-	expr:  expr.REM expr 
-
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 28 (src line 268)
-
-
-state 81
-	expr:  expr.ADD expr 
-	expr:  expr.SUB expr 
-	expr:  expr SUB expr.    (29)
-	expr:  expr.MUL expr 
-	expr:  expr.QUO expr 
-	expr:  expr.EQUAL expr 
-	expr:  expr.NOT_EQUAL expr 
-	expr:  expr.GREATE expr 
-	expr:  expr.AND expr 
-	expr:  expr.OR expr 
-	expr:  expr.REM expr 
-
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 29 (src line 277)
-
-
-state 82
-	expr:  expr.ADD expr 
-	expr:  expr.SUB expr 
-	expr:  expr.MUL expr 
-	expr:  expr MUL expr.    (30)
-	expr:  expr.QUO expr 
-	expr:  expr.EQUAL expr 
-	expr:  expr.NOT_EQUAL expr 
-	expr:  expr.GREATE expr 
-	expr:  expr.AND expr 
-	expr:  expr.OR expr 
-	expr:  expr.REM expr 
-
-	.  reduce 30 (src line 286)
 
 
 state 83
 	expr:  expr.ADD expr 
+	expr:  expr ADD expr.    (29)
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
 	expr:  expr.QUO expr 
-	expr:  expr QUO expr.    (31)
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	.  reduce 31 (src line 295)
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 29 (src line 255)
 
 
 state 84
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
+	expr:  expr SUB expr.    (30)
 	expr:  expr.MUL expr 
 	expr:  expr.QUO expr 
 	expr:  expr.EQUAL expr 
-	expr:  expr EQUAL expr.    (32)
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 32 (src line 304)
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 30 (src line 263)
 
 
 state 85
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
+	expr:  expr MUL expr.    (31)
 	expr:  expr.QUO expr 
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
-	expr:  expr NOT_EQUAL expr.    (33)
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 33 (src line 313)
+	.  reduce 31 (src line 271)
 
 
 state 86
@@ -1147,20 +1174,16 @@ state 86
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
 	expr:  expr.QUO expr 
+	expr:  expr QUO expr.    (32)
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
-	expr:  expr GREATE expr.    (34)
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 34 (src line 322)
+	.  reduce 32 (src line 279)
 
 
 state 87
@@ -1169,19 +1192,20 @@ state 87
 	expr:  expr.MUL expr 
 	expr:  expr.QUO expr 
 	expr:  expr.EQUAL expr 
+	expr:  expr EQUAL expr.    (33)
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
-	expr:  expr AND expr.    (35)
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 35 (src line 331)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 33 (src line 287)
 
 
 state 88
@@ -1191,18 +1215,19 @@ state 88
 	expr:  expr.QUO expr 
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
+	expr:  expr NOT_EQUAL expr.    (34)
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
-	expr:  expr OR expr.    (36)
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	.  reduce 36 (src line 340)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 34 (src line 295)
 
 
 state 89
@@ -1213,35 +1238,124 @@ state 89
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr GREATE expr.    (35)
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
-	expr:  expr REM expr.    (37)
 
-	.  reduce 37 (src line 349)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 35 (src line 303)
 
 
 state 90
-	statement:  IF expr statement_block.ELSE statement_block 
-	statement:  IF expr statement_block.    (12)
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.EQUAL expr 
+	expr:  expr.NOT_EQUAL expr 
+	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
+	expr:  expr LESS expr.    (36)
+	expr:  expr.AND expr 
+	expr:  expr.OR expr 
+	expr:  expr.REM expr 
 
-	ELSE  shift 101
-	.  reduce 12 (src line 155)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 36 (src line 311)
 
 
 state 91
-	statement:  FOR expr statement_block.    (13)
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.EQUAL expr 
+	expr:  expr.NOT_EQUAL expr 
+	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
+	expr:  expr.AND expr 
+	expr:  expr AND expr.    (37)
+	expr:  expr.OR expr 
+	expr:  expr.REM expr 
 
-	.  reduce 13 (src line 163)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 37 (src line 319)
 
 
 state 92
-	expr:  LPAREN expr RPAREN.    (24)
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.EQUAL expr 
+	expr:  expr.NOT_EQUAL expr 
+	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
+	expr:  expr.AND expr 
+	expr:  expr.OR expr 
+	expr:  expr OR expr.    (38)
+	expr:  expr.REM expr 
 
-	.  reduce 24 (src line 241)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	.  reduce 38 (src line 327)
 
 
 state 93
+	expr:  expr.ADD expr 
+	expr:  expr.SUB expr 
+	expr:  expr.MUL expr 
+	expr:  expr.QUO expr 
+	expr:  expr.EQUAL expr 
+	expr:  expr.NOT_EQUAL expr 
+	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
+	expr:  expr.AND expr 
+	expr:  expr.OR expr 
+	expr:  expr.REM expr 
+	expr:  expr REM expr.    (39)
+
+	.  reduce 39 (src line 335)
+
+
+state 94
+	statement:  IF expr statement_block.ELSE statement_block 
+	statement:  IF expr statement_block.    (13)
+
+	ELSE  shift 105
+	.  reduce 13 (src line 150)
+
+
+state 95
+	statement:  FOR expr statement_block.    (14)
+
+	.  reduce 14 (src line 157)
+
+
+state 96
+	expr:  LPAREN expr RPAREN.    (25)
+
+	.  reduce 25 (src line 229)
+
+
+state 97
 	expr:  identifier LBRACK expr.RBRACK 
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
@@ -1250,41 +1364,43 @@ state 93
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	RBRACK  shift 102
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	RBRACK  shift 106
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
-state 94
+state 98
 	expr_list:  expr_list.COMMA expr 
 	expr:  identifier LPAREN expr_list.RPAREN 
 
-	COMMA  shift 103
-	RPAREN  shift 104
+	COMMA  shift 107
+	RPAREN  shift 108
 	.  error
 
 
-state 95
-	expr:  identifier LPAREN RPAREN.    (27)
+state 99
+	expr:  identifier LPAREN RPAREN.    (28)
 
-	.  reduce 27 (src line 262)
+	.  reduce 28 (src line 249)
 
 
-state 96
-	expr_list:  expr.    (22)
+state 100
+	expr_list:  expr.    (23)
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -1292,24 +1408,26 @@ state 96
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
-	.  reduce 22 (src line 231)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
+	.  reduce 23 (src line 219)
 
 
-state 97
+state 101
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -1317,26 +1435,28 @@ state 97
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 	expr:  SIN LPAREN expr.RPAREN 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	RPAREN  shift 105
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	RPAREN  shift 109
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
-state 98
+state 102
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -1344,26 +1464,28 @@ state 98
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 	expr:  COS LPAREN expr.RPAREN 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	RPAREN  shift 106
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	RPAREN  shift 110
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
-state 99
+state 103
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -1371,96 +1493,98 @@ state 99
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 	expr:  SQRT LPAREN expr.RPAREN 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	RPAREN  shift 107
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	RPAREN  shift 111
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
 	.  error
 
 
-state 100
+state 104
 	statement:  expr ASSIGNED expr NEW_LINE.    (8)
 
-	.  reduce 8 (src line 122)
+	.  reduce 8 (src line 113)
 
 
-state 101
+state 105
 	statement:  IF expr statement_block ELSE.statement_block 
 
 	LBRACE  shift 32
 	.  error
 
-	statement_block  goto 108
-
-state 102
-	expr:  identifier LBRACK expr RBRACK.    (25)
-
-	.  reduce 25 (src line 246)
-
-
-state 103
-	expr_list:  expr_list COMMA.expr 
-
-	INT_NUMBER  shift 19
-	FLOAT_NUMBER  shift 53
-	STRING_VALUE  shift 54
-	IDENTIFIER  shift 9
-	SUB  shift 50
-	SIN  shift 47
-	COS  shift 48
-	SQRT  shift 49
-	LPAREN  shift 45
-	.  error
-
-	enumerable  goto 52
-	expr  goto 109
-	number  goto 51
-	identifier  goto 46
-
-state 104
-	expr:  identifier LPAREN expr_list RPAREN.    (26)
-
-	.  reduce 26 (src line 254)
-
-
-state 105
-	expr:  SIN LPAREN expr RPAREN.    (38)
-
-	.  reduce 38 (src line 358)
-
+	statement_block  goto 112
 
 state 106
-	expr:  COS LPAREN expr RPAREN.    (39)
+	expr:  identifier LBRACK expr RBRACK.    (26)
 
-	.  reduce 39 (src line 366)
+	.  reduce 26 (src line 233)
 
 
 state 107
-	expr:  SQRT LPAREN expr RPAREN.    (40)
+	expr_list:  expr_list COMMA.expr 
 
-	.  reduce 40 (src line 374)
+	INT_NUMBER  shift 19
+	FLOAT_NUMBER  shift 54
+	STRING_VALUE  shift 55
+	IDENTIFIER  shift 9
+	SUB  shift 51
+	SIN  shift 48
+	COS  shift 49
+	SQRT  shift 50
+	LPAREN  shift 46
+	.  error
 
+	enumerable  goto 53
+	expr  goto 113
+	number  goto 52
+	identifier  goto 47
 
 state 108
-	statement:  IF expr statement_block ELSE statement_block.    (11)
+	expr:  identifier LPAREN expr_list RPAREN.    (27)
 
-	.  reduce 11 (src line 146)
+	.  reduce 27 (src line 241)
 
 
 state 109
-	expr_list:  expr_list COMMA expr.    (23)
+	expr:  SIN LPAREN expr RPAREN.    (40)
+
+	.  reduce 40 (src line 343)
+
+
+state 110
+	expr:  COS LPAREN expr RPAREN.    (41)
+
+	.  reduce 41 (src line 350)
+
+
+state 111
+	expr:  SQRT LPAREN expr RPAREN.    (42)
+
+	.  reduce 42 (src line 357)
+
+
+state 112
+	statement:  IF expr statement_block ELSE statement_block.    (12)
+
+	.  reduce 12 (src line 142)
+
+
+state 113
+	expr_list:  expr_list COMMA expr.    (24)
 	expr:  expr.ADD expr 
 	expr:  expr.SUB expr 
 	expr:  expr.MUL expr 
@@ -1468,32 +1592,34 @@ state 109
 	expr:  expr.EQUAL expr 
 	expr:  expr.NOT_EQUAL expr 
 	expr:  expr.GREATE expr 
+	expr:  expr.LESS expr 
 	expr:  expr.AND expr 
 	expr:  expr.OR expr 
 	expr:  expr.REM expr 
 
-	ADD  shift 59
-	SUB  shift 60
-	MUL  shift 61
-	QUO  shift 62
-	REM  shift 68
-	EQUAL  shift 63
-	NOT_EQUAL  shift 64
-	GREATE  shift 65
-	AND  shift 66
-	OR  shift 67
-	.  reduce 23 (src line 235)
+	ADD  shift 60
+	SUB  shift 61
+	MUL  shift 62
+	QUO  shift 63
+	REM  shift 70
+	EQUAL  shift 64
+	NOT_EQUAL  shift 65
+	GREATE  shift 66
+	AND  shift 68
+	OR  shift 69
+	LESS  shift 67
+	.  reduce 24 (src line 223)
 
 
-41 terminals, 14 nonterminals
-54 grammar rules, 110/2000 states
-3 shift/reduce, 0 reduce/reduce conflicts reported
+43 terminals, 14 nonterminals
+56 grammar rules, 114/2000 states
+4 shift/reduce, 0 reduce/reduce conflicts reported
 63 working sets used
-memory: parser 146/30000
-78 extra closures
-447 shift entries, 1 exceptions
-53 goto entries
-71 entries saved by goto default
-Optimizer space used: output 271/30000
-271 table entries, 32 zero
-maximum spread: 40, maximum offset: 103
+memory: parser 156/30000
+80 extra closures
+495 shift entries, 1 exceptions
+55 goto entries
+77 entries saved by goto default
+Optimizer space used: output 303/30000
+303 table entries, 51 zero
+maximum spread: 42, maximum offset: 107

@@ -62,12 +62,12 @@ var blockstmts []ast.BlockStmt
 %type <field_list> field_list
 	
 %token <token> EOF
-%token <token> LBRACE RBRACE IF ELSE FOR RETURN FUNC COMMENT LBRACK RBRACK COMMA
+%token <token> LBRACE RBRACE IF ELSE FOR RETURN PRINT FUNC COMMENT LBRACK RBRACK COMMA
 %token <token> INT_NUMBER FLOAT_NUMBER STRING_VALUE INT FLOAT STRING NEW_LINE VAR ASSIGNED IDENTIFIER
 %token <token> ADD SUB MUL QUO REM SIN COS SQRT LPAREN RPAREN
-%token <token> EQUAL NOT_EQUAL GREATE AND OR
+%token <token> EQUAL NOT_EQUAL GREATE AND OR LESS
 
-%left ASSIGNED EQUAL NOT_EQUAL GREATE AND OR
+%left ASSIGNED EQUAL NOT_EQUAL GREATE AND OR LESS
 %left ADD  SUB
 %left MUL  QUO  REM
 %left UMINUS      /*  supplies  precedence  for  unary  minus  */
@@ -77,24 +77,20 @@ var blockstmts []ast.BlockStmt
 
 file    : declaration
 		{
-			fmt.Println("file begin")
 			$$ = ast.FileAst{Decls: []ast.Declaration{$1}}
-		}
+		}	
 	|	file declaration
 		{
-			fmt.Println("add decl to list")
 			$1.Decls = append($1.Decls, $2)
 			$$ = $1
 		}
 	|    file EOF
 		{
-			fmt.Println("EOF")
 			mainResult = $1
 		}
 	;
 statement_block	: LBRACE NEW_LINE statement_list RBRACE
 		{
-			fmt.Println("init stmt block")
 			blockstmts = append(blockstmts, $3)
 			$$ = len(blockstmts) - 1
 		}
@@ -102,26 +98,20 @@ statement_block	: LBRACE NEW_LINE statement_list RBRACE
 	
 statement_list : statement
 		{
-			fmt.Println("list statement begin")
-			fmt.Println($1)
 			$$ = ast.BlockStmt{List: []ast.Statement{$1}}
 		}
 	|     statement_list statement
 		{
-			fmt.Println("add stmt to list")
 			$1.List = append($1.List, $2)
 			$$ = $1
 		}	
 	;
 statement	: declaration
 		{
-			fmt.Println("decl --> stmt")
-			fmt.Println($1)
 			$$ = &ast.DeclStmt{Decl: $1}
 		}	
 	|   expr ASSIGNED expr NEW_LINE
 		{
-			fmt.Println("assigned --> stmt")			
 			$$ = &ast.AssignStmt {
 				Ident: $1,
 				Op: $2.TokenType,
@@ -131,21 +121,26 @@ statement	: declaration
 		}
 	|    COMMENT
 		{
-			fmt.Println("comment")			
 			$$ = &ast.EmptyStmt {}
 		}
 	|    RETURN expr
 		{
-			// conflict
-			fmt.Println("return stmt")			
+			// conflict			
 			$$ = &ast.ReturnStmt {
+				X: $2,			
+			}
+			
+		}
+	|    PRINT expr
+		{
+			// conflict			
+			$$ = &ast.PrintStmt {
 				X: $2,			
 			}
 			
 		}
 	|	IF expr statement_block ELSE statement_block
 		{
-			fmt.Println("if stmt with else")
 			$$ = &ast.IfStmt {
 				Cond: $2,
 				Body: &blockstmts[$3],
@@ -154,7 +149,6 @@ statement	: declaration
 		}
 	|	IF expr statement_block
 		{
-			fmt.Println("if stmt")
 			$$ = &ast.IfStmt {
 				Cond: $2,
 				Body: &blockstmts[$3],
@@ -162,7 +156,6 @@ statement	: declaration
 		}
 	|	FOR expr statement_block
 		{
-			fmt.Println("for stmt")
 			$$ = &ast.ForStmt {
 				X: $2,
 				Body: &blockstmts[$3],
@@ -170,13 +163,12 @@ statement	: declaration
 		}
 	|	statement NEW_LINE
 		{
-			fmt.Println("stmt + new line")
 			$$ = $1
 		}
 	;
 
-declaration : VAR identifier type		{
-			fmt.Println("var")
+declaration : VAR identifier type
+		{
 			$$ = &ast.VarDecl {
 				Name: &identifiers[$2],
 				Type: $3,
@@ -184,7 +176,6 @@ declaration : VAR identifier type		{
 		}
 	|    FUNC identifier LPAREN RPAREN type statement_block
 		{
-			fmt.Println("func")
 			$$ = &ast.FuncDecl {
 				Name: &identifiers[$2],
 				RetType: $5,
@@ -193,7 +184,6 @@ declaration : VAR identifier type		{
 		}
 	|    FUNC identifier LPAREN field_list RPAREN type statement_block
 		{
-			fmt.Println("func")
 			$$ = &ast.FuncDecl {
 				Name: &identifiers[$2],
 				Params: $4,
@@ -203,9 +193,8 @@ declaration : VAR identifier type		{
 		}
 	|	declaration NEW_LINE
 		{
-			fmt.Println("decl new line")
 			$$ = $1
-		}	
+		}
 	;	
 	
 field_list  : field
@@ -220,7 +209,6 @@ field_list  : field
 	
 field   :  identifier type
 		{
-			fmt.Println("field")
 			$$ = ast.Field {
 				Name: &identifiers[$1],
 				Type: $2,
@@ -240,7 +228,6 @@ expr_list  :    expr
 	
 expr	:    LPAREN expr RPAREN
 		{ 
-			fmt.Printf("expr <- LPAREN expr RPAREN\n")
 			$$ = $2 
 		}
 	|    identifier LBRACK expr RBRACK
@@ -267,7 +254,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr ADD expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -276,7 +262,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr SUB expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -285,7 +270,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr MUL expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -294,7 +278,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr QUO expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -303,7 +286,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr EQUAL expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -312,7 +294,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr NOT_EQUAL expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -321,16 +302,22 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr GREATE expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
 				Y: $3,
 			}
 		}	
+	|    expr LESS expr
+		{ 
+			$$ = &ast.BinaryExpr {
+				X: $1,
+				OpT: $2,
+				Y: $3,
+			}
+		}
 	|    expr AND expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -339,7 +326,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr OR expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -348,7 +334,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    expr REM expr
 		{ 
-			fmt.Println($2.Value)
 			$$ = &ast.BinaryExpr {
 				X: $1,
 				OpT: $2,
@@ -357,7 +342,6 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    SIN LPAREN expr RPAREN
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.UnaryExpr{
 				X: $3,
 				OpT: $1,
@@ -365,7 +349,6 @@ expr	:    LPAREN expr RPAREN
 	     }
 	|    COS LPAREN expr RPAREN
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.UnaryExpr{
 				X: $3,
 				OpT: $1,
@@ -373,7 +356,6 @@ expr	:    LPAREN expr RPAREN
 	    }
 	|    SQRT LPAREN expr RPAREN
 	    {
-			fmt.Println($1.Value)
 			$$ = &ast.UnaryExpr{
 				X: $3,
 				OpT: $1,
@@ -381,7 +363,6 @@ expr	:    LPAREN expr RPAREN
 	    }
 	|    SUB  expr        %prec  UMINUS
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.UnaryExpr{
 				X: $2,
 				OpT: $1,
@@ -389,19 +370,16 @@ expr	:    LPAREN expr RPAREN
 		}
 	|    identifier
 		{
-			fmt.Println("identifier -> expr")
 			$$ = &identifiers[$1]
 		}
 	|    number
 		{
-		    fmt.Println("expr <- number")
 			$$ = $1
 		}
 	;
 	
 identifier : IDENTIFIER
-		{
-			fmt.Println("identifier")			
+		{		
 			ident := ast.Ident{
 				Name: $1.Value,
 				T: $1,
@@ -413,34 +391,29 @@ identifier : IDENTIFIER
 	
 type    : INT
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	| 	 FLOAT
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	|    STRING
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	|	 LBRACK RBRACK type
 		{
-			fmt.Println("array")
 			$$ = &ast.ArrayType {
-				Index: -1,
+				Index: 0,
 				At: $3,
 			}
 		}
 	|	 LBRACK enumerable RBRACK type
 		{
-			value, err := strconv.Atoi($2.Value)
+			value, err := strconv.ParseUint($2.Value, 10, 64)
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println("array")
 			$$ = &ast.ArrayType {
 				Index: value,
 				At: $4,
@@ -450,17 +423,14 @@ type    : INT
 
 number	:   enumerable
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	| 		FLOAT_NUMBER
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	| 		STRING_VALUE
 		{
-			fmt.Println($1.Value)
 			$$ = &ast.BasicLit{T: $1}
 		}
 	;
@@ -525,6 +495,7 @@ func prepareTokenMap() map[int]int {
 	tokenMap[int(token.IF)] = IF
 	tokenMap[int(token.ELSE)] = ELSE
 	tokenMap[int(token.FOR)] = FOR
+	tokenMap[int(token.PRINT)] = PRINT
 	tokenMap[int(token.RETURN)] = RETURN
 	tokenMap[int(token.FUNC)] = FUNC
 	tokenMap[int(token.COMMENT)] = COMMENT
@@ -534,6 +505,7 @@ func prepareTokenMap() map[int]int {
 	tokenMap[int(token.EQUAL)] = EQUAL
 	tokenMap[int(token.NOT_EQUAL)] = NOT_EQUAL
 	tokenMap[int(token.GREATE)] = GREATE
+	tokenMap[int(token.LESS)] = LESS
 	tokenMap[int(token.STRING_VALUE)] = STRING_VALUE
 	tokenMap[int(token.AND)] = AND
 	tokenMap[int(token.OR)] = OR
@@ -542,11 +514,30 @@ func prepareTokenMap() map[int]int {
 }
 
 func main() {	
+
+	defer func() {
+	        if err := recover(); err != nil {
+				switch x := err.(type) {
+		        case string:
+		            fmt.Println(x)
+		        case error:
+		            fmt.Println(x.Error())
+		        default:
+		            fmt.Println("Unknown error")
+		        }    
+	        }
+	    }()
+		
+	if len(os.Args) < 2 {
+		panic("Missing parameter, provide file name!")
+	}
+	if len(os.Args) < 3 {
+		panic("Missing parameter, provide otput file name!")
+	}
+		
 	if buffer, ok := readFile(); ok {
-		fmt.Println(buffer)
 		lexerObj := new(lexer.Lexer)
 		tokensParsed, errors := lexerObj.ParseTokens(buffer)
-		fmt.Println(tokensParsed)
 		if len(errors) > 0 {
 			panic("Unexpected tokens")
 		}
@@ -557,9 +548,10 @@ func main() {
 		astChecker := new(ast.AstCheckerVisitor)
 		mainResult.Accept(astChecker)
 		llvmBuilder := new(ast.LlvmBuilderVisitor)
-		mainResult.Accept(llvmBuilder)
+		llvmBuilder.OutputFile = os.Args[2]
+		mainResult.Accept(llvmBuilder)		
 	} else {
-		fmt.Printf("Error reading file")
+		fmt.Println("Error reading file")
 	}
 }
 
@@ -571,9 +563,10 @@ func readline(fi *bufio.Reader) (string, bool) {
 	return s, true
 }
 
-func readFile() (string, bool) {
+func readFile() (string, bool) {	
 	buf := bytes.NewBuffer(nil)
-	f, err := os.Open("input.txt")
+	f, err := os.Open(os.Args[1])
+//	f, err := os.Open("example1.txt")
 	if err != nil {
 		return "", false
 	}
