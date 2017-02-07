@@ -1,0 +1,10 @@
+.sign_up_form
+{
+    width: 200px;
+    text-align: center;
+}
+
+.sign_up_form input
+{
+    margin-bottom: 10px;
+}
