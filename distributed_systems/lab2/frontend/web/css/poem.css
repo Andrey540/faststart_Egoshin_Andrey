@@ -1,0 +1,11 @@
+.poem_form
+{
+    width: 300px;
+    text-align: center;
+}
+
+.poem_form .poem_text
+{
+    margin-bottom: 10px;
+    width: 300px;
+}

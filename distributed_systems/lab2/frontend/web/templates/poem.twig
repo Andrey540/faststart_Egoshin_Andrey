@@ -1,0 +1,14 @@
+{% extends 'index.twig' %}
+
+{% set title = 'poem' %}
+{% set cssFile = '/css/poem.css' %}
+
+{% block main_container %}
+    {{ parent() }}
+
+    <form class="poem_form" action="process_poem" method="post">
+        <textarea class="poem_text" rows="10" cols="45" name="poem"></textarea>
+        <button type="sumbit">POST</button>
+    </form>
+
+{% endblock main_container %}

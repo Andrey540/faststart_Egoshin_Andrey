@@ -1,0 +1,19 @@
+{% extends 'index.twig' %}
+
+{% set title = 'poemSuccess' %}
+{% set cssFile = '/css/poem.css' %}
+
+{% block main_container %}
+    {{ parent() }}
+
+    <div id="resultContainer">{{'wait'|trans}}</div>
+
+{% endblock main_container %}
+
+{% block script %}
+    {{ parent() }}
+
+    <script>
+        {% include 'script/_poem_response.js.twig' %}
+    </script>
+{% endblock script %}

@@ -1,0 +1,23 @@
+var url = '{{ poemRequestUrl }}';
+
+function sendRequest()
+{
+    $.ajax({
+        url: url,
+        dataType : "json",
+    })
+    .done(function(data) {
+        if (data && data.text)
+        {
+            $("#resultContainer").html(data.text);
+        }
+        else
+        {
+            setTimeout(function() {sendRequest()}, 1000);
+        }
+    });
+}
+
+$(function(){
+    setTimeout(function() {sendRequest()}, 1000);
+});
