@@ -15,6 +15,9 @@ function sendRequest()
         {
             setTimeout(function() {sendRequest()}, 1000);
         }
+    })
+    .fail(function() {
+        setTimeout(function() {sendRequest()}, 1000);
     });
 }
 

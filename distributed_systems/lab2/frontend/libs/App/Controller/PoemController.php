@@ -56,7 +56,14 @@ class PoemController extends BaseController
         }
 
         $redisClient = \Redis\Client::getRedisClient();
-        $result = $redisClient->get($taskId);
+        try
+        {
+            $result = $redisClient->get($taskId);
+        }
+        catch (\Exception $e)
+        {
+            return self::returnServerError($response, json_encode(["error" => "could not read data"]), RequestUtil::INTERNAL_SERVER_ERROR_STATUS);
+        }
 
         $result = nl2br($result);
         return self::returnServerSuccess($response, json_encode(["text" => $result]));
