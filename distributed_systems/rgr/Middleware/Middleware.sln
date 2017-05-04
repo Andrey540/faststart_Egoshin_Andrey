@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middleware", "Middleware\Middleware.csproj", "{8BCD49A6-C29B-4226-AF22-E7CDCA8D6228}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{C175693D-189F-48FB-A3DD-8F2D6CA68D44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{8C519B1E-ADE9-41D6-BD7F-E04C967BDA89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryDelegatingHandler", "RetryDelegatingHandler\RetryDelegatingHandler.csproj", "{AD0353A1-023F-4DD7-9169-E8FD145A16FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BCD49A6-C29B-4226-AF22-E7CDCA8D6228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BCD49A6-C29B-4226-AF22-E7CDCA8D6228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BCD49A6-C29B-4226-AF22-E7CDCA8D6228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BCD49A6-C29B-4226-AF22-E7CDCA8D6228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C175693D-189F-48FB-A3DD-8F2D6CA68D44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C175693D-189F-48FB-A3DD-8F2D6CA68D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C175693D-189F-48FB-A3DD-8F2D6CA68D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C175693D-189F-48FB-A3DD-8F2D6CA68D44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C519B1E-ADE9-41D6-BD7F-E04C967BDA89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C519B1E-ADE9-41D6-BD7F-E04C967BDA89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C519B1E-ADE9-41D6-BD7F-E04C967BDA89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C519B1E-ADE9-41D6-BD7F-E04C967BDA89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD0353A1-023F-4DD7-9169-E8FD145A16FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0353A1-023F-4DD7-9169-E8FD145A16FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0353A1-023F-4DD7-9169-E8FD145A16FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0353A1-023F-4DD7-9169-E8FD145A16FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
+	EndGlobalSection
+EndGlobal
