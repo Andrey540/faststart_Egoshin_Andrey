@@ -55,15 +55,13 @@ namespace Middleware
 
         private static void InitStartupState()
         {
-            var currentService = Program.currentServiceName;
-            string address = Program.currentServiceAddress;
             Program.services.ForEach(delegate (ServiceItem service)
             {
                 if ((service.Name.IndexOf(Program.currentServiceName) == -1) && service.Active)
                 {
                     HttpResponseMessage httpResponseMessage = null;
                     var query = HttpUtility.ParseQueryString(string.Empty);
-                    query["serviceName"] = currentService;
+                    query["serviceName"] = Program.currentServiceName;
                     try
                     {
                         httpResponseMessage = _httpClient.GetAsync(service.Url + "?" + query.ToString()).Result;
@@ -77,14 +75,19 @@ namespace Middleware
                     {
                         var formattedResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
                         var appsState = JsonConvert.DeserializeObject<AppsHash>(formattedResponse);
-                        foreach (KeyValuePair<string, AppInfoEx> entry in appsState)
-                        {
-                            entry.Value.Weight = (entry.Value.ServiceName == currentService) ? 0 : GetServiceWeight(entry.Value.ServiceName);
-                            AppInfoStorageController.CheckAndSetAppInfo(entry.Value, address, service.Url);
-                        }
+                        ProcessAppsSate(appsState, service);
                     }
                 }
             });
+        }
+
+        private static void ProcessAppsSate(AppsHash appsState, ServiceItem service)
+        {
+            foreach (KeyValuePair<string, AppInfoEx> entry in appsState)
+            {
+                entry.Value.Weight = (entry.Value.ServiceName == Program.currentServiceName) ? 0 : GetServiceWeight(entry.Value.ServiceName);
+                AppInfoStorageController.CheckAndSetAppInfo(entry.Value, Program.currentServiceAddress, service.Url);
+            }
         }
 
         static void Main(string[] args)
