@@ -10,9 +10,13 @@ namespace Middleware
     public class MiddlewareController : ApiController
     {
         private readonly HttpClient _httpClient;
-        public MiddlewareController(HttpClient httpClient)
+        private readonly ServicesCollector _servicesCollector;
+        private readonly ServiceConfig _serviceConfig;
+        public MiddlewareController(HttpClient httpClient, ServicesCollector servicesCollector, ServiceConfig serviceConfig)
         {
             _httpClient = httpClient;
+            _servicesCollector = servicesCollector;
+            _serviceConfig = serviceConfig;
         }
 
         public AppsHash Get(string serviceName)
@@ -33,26 +37,28 @@ namespace Middleware
         {
             Console.WriteLine("Receive info app from " + stateEvent.ServiceName);
             ResetService(stateEvent.ServiceName);
-            var serviceName = Program.currentServiceAddress;
+            var serviceName = _serviceConfig.GetServiceAddress();
             if (AppInfoStorageController.NeedUpdate(stateEvent.AppState.Hash, stateEvent.AppState.Time, serviceName, stateEvent.ServiceName))
             {
                 SendGetAppInfoRequest(stateEvent);
             }
         }
 
-        private void SendGetAppInfoRequest(Contracts.StateChangedEvent stateEvent)
+        private async void SendGetAppInfoRequest(Contracts.StateChangedEvent stateEvent)
         {
-            var serviceUrl = Program.GetServiceUrl(stateEvent.ServiceName);
+            var serviceUrl = _servicesCollector.GetServiceUrl(stateEvent.ServiceName);
             if (serviceUrl != null)
             {
                 var query = HttpUtility.ParseQueryString(string.Empty);
-                query["serviceName"] = Program.currentServiceName;
+                query["serviceName"] = _serviceConfig.GetServiceName();
                 query["hash"] = Uri.EscapeDataString(stateEvent.AppState.Hash);
-                var httpResponseMessage = _httpClient.GetAsync(serviceUrl + "?" + query.ToString()).Result;
-                var formattedResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                var serviceName = Program.currentServiceAddress;
+
+                var response = await _httpClient.GetAsync(serviceUrl + "?" + query.ToString());
+                var formattedResponse = await response.Content.ReadAsStringAsync();
+
+                var serviceName = _serviceConfig.GetServiceAddress();
                 var appInfo = JsonConvert.DeserializeObject<AppInfoEx>(formattedResponse);
-                appInfo.Weight = Program.GetServiceWeight(appInfo.ServiceName);
+                appInfo.Weight = _servicesCollector.GetServiceWeight(appInfo.ServiceName);
 
                 AppInfoStorageController.CheckAndSetAppInfo(appInfo, serviceName, stateEvent.ServiceName);
             }
@@ -60,7 +66,7 @@ namespace Middleware
 
         private void ResetService(string name)
         {
-            var service = Program.GetService(name);
+            var service = _servicesCollector.GetService(name);
             if ((service != null) && !service.Active)
             {
                 Console.WriteLine("Reset " + name);

@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace Application
 {
@@ -10,6 +11,11 @@ namespace Application
     {
         private static HttpClient _httpClient;
         static void Main(string[] args)
+        {
+            Run(args).Wait();
+        }
+
+        static async Task Run(string[] args)
         {
             _httpClient = new HttpClient(new RetryDelegatingHandler.RetryDelegatingHandler());
 
@@ -25,7 +31,7 @@ namespace Application
             string jsonString = JsonConvert.SerializeObject(appInfo);
             HttpContent content = new StringContent(jsonString);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var httpResponseMessage = _httpClient.PostAsync(middlewareAddress, content).Result;
+            var sendStartTask = await _httpClient.PostAsync(middlewareAddress, content);
 
             Console.WriteLine(jsonString);
             Console.WriteLine("Web Applicationr is running.");
@@ -35,7 +41,8 @@ namespace Application
             appInfo.Status = Contracts.AppStatus.Stoped;
             jsonString = JsonConvert.SerializeObject(appInfo);
             content = new StringContent(jsonString);
-            httpResponseMessage = _httpClient.PostAsync(middlewareAddress, content).Result;
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var sendStopTask = await _httpClient.PostAsync(middlewareAddress, content);
         }
     }
 }

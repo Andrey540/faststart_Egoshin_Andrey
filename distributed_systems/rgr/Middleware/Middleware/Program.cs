@@ -7,99 +7,75 @@ using Microsoft.Owin.Hosting;
 using System.Reflection;
 using System.Net.Http;
 using System.Web;
+using System.Threading.Tasks;
 
 namespace Middleware
 {
     class Program
     {
-        public static List<ServiceItem> services = new List<ServiceItem>();
-        public static readonly string currentServiceName = ConfigurationManager.AppSettings["serviceName"];
-        public static readonly string currentServiceAddress = ConfigurationManager.AppSettings["serviceAddress"];
         private static HttpClient _httpClient = new HttpClient(new RetryDelegatingHandler.RetryDelegatingHandler());
-
-        public static string GetServiceUrl(string name)
+        private static ServicesCollector _servicesCollector = ServicesCollector.Instance;
+        private static ServiceConfig _serviceConfig = ServiceConfig.Instance;
+        
+        private static async Task<string[]> InitStartupState()
         {
-            var service = GetService(name);
-            return (service != null) ? service.Url : null;
-        }
-
-        public static int GetServiceWeight(string name)
-        {
-            var service = GetService(name);
-            return (service != null) ? service.Weight : 0;
-        }
-
-        public static ServiceItem GetService(string name)
-        {
-            return Program.services.Find(x => x.Name == name);
-        }
-
-        private static void InitServiceData()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Middleware.manifest.json"))
-            using (var reader = new System.IO.StreamReader(stream))
+            var tasks = new List<Task<string>>();
+            var services = _servicesCollector.GetServices();
+            for (var i = 0; i < services.Count; ++i)
             {
-                string servicesString = reader.ReadToEnd();
-                JObject servicesObj = JObject.Parse(servicesString);
-                JArray servicesArr = (JArray)servicesObj["services"];
-
-                for (var i = 0; i < servicesArr.Count; ++i)
+                if ((services[i].Name.IndexOf(_serviceConfig.GetServiceName()) == -1) && services[i].Active)
                 {
-                    JObject service = (JObject)servicesArr[i];
-                    var item = new ServiceItem() { Name = (string)service["Name"], Url = (string)service["Url"], Weight = (int)service["Weight"], Active = (bool)service["Active"] };
-                    services.Add(item);
+                    var initServiceStateTask = GetInitServiceState(services[i]);
+                    tasks.Add(initServiceStateTask);
+                    var serviceState = await initServiceStateTask;
+                    if (serviceState != null)
+                    {
+                        var appsState = JsonConvert.DeserializeObject<AppsHash>(serviceState);
+                        ProcessAppsSate(appsState, services[i]);
+                    }
                 }
             }
+            return await Task.WhenAll(tasks.ToArray());
         }
 
-        private static void InitStartupState()
+        private static async Task<string> GetInitServiceState(ServiceItem service)
         {
-            Program.services.ForEach(delegate (ServiceItem service)
+            HttpResponseMessage response = null;
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["serviceName"] = _serviceConfig.GetServiceName();
+            try
             {
-                if ((service.Name.IndexOf(Program.currentServiceName) == -1) && service.Active)
-                {
-                    HttpResponseMessage httpResponseMessage = null;
-                    var query = HttpUtility.ParseQueryString(string.Empty);
-                    query["serviceName"] = Program.currentServiceName;
-                    try
-                    {
-                        httpResponseMessage = _httpClient.GetAsync(service.Url + "?" + query.ToString()).Result;
-                    }
-                    catch(Exception)
-                    {
-                        service.Active = false;
-                    }
-
-                    if (httpResponseMessage != null)
-                    {
-                        var formattedResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                        var appsState = JsonConvert.DeserializeObject<AppsHash>(formattedResponse);
-                        ProcessAppsSate(appsState, service);
-                    }
-                }
-            });
+                response =  await _httpClient.GetAsync(service.Url + "?" + query.ToString());
+            }
+            catch (Exception)
+            {
+                service.Active = false;
+            }
+            if (response != null)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            return null;
         }
 
         private static void ProcessAppsSate(AppsHash appsState, ServiceItem service)
         {
             foreach (KeyValuePair<string, AppInfoEx> entry in appsState)
             {
-                entry.Value.Weight = (entry.Value.ServiceName == Program.currentServiceName) ? 0 : GetServiceWeight(entry.Value.ServiceName);
-                AppInfoStorageController.CheckAndSetAppInfo(entry.Value, Program.currentServiceAddress, service.Url);
+                entry.Value.Weight = (entry.Value.ServiceName == _serviceConfig.GetServiceName()) ? 0 : _servicesCollector.GetServiceWeight(entry.Value.ServiceName);
+                AppInfoStorageController.CheckAndSetAppInfo(entry.Value, _serviceConfig.GetServiceAddress(), service.Url);
             }
         }
 
         static void Main(string[] args)
         {
-            InitServiceData();
-            InitStartupState();
+            InitStartupState().Wait();
 
-            using (WebApp.Start<Startup>(Program.currentServiceAddress))
+            using (WebApp.Start<Startup>(_serviceConfig.GetServiceAddress()))
             {
                 Console.WriteLine("Web Service is running.");
                 Console.WriteLine("Press any key to quit.");
-                Console.ReadLine();
+                Console.ReadKey();
             }
         }
     }

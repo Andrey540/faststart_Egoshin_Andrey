@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Configuration;
 using System.Web.Http;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Middleware
 {
@@ -11,9 +12,13 @@ namespace Middleware
     public class ApplicationController : ApiController
     {
         private readonly HttpClient _httpClient;
-        public ApplicationController(HttpClient httpClient)
+        private readonly ServicesCollector _servicesCollector;
+        private readonly ServiceConfig _serviceConfig;
+        public ApplicationController(HttpClient httpClient, ServicesCollector servicesCollector, ServiceConfig serviceConfig)
         {
             _httpClient = httpClient;
+            _servicesCollector = servicesCollector;
+            _serviceConfig = serviceConfig;
         }
 
         public string Get(string appName)
@@ -30,37 +35,40 @@ namespace Middleware
                 Status = appInfo.Status,
                 Time = 1,
                 Hash = AppInfoStorageController.GenerateHash(appInfo.Url),
-                ServiceName = Program.currentServiceName,
+                ServiceName = _serviceConfig.GetServiceName(),
             };
             AppInfoStorageController.StepForwardAndSetAppInfo(appInfoEx);
             Console.WriteLine("Application with name: " + appInfo.Name + " and status: " + appInfo.Status + " and url: " + appInfo.Url + " and weight: 0 ");
 
-            SendStateChangedEvent(appInfoEx);
+            Task.WaitAll(SendStateChangedEvent(appInfoEx));
         }
 
-        private void SendStateChangedEvent (AppInfoEx appInfo)
+        private Task<HttpResponseMessage>[] SendStateChangedEvent (AppInfoEx appInfo)
         {
+            var tasks = new List<Task<HttpResponseMessage>>();
             var appsState = new Contracts.AppStateInfo() {Hash = appInfo.Hash, Time = appInfo.Time };
             var stateEvent = new Contracts.StateChangedEvent();
-            stateEvent.ServiceName = Program.currentServiceName;
+            stateEvent.ServiceName = _serviceConfig.GetServiceName();
             stateEvent.AppState = appsState;
-            Program.services.ForEach(delegate (ServiceItem service)
+            var services = _servicesCollector.GetServices();
+            for (var i = 0; i < services.Count; ++i)
             {
-                if ((service.Name.IndexOf(Program.currentServiceName) == -1) && service.Active)
+                if ((services[i].Name.IndexOf(_serviceConfig.GetServiceName()) == -1) && services[i].Active)
                 {
                     string jsonString = JsonConvert.SerializeObject(stateEvent);
                     HttpContent content = new StringContent(jsonString);
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     try
                     {
-                        var httpResponseMessage = _httpClient.PostAsync(service.Url, content).Result;
+                        tasks.Add(_httpClient.PostAsync(services[i].Url, content));
                     }
                     catch (Exception)
                     {
-                        service.Active = false;
+                        services[i].Active = false;
                     }
                 }
-            });
+            }
+            return tasks.ToArray();
         }
     }
 }

@@ -4,19 +4,19 @@
       "Name": "middleware1",
       "Url": "http://localhost:8084/api/middleware/",
       "Weight": 30,
-      "Active":  true,
+      "Active":  true
     },
     {
       "Name": "middleware2",
       "Url": "http://localhost:8085/api/middleware/",
       "Weight": 50,
-      "Active":  true,
+      "Active":  true
     },
     {
       "Name": "middleware3",
       "Url": "http://localhost:8086/api/middleware/",
       "Weight": 70,
-      "Active":  true,
+      "Active":  true
     }
   ]
 }
